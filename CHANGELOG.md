@@ -4,6 +4,10 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v12 — 04.09.2026
+
+Detailanalyse-Chart (BTC/ETH) um Achsenbeschriftung erweitert: grobe horizontale Zeitskala (Monats-/Jahresmarken, 23.04.2025–04.09.2026) und grobe vertikale Wertskala (gerundete Kurs-Ticks, z.&nbsp;B. $40'000/$60'000/…) hinzugefügt. Der aktuelle, exakte Kursstand wird jetzt zusätzlich als Zahl direkt am Graphen-Endpunkt angezeigt (zuvor nur als Punktmarkierung ohne Beschriftung).
+
 ## v11 — 04.09.2026
 
 Datenqualitäts-Review: Die BTC-Kachel zeigte fälschlich den Hinweis „Trotz Preis in der Zone auf ‚Beobachten' eingestuft", obwohl der Kurs ($79.616) weit über der Einstiegszone ($28.530–$40.030, einem zukünftigen Wave-C-Ziel) liegt. Ursache war ein Anzeige-Bug: Der Downgrade-Hinweis wurde immer mit „Trotz Preis in der Zone" formuliert, sobald ein `downgradeReason` gesetzt war — unabhängig davon, ob der Preis tatsächlich in der Zone lag. Fix: Die Formulierung hängt jetzt vom tatsächlichen Preis-Zone-Abgleich ab (betraf neben BTC auch NVO als Grenzfall, $47,51 knapp über der Zone $35,12–$46,20). Bei BTC wurde der ursprüngliche Downgrade-Text zusätzlich inhaltlich korrigiert und ins Feld „Zu beachten" verschoben.

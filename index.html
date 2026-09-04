@@ -416,6 +416,10 @@
   .dd-chart-wrap svg{ width:100%; height:auto; display:block; }
   .dd-zone-long{ fill: color-mix(in srgb, var(--good) 30%, transparent); }
   .dd-zone-short{ fill: color-mix(in srgb, var(--bad) 25%, transparent); }
+  .dd-axis-grid{ stroke:var(--border); stroke-width:1; }
+  .dd-axis-label{ font-family:'IBM Plex Mono',monospace; font-size:11px; fill:var(--ink-soft); }
+  .dd-price-tag-bg{ fill:var(--ink); }
+  .dd-price-tag{ font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; fill:var(--surface); }
   .dd-chart-legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:.72rem; color:var(--ink-soft); margin-top:10px; }
   .dd-chart-legend span{ display:inline-flex; align-items:center; gap:5px; }
   .dd-swatch{ width:11px; height:11px; border-radius:3px; display:inline-block; }
@@ -1110,6 +1114,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v12", date:"04.09.2026", kind:"manual", summary:"Detailanalyse-Chart (BTC/ETH) um Achsenbeschriftung erweitert: grobe horizontale Zeitskala (Monats-/Jahresmarken) und grobe vertikale Wertskala (gerundete Kurs-Ticks) hinzugefügt; der aktuelle exakte Kursstand wird jetzt direkt als Zahl am Graphen-Endpunkt angezeigt." },
     { version:"v11", date:"04.09.2026", kind:"manual", summary:"Datenqualitäts-Fixes: BTC zeigte fälschlich &bdquo;Trotz Preis in der Zone auf Beobachten eingestuft&ldquo;, obwohl der Kurs ($79.616) weit über der Zielzone ($28.530&ndash;$40.030) liegt &mdash; Ursache behoben (Downgrade-Hinweis wird jetzt nur noch angezeigt, wenn der Preis tatsächlich in der Einstiegszone liegt; betraf auch NVO als Grenzfall). Squeeze-Momentum-Indikator wurde bisher auf allen 44 Kacheln als &bdquo;n/v&ldquo;-Platzhalter angezeigt, obwohl nur bei TSLA echte Daten vorliegen &mdash; wird jetzt nur noch gezeigt, wenn tatsächlich verfügbar. KAS: MACD-Wert war unbelegt (&bdquo;kein exakter Wert verifiziert&ldquo;) und wurde als &bdquo;Neutral&ldquo; dargestellt &mdash; jetzt ausgeblendet; RSI-Label korrigiert von RSI(14) auf RSI(7), da nur ein 7-Tage-Wert vorliegt." },
     { version:"v10", date:"04.09.2026", kind:"manual", summary:"BTC/ETH-Detailanalyse ergänzt: eigene quantitative Elliott-Wave-Zählung (Primär- &amp; Alternativszenario mit exakten Invalidierungsmarken) auf Basis von 500 Tagesschlusskursen (Twelve Data), verzahnt mit Fibonacci-Retracements/-Extensions als Konfluenz-System, RSI(14)/MACD-Divergenzanalyse, Wahrscheinlichkeits-Score, CRV-Berechnung und Wachstumsszenarien &mdash; abrufbar über neuen &bdquo;Detailanalyse&ldquo;-Button auf den BTC-/ETH-Kacheln, inkl. Kurschart mit Zielzonen. Cross-Check gegen das aktuelle HKCM-Tagesupdate (03.09.2026) zeigt weitgehende Übereinstimmung der Fibonacci-Zonen." },
     { version:"Sync-04.09.2026", date:"04.09.2026", kind:"auto", summary:"Täglicher Twelve-Data-Sync: 42 von 44 Titeln aktualisiert (Kurs/RSI/MACD); übersprungen: ABBN (Schweizer SIX-Börse, benötigt Twelve-Data Pro-/Venture-Plan, nicht im Free-Plan abgedeckt), KAS (Symbol KAS/USD bei Twelve Data nicht gefunden)." },
@@ -1319,7 +1324,7 @@
       crossCheck:"Cross-Check HKCM (Markt.pdf, 03.09.2026): HKCM erwartet ein korrektives Hoch unterhalb $82.822 und danach eine grüne Zielzone $34.739&ndash;$23.961 &mdash; beide Werte liegen innerhalb weniger Prozent der hier unabhängig berechneten Fibonacci-Zonen ($83.929 bzw. $28.530&ndash;$40.030). Die Übereinstimmung zweier unabhängiger Methoden (eigene ZigZag-/Fibo-Rechnung vs. HKCM-Wellenzählung) erhöht die Konfluenz-Bewertung des Primärszenarios.",
       ath:126199.63, cycleLow:57800.19,
       longZone:[28530,40030], shortZone:[79600,83900],
-      chart: DD_CHART_BTC
+      chart: DD_CHART_BTC, chartStart:"23.04.2025", chartEnd:"04.09.2026"
     },
     ETH: {
       name:"Ethereum", ticker:"ETH", unit:"$",
@@ -1358,7 +1363,7 @@
       crossCheck:"Cross-Check HKCM (Markt.pdf, 03.09.2026): HKCM erwartet &bdquo;primär imminent Anstiege bis in die rote Zielzone $3.232&ndash;$3.640&ldquo;, danach einen Rücklauf in die grüne Zielzone $560,33&ndash;$1.061 &mdash; strukturell identisch mit dem hier als Primärszenario berechneten Pfad (Fortsetzung Richtung $3.136&ndash;$3.521, danach Welle C auf $959&ndash;$1.506). Die eigene RSI/MACD-Divergenzanalyse liefert zusätzlich ein Warnsignal, das HKCMs Primärszenario etwas Konkurrenz durch die hier ergänzte Alternative macht.",
       ath:4765.41, cycleLow:1507.05,
       longZone:[959,1506], shortZone:[3136,3521],
-      chart: DD_CHART_ETH
+      chart: DD_CHART_ETH, chartStart:"23.04.2025", chartEnd:"04.09.2026"
     }
   };
 
@@ -1367,8 +1372,36 @@
     return n.toLocaleString('de-CH', {maximumFractionDigits: n < 100 ? 2 : 0});
   }
 
+  const DD_MONTHS = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+
+  function ddParseDate(s){
+    const [d,m,y] = s.split('.').map(Number);
+    return new Date(y, m-1, d);
+  }
+
+  function ddDateAt(frac, startStr, endStr){
+    const start = ddParseDate(startStr), end = ddParseDate(endStr);
+    const t = start.getTime() + (end.getTime() - start.getTime()) * frac;
+    const dt = new Date(t);
+    return `${DD_MONTHS[dt.getMonth()]} ${String(dt.getFullYear()).slice(2)}`;
+  }
+
+  // "Grobe" (grob gerundete) Wertskala: rundet die Schrittweite auf 1/2/5 * 10^n,
+  // damit die Achsenbeschriftung sich an lesbaren Kurswerten statt an Zufallszahlen orientiert.
+  function ddNiceTicks(min, max, count){
+    const range = max - min || 1;
+    const rawStep = range / count;
+    const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const norm = rawStep / mag;
+    const niceNorm = norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10;
+    const step = niceNorm * mag;
+    const ticks = [];
+    for(let v = Math.ceil(min/step)*step; v <= max; v += step) ticks.push(v);
+    return ticks;
+  }
+
   function buildDDChart(dd){
-    const W = 860, H = 300, padL = 8, padR = 8, padT = 14, padB = 8;
+    const W = 860, H = 320, padL = 60, padR = 14, padT = 14, padB = 26;
     const prices = dd.chart;
     const zoneLow = Math.min(dd.longZone[0], dd.shortZone[0]) * 0.94;
     const zoneHigh = Math.max(dd.longZone[1], dd.shortZone[1], dd.ath) * 1.04;
@@ -1379,13 +1412,40 @@
     const path = prices.map((p,i) => `${i===0?'M':'L'}${x(i).toFixed(1)},${y(p).toFixed(1)}`).join(' ');
     const rectFor = (lo,hi,cls) => `<rect x="${padL}" y="${y(hi).toFixed(1)}" width="${W-padL-padR}" height="${Math.max(1,(y(lo)-y(hi))).toFixed(1)}" class="${cls}" />`;
     const lineFor = (v,dash) => `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W-padR}" y2="${y(v).toFixed(1)}" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="${dash}" />`;
-    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Kursverlauf ${dd.name} mit Zielzonen">
+
+    // Grobe vertikale Wertskala (4 gerundete Kurs-Ticks) + horizontale Zeitskala (6 Datumsmarken).
+    const yTicks = ddNiceTicks(yMin, yMax, 4);
+    const yAxis = yTicks.map(v => `
+      <line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W-padR}" y2="${y(v).toFixed(1)}" class="dd-axis-grid" />
+      <text x="${padL-8}" y="${y(v).toFixed(1)}" class="dd-axis-label" text-anchor="end" dominant-baseline="middle">${dd.unit}${ddFmt(v)}</text>`).join('');
+    const xTickCount = 6;
+    const xAxis = Array.from({length: xTickCount+1}, (_, k) => k/xTickCount).map(frac => {
+      const xi = padL + frac * (W-padL-padR);
+      const anchor = frac === 0 ? 'start' : frac === 1 ? 'end' : 'middle';
+      return `
+      <line x1="${xi.toFixed(1)}" y1="${padT}" x2="${xi.toFixed(1)}" y2="${H-padB}" class="dd-axis-grid" />
+      <text x="${xi.toFixed(1)}" y="${H-padB+16}" class="dd-axis-label" text-anchor="${anchor}">${ddDateAt(frac, dd.chartStart, dd.chartEnd)}</text>`;
+    }).join('');
+
+    // Aktueller Kursstand als exakte Zahl direkt am Endpunkt des Graphen.
+    const lastX = x(prices.length-1), lastY = y(prices[prices.length-1]);
+    const priceLabelY = Math.max(padT+11, Math.min(H-padB-6, lastY-10));
+    const priceLabelText = `${dd.unit}${ddFmt(dd.currentPrice)}`;
+    const priceLabelW = 16 + priceLabelText.length * 6.6;
+
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Kursverlauf ${dd.name} mit Zielzonen, aktueller Kurs ${priceLabelText}">
       ${rectFor(dd.longZone[0], dd.longZone[1], 'dd-zone-long')}
       ${rectFor(dd.shortZone[0], dd.shortZone[1], 'dd-zone-short')}
+      ${yAxis}
+      ${xAxis}
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="var(--border)" stroke-width="1" />
+      <line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="var(--border)" stroke-width="1" />
       ${lineFor(dd.ath,'2,3')}
       ${lineFor(dd.cycleLow,'2,3')}
       <path d="${path}" fill="none" stroke="var(--ink)" stroke-width="1.6" />
-      <circle cx="${x(prices.length-1).toFixed(1)}" cy="${y(prices[prices.length-1]).toFixed(1)}" r="3.2" fill="var(--accent)" />
+      <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.2" fill="var(--accent)" />
+      <rect x="${(lastX-priceLabelW).toFixed(1)}" y="${(priceLabelY-13).toFixed(1)}" width="${priceLabelW.toFixed(1)}" height="18" rx="4" class="dd-price-tag-bg" />
+      <text x="${(lastX-8).toFixed(1)}" y="${priceLabelY.toFixed(1)}" text-anchor="end" dominant-baseline="middle" class="dd-price-tag">${priceLabelText}</text>
     </svg>`;
   }
 
