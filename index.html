@@ -797,8 +797,7 @@
       wave:"Eigene quantitative Elliott-Wave-/Fibonacci-Konfluenz-Analyse (Twelve-Data-Tagesschlusskurse, 23.04.2025&ndash;04.09.2026): Seit dem Allzeithoch $126.200 (Okt. 2025) läuft eine A-B-Korrektur mit sauberen Fibonacci-Verhältnissen (Zwischenhoch $97.924 am 14.01. = 38,0&thinsp;%-Retracement der ersten Abwärtswelle; aktuelles Erholungshoch $82.300 am 03.09. = 61,1&thinsp;%-Retracement der dritten Abwärtswelle ab $97.924 auf das Zyklustief $57.800). Primär: Korrekturhoch im Bereich $79.600&ndash;$83.900 (knapp unter der 38,2&thinsp;%-Fibo-Zone $83.929), danach Welle&nbsp;C Richtung $28.530&ndash;$40.030 &mdash; bestätigt durch bärische RSI-Divergenz (Hoch 85,9 am 21.08. vs. nur 73,0 am 03.09. bei höherem Kurshoch) und MACD-Bär-Crossover (Hist. von +1.670 auf -52 gedreht). Deckt sich mit HKCM/Philip Hopf (&bdquo;BTC: Hier sehe ich jetzt das Top!&ldquo;, 28.08.2026, Volltranskript ausgewertet): Reversal-Zone rund $82.822, danach Ziel bis Ende Oktober 2026 (&plusmn;1 Monat). Alternative (32&thinsp;%): Zyklustief bereits gesehen, laufende Rally = Welle&nbsp;1 einer neuen Bullbewegung, Dip-Kaufzone $70.050&ndash;$72.940. Ausführliche Primär-/Alternativzählung, Konfluenz-Score, CRV und Chart mit Zielzonen: Detailanalyse-Button unten.",
       invalid:"Primär: Tagesschluss über $97.924 (Welle-2-Hoch) kippt die Zählung zur Alternative; hart: neues Allzeithoch über $126.200. Alternative: Tagesschluss unter $57.800 (Zyklustief).",
       source:"HKCM (Philip Hopf): &bdquo;BTC: Hier sehe ich jetzt das Top!&ldquo; (28.08.2026) &mdash; Video/Transkript vollständig angesehen und ausgewertet, bestätigt/vertieft die frühere &bdquo;Willkommen im Bitcoin-Bärenmarkt!&ldquo;-Einschätzung.", sourceUrl:"https://www.youtube.com/watch?v=e9jQc-ByTww",
-      flag:null,
-      downgradeReason:"HKCM stuft die Lage weiterhin als Bärenmarkt-Kapitulation ein und erwartet den echten Boden erst Ende Oktober 2026 (&plusmn;1 Monat) &mdash; Zone technisch erreicht, aber selbst der Analyst rät aktuell NICHT zum Spot-Kauf.",
+      flag:"HKCM stuft die Lage weiterhin als Bärenmarkt-Kapitulation ein und erwartet den echten Boden erst Ende Oktober 2026 (&plusmn;1 Monat). Bis zur Zielzone $28.530&ndash;$40.030 ist es noch ein weiter Weg (aktuell $79.615) &mdash; auch der Analyst rät aktuell NICHT zum Spot-Kauf.",
       etoro:"yes", yuh:"maybe"
     },
     {
@@ -1082,7 +1081,7 @@
     AVAX: { rsi:60.5, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,1870 unter Signallinie 0,1952 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
     ADA: { rsi:63.0, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0062 über Signallinie 0,0061 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
     SUI:  { rsi:55.9, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,0113 unter Signallinie 0,0116 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
-    KAS:  { rsi:28.5, rsiNote:"überverkauft (7-Tage)", macd:"neutral", macdText:"schwach, kein exakter Wert verifiziert", squeeze:"nv" },
+    KAS:  { rsi:28.5, rsiPeriod:7, rsiNote:"überverkauft (7-Tage)", macd:null, macdText:null, squeeze:"nv" },
     DOT: { rsi:55.8, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0142 über Signallinie 0,0130 (Twelve Data live, 04.09.2026)", squeeze:"nv" }
   };
 
@@ -1111,6 +1110,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v11", date:"04.09.2026", kind:"manual", summary:"Datenqualitäts-Fixes: BTC zeigte fälschlich &bdquo;Trotz Preis in der Zone auf Beobachten eingestuft&ldquo;, obwohl der Kurs ($79.616) weit über der Zielzone ($28.530&ndash;$40.030) liegt &mdash; Ursache behoben (Downgrade-Hinweis wird jetzt nur noch angezeigt, wenn der Preis tatsächlich in der Einstiegszone liegt; betraf auch NVO als Grenzfall). Squeeze-Momentum-Indikator wurde bisher auf allen 44 Kacheln als &bdquo;n/v&ldquo;-Platzhalter angezeigt, obwohl nur bei TSLA echte Daten vorliegen &mdash; wird jetzt nur noch gezeigt, wenn tatsächlich verfügbar. KAS: MACD-Wert war unbelegt (&bdquo;kein exakter Wert verifiziert&ldquo;) und wurde als &bdquo;Neutral&ldquo; dargestellt &mdash; jetzt ausgeblendet; RSI-Label korrigiert von RSI(14) auf RSI(7), da nur ein 7-Tage-Wert vorliegt." },
     { version:"v10", date:"04.09.2026", kind:"manual", summary:"BTC/ETH-Detailanalyse ergänzt: eigene quantitative Elliott-Wave-Zählung (Primär- &amp; Alternativszenario mit exakten Invalidierungsmarken) auf Basis von 500 Tagesschlusskursen (Twelve Data), verzahnt mit Fibonacci-Retracements/-Extensions als Konfluenz-System, RSI(14)/MACD-Divergenzanalyse, Wahrscheinlichkeits-Score, CRV-Berechnung und Wachstumsszenarien &mdash; abrufbar über neuen &bdquo;Detailanalyse&ldquo;-Button auf den BTC-/ETH-Kacheln, inkl. Kurschart mit Zielzonen. Cross-Check gegen das aktuelle HKCM-Tagesupdate (03.09.2026) zeigt weitgehende Übereinstimmung der Fibonacci-Zonen." },
     { version:"Sync-04.09.2026", date:"04.09.2026", kind:"auto", summary:"Täglicher Twelve-Data-Sync: 42 von 44 Titeln aktualisiert (Kurs/RSI/MACD); übersprungen: ABBN (Schweizer SIX-Börse, benötigt Twelve-Data Pro-/Venture-Plan, nicht im Free-Plan abgedeckt), KAS (Symbol KAS/USD bei Twelve Data nicht gefunden)." },
     { version:"v9", date:"02.09.2026", kind:"manual", summary:"Release-Notes/&bdquo;Was ist neu?&ldquo;-Panel eingeführt (dieses hier). Neue wöchentliche, geräte-gebundene Aufgabe eingerichtet, die per YouTube-RSS-Feed automatisch neue Videos von HKCM, Phantom by HKCM und STA Solutions erkennt, per Live-Browser liest und auswertet &mdash; inkl. einer Warteliste (&bdquo;YouTube-Watch&ldquo;) für Funde, die (noch) nicht sicher genug ausgewertet werden konnten." },
@@ -1244,23 +1244,26 @@
     if(!ind) return "";
     const rsiPct = ind.rsi != null ? Math.max(0, Math.min(100, ind.rsi)) : null;
     const rsiDisplay = ind.rsi != null ? ind.rsi.toFixed(1) : "n/v";
-    return `
-      <div class="indicators">
+    const rsiBlock = ind.rsi != null ? `
         <div class="indicator">
-          <span class="ind-label">RSI(14)</span>
+          <span class="ind-label">RSI(${ind.rsiPeriod || 14})</span>
           <span class="ind-value num">${rsiDisplay}</span>
           ${rsiPct != null ? `<div class="rsi-track"><div class="rsi-zone-os"></div><div class="rsi-zone-ob"></div><div class="rsi-marker" style="left:${rsiPct}%;"></div></div>` : ""}
           <span class="ind-note">${ind.rsiNote || ""}</span>
-        </div>
+        </div>` : "";
+    const macdBlock = ind.macd != null ? `
         <div class="indicator">
           <span class="ind-label">MACD</span>
           ${macdBadge(ind.macd, ind.macdText)}
-        </div>
+        </div>` : "";
+    const squeezeBlock = ind.squeeze === "on" ? `
         <div class="indicator">
           <span class="ind-label">Squeeze Mom.</span>
           ${squeezeBadge(ind)}
-        </div>
-      </div>
+        </div>` : "";
+    if(!rsiBlock && !macdBlock && !squeezeBlock) return conflictNote(item, ind);
+    return `
+      <div class="indicators">${rsiBlock}${macdBlock}${squeezeBlock}</div>
       ${conflictNote(item, ind)}`;
   }
 
@@ -1457,6 +1460,7 @@
   function cardHTML(item){
     const tags = item.cats.map(c => `<span class="tag">${CAT_LABEL[c]}</span>`).join("");
     const hasConflict = conflictReasons(item, IND[item.ticker]).length > 0;
+    const inZone = item.entryLow != null && item.entryHigh != null && item.price >= item.entryLow && item.price <= item.entryHigh;
     return `
     <article class="card" data-cats="${item.cats.join(' ')}" data-status="${item.status}" data-conflict="${hasConflict ? '1' : '0'}" data-search="${(item.ticker + ' ' + item.name).toLowerCase()}">
       <div class="card-top">
@@ -1471,7 +1475,7 @@
       ${item.brokerWarning ? `<div class="broker-warning">⚠ ${item.brokerWarning}</div>` : ""}
       <div class="price-row"><span class="price num">${fmtPrice(item)}</span><span class="trend">${item.trend}</span></div>
       ${rangeBarHTML(item)}
-      ${item.downgradeReason ? `<div class="downgrade-note">↓ <span><b>Trotz Preis in der Zone auf &bdquo;${STATUS_LABEL[item.status]}&ldquo; eingestuft:</b> ${item.downgradeReason}</span></div>` : ""}
+      ${item.downgradeReason ? `<div class="downgrade-note">↓ <span><b>${inZone ? "Trotz Preis in der Zone" : "Trotz zusätzlicher Faktoren"} auf &bdquo;${STATUS_LABEL[item.status]}&ldquo; eingestuft:</b> ${item.downgradeReason}</span></div>` : ""}
       ${indicatorsHTML(item)}
       <details>
         <summary>Elliott-Wave-Einordnung &amp; Quellen</summary>

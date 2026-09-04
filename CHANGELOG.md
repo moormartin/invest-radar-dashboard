@@ -4,7 +4,13 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
-## v10 — 04.09.2026 (dieser Commit)
+## v11 — 04.09.2026
+
+Datenqualitäts-Review: Die BTC-Kachel zeigte fälschlich den Hinweis „Trotz Preis in der Zone auf ‚Beobachten' eingestuft", obwohl der Kurs ($79.616) weit über der Einstiegszone ($28.530–$40.030, einem zukünftigen Wave-C-Ziel) liegt. Ursache war ein Anzeige-Bug: Der Downgrade-Hinweis wurde immer mit „Trotz Preis in der Zone" formuliert, sobald ein `downgradeReason` gesetzt war — unabhängig davon, ob der Preis tatsächlich in der Zone lag. Fix: Die Formulierung hängt jetzt vom tatsächlichen Preis-Zone-Abgleich ab (betraf neben BTC auch NVO als Grenzfall, $47,51 knapp über der Zone $35,12–$46,20). Bei BTC wurde der ursprüngliche Downgrade-Text zusätzlich inhaltlich korrigiert und ins Feld „Zu beachten" verschoben.
+
+Weiterer Fund: Der „Squeeze Momentum"-Indikator wurde auf allen 44 Kacheln angezeigt, auch wenn keine echten Daten vorlagen (43 von 44 Titeln zeigten nur einen „n/v"-Platzhalter, nur TSLA hat eine echte Squeeze-Kennzahl). Fix: Der Indikator wird jetzt nur noch angezeigt, wenn Daten tatsächlich vorhanden sind. Bei KAS wurde zusätzlich der MACD-Wert ausgeblendet (war als „Neutral" dargestellt, obwohl der Quelltext selbst „kein exakter Wert verifiziert" auswies) und das RSI-Label von RSI(14) auf RSI(7) korrigiert, da für KAS nur ein 7-Tage-RSI vorliegt.
+
+## v10 — 04.09.2026
 BTC/ETH-Detailanalyse ergänzt: eigene quantitative Elliott-Wave-Zählung (Primär- & Alternativszenario mit exakten Invalidierungsmarken) auf Basis von 500 Tagesschlusskursen (Twelve Data), verzahnt mit Fibonacci-Retracements/-Extensions als Konfluenz-System, RSI(14)/MACD-Divergenzanalyse, Wahrscheinlichkeits-Score, CRV-Berechnung und Wachstumsszenarien — abrufbar über neuen „Detailanalyse“-Button auf den BTC-/ETH-Kacheln, inkl. Kurschart mit Zielzonen. Cross-Check gegen das aktuelle HKCM-Tagesupdate (03.09.2026) zeigt weitgehende Übereinstimmung der Fibonacci-Zonen.
 
 Methodik im Detail:
