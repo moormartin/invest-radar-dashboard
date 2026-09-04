@@ -4,6 +4,14 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v13 — 04.09.2026
+
+Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System, gleiche Tiefe wie BTC/ETH) für **IonQ (IONQ)** ergänzt — als erster Pilot-Titel außerhalb Krypto, auf ausdrücklichen Wunsch zunächst nur für diesen einen Titel statt für alle 44.
+
+Methodik: eigene ZigZag-Pivot-Analyse aus 500 Twelve-Data-Tagesschlusskursen (09.09.2024–04.09.2026). Die unabhängig berechnete 78,6–88,6&nbsp;%-Fibonacci-Retracement-Zone der Welle (I) ($18,27 → $84,64) ergibt $25,84–$32,47 — das deckt sich auf unter 3&nbsp;% mit der bereits im bestehenden Datensatz zitierten ElliottWave-Forecast-Zielzone ($25,77–$33,38, Quelle vom 19.11.2025). Diese Zone wurde seit Februar 2026 bereits dreimal angelaufen ($30,43 am 05.02., $25,89 am 30.03., $31,99 am 29.07.) — jedes Mal ohne nachhaltigen Bruch, und am März-Tief mit einer echten bullischen RSI(14)-Divergenz (28,4 vs. 25,4 im Februar, bei niedrigerem Kurstief). Cross-Check gegen das HKCM-Tagesupdate vom 04.09.2026 war nicht möglich, da IONQ darin nicht behandelt wird (nur Bittensor, Solana, Render, Polkadot, BTC/ETH).
+
+Primär-/Alternativszenario, CRV, Wachstumsszenarien und Chart mit Zielzonen (inkl. Zeit-/Wertachsen und exaktem Kursstand, s. v12) ergänzt. Live-Zahlen (Kurs, RSI, MACD) für IONQ auf den 04.09.2026 aktualisiert.
+
 ## v12 — 04.09.2026
 
 Detailanalyse-Chart (BTC/ETH) um Achsenbeschriftung erweitert: grobe horizontale Zeitskala (Monats-/Jahresmarken, 23.04.2025–04.09.2026) und grobe vertikale Wertskala (gerundete Kurs-Ticks, z.&nbsp;B. $40'000/$60'000/…) hinzugefügt. Der aktuelle, exakte Kursstand wird jetzt zusätzlich als Zahl direkt am Graphen-Endpunkt angezeigt (zuvor nur als Punktmarkierung ohne Beschriftung).
