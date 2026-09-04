@@ -1,0 +1,1601 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Schwellenradar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#EEF1F5;
+    --surface:#FFFFFF;
+    --surface-2:#E3E8EE;
+    --border:#CBD3DC;
+    --ink:#131B24;
+    --ink-soft:#55606C;
+    --ink-faint:#8391A0;
+    --accent:#0E7C86;
+    --accent-ink:#04353A;
+    --accent-soft:#D7EEF0;
+    --good:#1F7A4D;
+    --good-soft:#DCEFE3;
+    --warn:#96650F;
+    --warn-soft:#F5EAD2;
+    --bad:#AD3527;
+    --bad-soft:#F6DEDA;
+    --shadow: 0 1px 2px rgba(19,27,36,.06), 0 8px 24px -12px rgba(19,27,36,.18);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B121A;
+      --surface:#121B25;
+      --surface-2:#1A2530;
+      --border:#2A3A47;
+      --ink:#E7EDF2;
+      --ink-soft:#9AA8B4;
+      --ink-faint:#66757F;
+      --accent:#39BCC6;
+      --accent-ink:#DFF7F8;
+      --accent-soft:#123338;
+      --good:#4FCB8E;
+      --good-soft:#153524;
+      --warn:#E3B455;
+      --warn-soft:#392B10;
+      --bad:#E67362;
+      --bad-soft:#3A1B16;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B121A;
+    --surface:#121B25;
+    --surface-2:#1A2530;
+    --border:#2A3A47;
+    --ink:#E7EDF2;
+    --ink-soft:#9AA8B4;
+    --ink-faint:#66757F;
+    --accent:#39BCC6;
+    --accent-ink:#DFF7F8;
+    --accent-soft:#123338;
+    --good:#4FCB8E;
+    --good-soft:#153524;
+    --warn:#E3B455;
+    --warn-soft:#392B10;
+    --bad:#E67362;
+    --bad-soft:#3A1B16;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); color:var(--accent-ink); }
+  a{ color:var(--accent); }
+  h1,h2,h3{ text-wrap:balance; font-family:'Big Shoulders Display', 'IBM Plex Sans', sans-serif; letter-spacing:.01em; }
+  .num{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px 96px; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:56px 24px 40px;
+    border-bottom:1px solid var(--border);
+    background:
+      radial-gradient(120% 140% at 82% -10%, var(--accent-soft) 0%, transparent 55%),
+      var(--surface);
+  }
+  .hero-inner{ max-width:1180px; margin:0 auto; position:relative; z-index:1; }
+  .sweep{
+    position:absolute; top:-30%; right:-10%; width:640px; height:640px;
+    border-radius:50%;
+    background: conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--accent) 22%, transparent) 18deg, transparent 46deg, transparent 360deg);
+    animation: spin 14s linear infinite;
+    pointer-events:none;
+  }
+  .sweep::before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at center, transparent 0, transparent 78px, color-mix(in srgb, var(--accent) 14%, transparent) 79px, transparent 80px);
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .sweep{ animation:none; } }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); font-weight:500;
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:18px;
+  }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+
+  .hero h1{ font-size:clamp(2.4rem, 5vw, 3.6rem); font-weight:800; margin:0 0 14px; line-height:.98; }
+  .hero p.lede{ max-width:62ch; color:var(--ink-soft); font-size:1.06rem; margin:0 0 26px; }
+
+  .disclaimer{
+    max-width:78ch;
+    border:1px solid var(--border);
+    border-left:3px solid var(--warn);
+    background:var(--warn-soft);
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:.88rem;
+    color:var(--ink);
+  }
+  .disclaimer strong{ color:var(--warn); }
+
+  /* ---------- Stats strip ---------- */
+  .stats{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:1px; background:var(--border);
+    border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; margin:34px 0 0;
+  }
+  .stat{ background:var(--surface); padding:16px 18px; }
+  .stat .n{ font-family:'Big Shoulders Display'; font-size:2rem; font-weight:700; line-height:1; }
+  .stat .l{ font-size:.78rem; color:var(--ink-soft); margin-top:4px; }
+  .stat.good .n{ color:var(--good); }
+  .stat.warn .n{ color:var(--warn); }
+  .stat.bad .n{ color:var(--bad); }
+
+  /* ---------- Changelog / Release notes ---------- */
+  .changelog-row{ display:flex; align-items:center; gap:10px; margin-top:16px; flex-wrap:wrap; }
+  .changelog-toggle{
+    font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    padding:7px 13px; border-radius:99px; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  }
+  .changelog-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+  .changelog-badge{
+    background:var(--accent); color:#fff; font-size:.68rem; font-weight:700;
+    border-radius:99px; padding:1px 7px; font-family:'IBM Plex Mono',monospace;
+  }
+  .changelog-panel{
+    margin-top:14px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--surface); box-shadow:var(--shadow); overflow:hidden; max-width:720px;
+  }
+  .changelog-entry{ padding:14px 18px; border-bottom:1px solid var(--border); }
+  .changelog-entry:last-child{ border-bottom:none; }
+  .changelog-entry .cl-head{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .changelog-entry .cl-version{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.82rem; color:var(--accent); }
+  .changelog-entry .cl-date{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint); }
+  .changelog-entry .cl-summary{ font-size:.85rem; color:var(--ink-soft); }
+  .changelog-entry .cl-kind{
+    font-family:'IBM Plex Mono',monospace; font-size:.62rem; text-transform:uppercase; letter-spacing:.06em;
+    padding:2px 7px; border-radius:5px; background:var(--surface-2); color:var(--ink-faint);
+  }
+  .changelog-entry .cl-kind.auto{ background:var(--accent-soft); color:var(--accent-ink); }
+
+  /* ---------- YouTube-Watch (automatisch erkannte, noch offene Videos) ---------- */
+  .yt-watch{
+    max-width:1180px; margin:0 auto 28px; padding:16px 24px 0;
+  }
+  .yt-watch-inner{
+    border:1px solid var(--border); border-left:3px solid var(--accent); background:var(--accent-soft);
+    border-radius:8px; padding:14px 16px;
+  }
+  .yt-watch-inner h4{ margin:0 0 8px; font-size:.85rem; font-family:'IBM Plex Sans'; color:var(--accent-ink); }
+  .yt-watch-item{ font-size:.82rem; color:var(--ink); margin:6px 0; display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+  .yt-watch-item a{ font-weight:600; }
+  .yt-watch-item .yt-meta{ font-size:.72rem; color:var(--ink-soft); }
+
+  /* ---------- Filter bar ---------- */
+  .controls{
+    position:sticky; top:0; z-index:5;
+    background:color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    padding:14px 24px;
+    margin:0 0 28px;
+  }
+  .controls-inner{ max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 28px; align-items:center; }
+  .filter-group{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  .filter-label{ font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-faint); margin-right:2px; font-family:'IBM Plex Mono',monospace;}
+  .pill{
+    font-family:'IBM Plex Sans'; font-size:.85rem; font-weight:500;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
+    padding:6px 13px; border-radius:99px; cursor:pointer; transition:.15s ease;
+    white-space:nowrap;
+  }
+  .pill:hover{ border-color:var(--accent); color:var(--ink); }
+  .pill:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .pill.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .pill[data-active-accent].active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:0 0 16px; }
+  .section-head h2{ font-size:1.5rem; margin:0; }
+  .result-count{ font-family:'IBM Plex Mono',monospace; font-size:.8rem; color:var(--ink-faint); }
+
+  /* ---------- Grid & Cards ---------- */
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 18px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+  }
+  .card-top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+  .ticker-block{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .ticker{ font-family:'Big Shoulders Display'; font-weight:700; font-size:1.5rem; letter-spacing:.01em; }
+  .exch{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint); }
+  .name{ font-size:.85rem; color:var(--ink-soft); margin-top:1px; }
+
+  .status-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:600; letter-spacing:.04em;
+    padding:4px 9px 4px 7px; border-radius:99px; display:flex; align-items:center; gap:5px; white-space:nowrap;
+    text-transform:uppercase;
+  }
+  .status-pill .dot{ width:6px; height:6px; border-radius:50%; }
+  .status-pill.good{ background:var(--good-soft); color:var(--good); }
+  .status-pill.good .dot{ background:var(--good); }
+  .status-pill.warn{ background:var(--warn-soft); color:var(--warn); }
+  .status-pill.warn .dot{ background:var(--warn); }
+  .status-pill.bad{ background:var(--bad-soft); color:var(--bad); }
+  .status-pill.bad .dot{ background:var(--bad); }
+
+  .tags{ display:flex; flex-wrap:wrap; gap:5px; }
+  .tag{
+    font-size:.68rem; font-family:'IBM Plex Mono',monospace; color:var(--accent-ink);
+    background:var(--accent-soft); border-radius:5px; padding:2.5px 7px; white-space:nowrap;
+  }
+
+  .case-text{ font-size:.87rem; color:var(--ink-soft); }
+
+  .price-row{ display:flex; align-items:baseline; gap:10px; }
+  .price{ font-family:'IBM Plex Mono',monospace; font-size:1.2rem; font-weight:600; }
+  .trend{ font-size:.78rem; color:var(--ink-soft); }
+
+  .range{ margin-top:2px; }
+  .range-track{
+    position:relative; height:8px; border-radius:99px; background:var(--surface-2); overflow:visible;
+  }
+  .range-zone{ position:absolute; top:0; bottom:0; background:color-mix(in srgb, var(--accent) 38%, transparent); border-radius:99px; }
+  .range-zone.hatch{
+    background:repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink-faint) 55%, transparent) 0 4px, transparent 4px 8px);
+  }
+  .range-marker{
+    position:absolute; top:-4px; width:2px; height:16px; background:var(--ink); border-radius:2px;
+  }
+  .range-marker::after{
+    content:""; position:absolute; left:50%; top:-4px; width:6px; height:6px; border-radius:50%;
+    background:var(--ink); transform:translateX(-50%);
+  }
+  .range-labels{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:.68rem; color:var(--ink-faint); margin-top:6px; }
+  .entry-line{ font-size:.78rem; margin-top:6px; }
+  .entry-line b{ color:var(--ink); }
+  .no-range-note{ font-size:.78rem; color:var(--ink-faint); font-style:italic; padding:8px 0 2px; }
+
+  details{ border-top:1px solid var(--border); padding-top:10px; margin-top:2px; }
+  summary{
+    cursor:pointer; font-size:.82rem; font-weight:600; color:var(--accent); list-style:none;
+    display:flex; align-items:center; gap:6px;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::before{ content:"▸"; font-size:.7rem; transition:transform .15s ease; }
+  details[open] summary::before{ transform:rotate(90deg); }
+  .detail-body{ font-size:.85rem; color:var(--ink-soft); margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+  .detail-body .lbl{ font-family:'IBM Plex Mono',monospace; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); display:block; margin-bottom:2px; }
+  .detail-body p{ margin:0; }
+  .invalid{ color:var(--bad); }
+
+  .card-foot{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; padding-top:12px; border-top:1px solid var(--border); }
+  .brokers{ display:flex; gap:6px; }
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:.68rem; padding:3px 8px; border-radius:6px; border:1px solid var(--border);
+    display:flex; align-items:center; gap:4px; color:var(--ink-soft);
+  }
+  .badge.yes{ border-color:color-mix(in srgb, var(--good) 45%, var(--border)); color:var(--good); }
+  .badge.maybe{ border-color:color-mix(in srgb, var(--warn) 45%, var(--border)); color:var(--warn); }
+  .badge.no{ opacity:.5; }
+  .src-link{ font-size:.72rem; color:var(--ink-faint); text-decoration:none; }
+  .src-link:hover{ color:var(--accent); }
+
+  /* ---------- Indicators ---------- */
+  .indicators{ display:flex; gap:14px; flex-wrap:wrap; padding:10px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .indicator{ display:flex; flex-direction:column; gap:4px; min-width:76px; flex:1; }
+  .indicator .ind-label{ font-family:'IBM Plex Mono',monospace; font-size:.64rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); }
+  .indicator .ind-value{ font-family:'IBM Plex Mono',monospace; font-size:.82rem; font-weight:600; }
+  .rsi-track{ position:relative; height:5px; border-radius:99px; background:var(--surface-2); overflow:visible; }
+  .rsi-zone-os{ position:absolute; left:0; width:30%; top:0; bottom:0; background:color-mix(in srgb, var(--good) 22%, transparent); border-radius:99px 0 0 99px; }
+  .rsi-zone-ob{ position:absolute; right:0; width:30%; top:0; bottom:0; background:color-mix(in srgb, var(--bad) 22%, transparent); border-radius:0 99px 99px 0; }
+  .rsi-marker{ position:absolute; top:-3px; width:3px; height:11px; border-radius:2px; background:var(--ink); }
+  .mini-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:.7rem; font-weight:600; padding:3px 8px; border-radius:6px;
+    display:inline-flex; align-items:center; gap:4px; width:fit-content;
+  }
+  .mini-badge.bull{ background:var(--good-soft); color:var(--good); }
+  .mini-badge.bear{ background:var(--bad-soft); color:var(--bad); }
+  .mini-badge.neutral{ background:var(--surface-2); color:var(--ink-soft); }
+  .mini-badge.nv{ background:var(--surface-2); color:var(--ink-faint); font-style:italic; font-weight:400; }
+  .ind-note{ font-size:.68rem; color:var(--ink-faint); }
+
+  .broker-warning{
+    display:flex; align-items:center; gap:6px; font-size:.75rem; color:var(--bad);
+    background:var(--bad-soft); border-radius:6px; padding:6px 9px; font-weight:600;
+  }
+  .conflict-note{
+    display:flex; align-items:flex-start; gap:6px; font-size:.74rem; color:var(--warn);
+    background:var(--warn-soft); border-radius:6px; padding:6px 9px; margin-top:8px; line-height:1.4;
+  }
+  .conflict-note b{ font-weight:600; }
+  .downgrade-note{
+    display:flex; align-items:flex-start; gap:6px; font-size:.74rem; color:var(--ink-soft);
+    background:var(--surface-2); border-radius:6px; padding:6px 9px; line-height:1.4;
+  }
+  .downgrade-note b{ font-weight:600; color:var(--ink); }
+
+  /* ---------- Search ---------- */
+  .search-wrap{ position:relative; flex:1; min-width:200px; max-width:280px; margin-left:auto; }
+  .search-input{
+    width:100%; font-family:'IBM Plex Sans'; font-size:.85rem; padding:7px 12px 7px 30px;
+    border-radius:99px; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+  }
+  .search-input:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  .search-wrap::before{
+    content:"⌕"; position:absolute; left:11px; top:50%; transform:translateY(-50%);
+    color:var(--ink-faint); font-size:.95rem; pointer-events:none;
+  }
+  .no-results{ color:var(--ink-faint); font-size:.9rem; padding:32px 4px; text-align:center; grid-column:1/-1; }
+
+  .card[hidden]{ display:none; }
+
+  /* ---------- Methodology / Footer ---------- */
+  .method{
+    margin-top:64px; padding-top:40px; border-top:1px solid var(--border);
+    display:grid; grid-template-columns: 1fr 1fr; gap:40px;
+  }
+  @media (max-width:760px){ .method{ grid-template-columns:1fr; } }
+  .method h3{ font-size:1.15rem; margin:0 0 10px; }
+  .method p, .method li{ font-size:.88rem; color:var(--ink-soft); }
+  .method ul{ padding-left:1.1em; margin:8px 0; }
+  .legend{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .legend-row{ display:flex; align-items:center; gap:10px; font-size:.85rem; }
+  .legend-row .status-pill{ min-width:118px; justify-content:center; }
+
+  /* ---------- Detailanalyse-Button & Modal (BTC/ETH Deep Dive) ---------- */
+  .detail-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700;
+    border:1px solid var(--accent); background:var(--accent-soft); color:var(--accent-ink);
+    padding:7px 12px; border-radius:8px; cursor:pointer; align-self:flex-start; text-align:left;
+  }
+  .detail-btn:hover{ background:var(--accent); color:#fff; }
+  .dd-overlay{
+    position:fixed; inset:0; background:rgba(8,12,18,.6); backdrop-filter:blur(2px);
+    z-index:80; display:flex; align-items:flex-start; justify-content:center;
+    padding:5vh 16px 40px; overflow-y:auto;
+  }
+  .dd-overlay[hidden]{ display:none; }
+  .dd-modal{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    max-width:940px; width:100%; box-shadow:var(--shadow); margin-bottom:40px;
+  }
+  .dd-head{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:16px;
+    padding:24px 28px 16px; border-bottom:1px solid var(--border); position:sticky; top:0;
+    background:var(--surface); border-radius:var(--radius) var(--radius) 0 0; z-index:1;
+  }
+  .dd-head h2{ margin:0 0 6px; font-size:1.9rem; line-height:1; }
+  .dd-head .dd-sub{ font-family:'IBM Plex Mono',monospace; font-size:.8rem; color:var(--ink-faint); }
+  .dd-status-badge{
+    display:inline-block; font-family:'Big Shoulders Display'; font-weight:700; font-size:1.05rem;
+    padding:4px 13px; border-radius:8px; margin-top:8px;
+  }
+  .dd-close{
+    background:none; border:1px solid var(--border); border-radius:99px; width:34px; height:34px;
+    font-size:1.05rem; cursor:pointer; color:var(--ink-soft); flex-shrink:0;
+  }
+  .dd-close:hover{ border-color:var(--accent); color:var(--accent); }
+  .dd-body{ padding:20px 28px 32px; display:flex; flex-direction:column; gap:22px; }
+  .dd-box{
+    border:1px solid var(--border); border-left:3px solid var(--accent); background:var(--accent-soft);
+    border-radius:8px; padding:14px 16px; font-size:.88rem; line-height:1.55;
+  }
+  .dd-box.short{ border-left-color:var(--bad); background:var(--bad-soft); }
+  .dd-box.long{ border-left-color:var(--good); background:var(--good-soft); }
+  .dd-section h4{ margin:0 0 8px; font-size:.95rem; }
+  .dd-section p{ margin:0 0 8px; font-size:.87rem; color:var(--ink-soft); line-height:1.6; }
+  .dd-scenario{ border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .dd-scenario-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .dd-scenario-head b{ font-family:'Big Shoulders Display'; font-size:1.1rem; }
+  .dd-prob{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.9rem; padding:2px 11px; border-radius:99px; white-space:nowrap; }
+  .dd-prob.high{ background:var(--good-soft); color:var(--good); }
+  .dd-prob.mid{ background:var(--warn-soft); color:var(--warn); }
+  .dd-invalid{ font-size:.78rem; color:var(--bad); margin-top:8px; }
+  .dd-invalid b{ font-weight:700; }
+  .dd-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:680px){ .dd-grid2{ grid-template-columns:1fr; } }
+  .dd-levels{ display:flex; flex-direction:column; gap:5px; font-size:.82rem; }
+  .dd-levels .lvl{ display:flex; justify-content:space-between; gap:10px; font-family:'IBM Plex Mono',monospace; }
+  .dd-levels .lvl .k{ color:var(--ink-soft); font-family:'IBM Plex Sans'; }
+  .dd-chart-wrap{ border:1px solid var(--border); border-radius:10px; padding:14px; background:var(--surface); }
+  .dd-chart-wrap svg{ width:100%; height:auto; display:block; }
+  .dd-zone-long{ fill: color-mix(in srgb, var(--good) 30%, transparent); }
+  .dd-zone-short{ fill: color-mix(in srgb, var(--bad) 25%, transparent); }
+  .dd-chart-legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:.72rem; color:var(--ink-soft); margin-top:10px; }
+  .dd-chart-legend span{ display:inline-flex; align-items:center; gap:5px; }
+  .dd-swatch{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .dd-conf{ display:flex; gap:10px; flex-wrap:wrap; }
+  .dd-conf-item{ flex:1; min-width:130px; border:1px solid var(--border); border-radius:8px; padding:10px 12px; text-align:center; }
+  .dd-conf-item .v{ font-family:'Big Shoulders Display'; font-size:1.6rem; font-weight:700; color:var(--accent); }
+  .dd-conf-item .l{ font-size:.66rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em; }
+  .dd-growth{ display:flex; flex-direction:column; gap:6px; font-size:.83rem; }
+  .dd-growth .g-row{ display:flex; justify-content:space-between; gap:10px; }
+  .dd-growth .g-row .pct{ font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--good); }
+  .dd-cross{ font-size:.82rem; color:var(--ink-soft); background:var(--surface-2); border-radius:8px; padding:10px 14px; line-height:1.55; }
+
+  footer{
+    margin-top:56px; padding-top:24px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:.78rem; color:var(--ink-faint);
+  }
+</style>
+
+<div class="hero">
+  <div class="sweep" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="dot"></span> Marktradar · Zukunftstechnologien 2026&ndash;2035</div>
+    <h1>Schwellenradar</h1>
+    <p class="lede">44 Wertschriften an der technologischen Schwelle &mdash; BCI/Neurotech, KI-Agenten &amp; ASI, humanoide Robotik, Quantencomputing, Biotech/Pharma, Krypto/CBDC &mdash; gefiltert auf Handelbarkeit über eToro oder Yuh, eingeordnet mit einer Elliott-Wave-Heuristik, RSI/MACD/Squeeze-Indikatoren und öffentlich auffindbaren Analysten-Stimmen (u.&nbsp;a. HKCM).</p>
+    <div class="disclaimer">
+      <strong>Kein Anlagerat.</strong> Dieses Dashboard ist eine strukturierte Recherchehilfe, keine Finanz- oder Anlageberatung. Die Elliott-Wave-Einordnungen sind eine eigene, interpretative Heuristik auf Basis von Kurszonen (Fibonacci-Retracements) &mdash; keine zertifizierte Wellenzählung. Kurse sind Momentaufnahmen vom 28.&ndash;31.08.2026 und vor jeder Order live zu prüfen. Broker-Handelbarkeit wurde primär für eToro über die jeweiligen Marktseiten bestätigt; die Yuh-Zuordnung stützt sich teils auf Drittquellen und ist vor Order in der Yuh-App zu verifizieren.
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="changelog-row">
+      <button class="changelog-toggle" id="changelogToggle" aria-expanded="false">🕘 Was ist neu? <span class="changelog-badge" id="changelogBadge"></span></button>
+    </div>
+    <div class="changelog-panel" id="changelogPanel" hidden></div>
+  </div>
+</div>
+
+<div class="yt-watch" id="ytWatchWrap" hidden>
+  <div class="yt-watch-inner">
+    <h4>🔔 Automatisch erkannte Videos, noch nicht (vollständig) ausgewertet</h4>
+    <div id="ytWatchList"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="filter-group">
+      <span class="filter-label">Feld</span>
+      <button class="pill active" data-filter="cat" data-value="all">Alle</button>
+      <button class="pill" data-filter="cat" data-value="bci">BCI / Neurotech</button>
+      <button class="pill" data-filter="cat" data-value="aiagent">KI-Agenten / ASI</button>
+      <button class="pill" data-filter="cat" data-value="robotics">Humanoide Robotik</button>
+      <button class="pill" data-filter="cat" data-value="quantum">Quantencomputing</button>
+      <button class="pill" data-filter="cat" data-value="biotech">Biotech / Pharma</button>
+      <button class="pill" data-filter="cat" data-value="crypto">Krypto / CBDC</button>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Status</span>
+      <button class="pill active" data-filter="status" data-value="all" data-active-accent>Alle</button>
+      <button class="pill" data-filter="status" data-value="good" data-active-accent>Im Einstiegsfenster</button>
+      <button class="pill" data-filter="status" data-value="warn" data-active-accent>Beobachten</button>
+      <button class="pill" data-filter="status" data-value="bad" data-active-accent>Abwarten</button>
+      <button class="pill" data-filter="status" data-value="conflict" data-active-accent>⚠ Indikator-Konflikte</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="Titel suchen…" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="section-head">
+    <h2>Radar</h2>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <div class="method">
+    <div>
+      <h3>Methodik: Wie die Einstiegsfenster entstehen</h3>
+      <p>Für jeden Titel wird die 52-Wochen-Handelsspanne (Tief&ndash;Hoch) als Grundlage für eine Fibonacci-Retracement-Zone (38,2&thinsp;%&ndash;61,8&thinsp;%) genommen &mdash; der klassische Bereich, in dem eine Welle&nbsp;2- oder Welle&nbsp;4-Korrektur innerhalb eines übergeordneten Aufwärtsimpulses typischerweise endet. Liegt der aktuelle Kurs in dieser Zone und bleibt die übergeordnete Struktur intakt, gilt das Fenster als <em>Im Einstiegsfenster</em>. Wo öffentlich auffindbare Wellenzählungen (HKCM, Elliott Wave International, ElliottWave-Forecast, TradingLounge u.&nbsp;a.) vorlagen, sind sie als Quelle vermerkt und mit der eigenen Einschätzung abgeglichen &mdash; wo nicht, ist das explizit ausgewiesen.</p>
+      <p>Frische IPOs (&lt; 12 Monate Kurshistorie, z.&nbsp;B. Cerebras, CoreWeave, Circle) und Titel mit einem laufenden fundamentalen Schock ohne Bodenbildung (z.&nbsp;B. Boston Scientific, Inspire Medical) werden bewusst <strong>nicht</strong> in eine Wellenzählung gezwungen, da die EW-Methode eine belastbare Wellenhistorie voraussetzt.</p>
+      <p><strong>Indikatoren (RSI, MACD, Squeeze Momentum/TTM Squeeze):</strong> RSI(14) und MACD stammen primär von Investing.com bzw. Barchart (Stand 27.&ndash;31.08.2026); wo beide Quellen spürbar abweichen, ist das im Detailbereich vermerkt. Der Squeeze-/TTM-Squeeze-Indikator ist auf frei zugänglichen Finanzseiten praktisch nicht verfügbar (meist hinter TradingView-/ThinkorSwim-Bezahlschranken) &mdash; wo kein verifizierter Status auffindbar war, zeigt das Dashboard das ehrlich als &bdquo;n/v&ldquo; statt einen Wert zu erfinden.</p>
+      <p><strong>Wichtig &mdash; Status ist Zone plus Risiko-Overlay, nicht rein mechanisch:</strong> Der Ampel-Status startet bei der Fibonacci-/Wellenzone, wird aber auf &bdquo;Beobachten&ldquo; heruntergestuft, wenn konkrete Risikofaktoren vorliegen &mdash; z.&nbsp;B. stark widersprüchliche Kursdaten zwischen Quellen, unbestätigte Bodenbildung, extreme Volatilität oder ein laufender fundamentaler Schock. Bei 9 von 44 Titeln liegt der Kurs aktuell zwar in der Zone, der Status ist aber trotzdem gelb &mdash; diese Karten zeigen dafür explizit einen Hinweis (&bdquo;↓ Trotz Preis in der Zone auf &lsquo;Beobachten&rsquo; eingestuft: [Grund]&ldquo;), damit dieser Judgment Call nachvollziehbar bleibt statt sich hinter der Ampelfarbe zu verstecken.</p>
+      <p><strong>Getrennt davon:</strong> RSI, MACD und Squeeze (kurzfristiges Momentum) fliessen <strong>nicht</strong> in den Status ein, weil sie einer anderen Zeitebene folgen und legitim von der Wellen-Einordnung abweichen können. Widerspricht die Indikatorenlage dem Status (z.&nbsp;B. Grün bei überkauftem RSI), zeigt die Karte einen separaten gelben &bdquo;Indikator-Konflikt&ldquo;-Hinweis &mdash; filterbar über die Status-Pille &bdquo;⚠ Indikator-Konflikte&ldquo;.</p>
+      <p><strong>Wichtige Einschränkung &mdash; YouTube-Analysten (HKCM, Phantom by HKCM, STA Solutions):</strong> Am 31.08.2026 wurde per Live-Browser-Zugriff (mit einem werbefreien YouTube-Abo) für alle 44 Titel gezielt nach dem jeweils neuesten Video dieser drei Kanäle gesucht (Suche sortiert nach Upload-Datum). Bei <strong>18 Titeln</strong> (u.&nbsp;a. Tesla, Bitcoin, Palantir, Atlassian, Nvidia, PayPal, D-Wave, Rigetti, CRISPR Therapeutics, Solana, Polkadot, Kaspa &mdash; STA Solutions) konnte das gefundene Video tatsächlich geöffnet werden; bei vier davon (Atlassian, Palantir, Bitcoin, Tesla) wurde das vollständige Transkript ausgewertet, bei den übrigen zumindest die Beschreibung bzw. das Suchergebnis-Snippet mit einer echten inhaltlichen Aussage. Diese Titel tragen die Markierung &bdquo;▶️ Video gelesen&ldquo;. Bei <strong>3 Titeln</strong> (CoreWeave, Intuitive Surgical, Sui) wurde ein passendes Video gefunden, aber aus Zeitgründen nicht geöffnet &mdash; nur Titel/Kanal/Datum sind bestätigt (&bdquo;📺&ldquo;). Bei <strong>5 Titeln</strong> stammt die Analysten-Einschätzung aus anderen, tatsächlich gelesenen Textquellen (ElliottWave-Forecast.com, Elliott Wave International u.&nbsp;a.), nicht aus einem der drei Zielkanäle. Bei den übrigen <strong>18 Titeln</strong> wurde trotz gezielter Suche kein dediziertes Video dieser drei Kanäle gefunden &mdash; der verlinkte &bdquo;Quelle&ldquo;-Link ist dort nur eine allgemeine Preis-/News-Seite. Ein Sonderfall: Bei Novo Nordisk wurde ein HKCM-Video mit passendem Titel geöffnet, dessen Beschreibungstext aber nachweislich zu einem völlig anderen Thema gehörte (Metadaten-Inkonsistenz bei HKCM selbst) &mdash; es wurde deshalb bewusst NICHT als Quelle verwendet. Diese Einordnung beruht auf einer manuellen Durchsicht jeder einzelnen Quellenangabe, nicht auf der blossen Existenz eines Links. Jede Karte zeigt unter &bdquo;Quelle&ldquo; einen Hinweis, welcher der vier Fälle vorliegt.</p>
+      <div class="legend">
+        <div class="legend-row"><span class="status-pill good"><span class="dot"></span>Im Fenster</span> Kurs in der Zone einer intakten Aufwärtsstruktur, ohne bekannte Gegenrisiken.</div>
+        <div class="legend-row"><span class="status-pill warn"><span class="dot"></span>Beobachten</span> Zone noch nicht erreicht &mdash; oder erreicht, aber durch Risiko-Overlay (s.&nbsp;o.) heruntergestuft.</div>
+        <div class="legend-row"><span class="status-pill bad"><span class="dot"></span>Abwarten</span> Frischer Ausverkauf ohne Bodenbestätigung, zu junge Historie oder laufender fundamentaler Schock.</div>
+      </div>
+    </div>
+    <div>
+      <h3>Einordnung aus dem Video</h3>
+      <p>Der Zukunftsforscher Sven Gábor Jánszky benennt im Interview vier Felder als börsenrelevant: Brain-Computer-Interfaces (Analogie zu KI vor 10 und Quantencomputing vor 5 Jahren), den Übergang von KI-Tools zu autonomen Agenten und weiter zu Superintelligenz (ASI), humanoide Roboter in Industrie/Haushalt bis 2035&ndash;2040, sowie Kryptowährungen sowie CBDCs als Abwicklungsschicht für KI-gesteuerte Transaktionen. Neuralink selbst ist nicht börsennotiert; das Radar bildet das Feld daher über die nächstliegenden handelbaren Neuromodulations- und Infrastruktur-Titel ab.</p>
+      <p>Die lukrativsten Frühphasen (Seed/VC) sind laut Interview ohnehin nicht börsengehandelt &mdash; dieses Radar bleibt entsprechend auf börsennotierte Näherungen beschränkt, wie im Auftrag vorgesehen.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>Stand der Kursdaten: 28.&ndash;31. August 2026 &middot; erstellt für das Projekt &bdquo;Invest-Radar Dashboard&ldquo;</span>
+    <span>Keine Anlageberatung &middot; alle Angaben ohne Gewähr</span>
+  </footer>
+</div>
+
+<div class="dd-overlay" id="ddOverlay" hidden>
+  <div class="dd-modal" id="ddModal" role="dialog" aria-modal="true"></div>
+</div>
+
+<script>
+(function(){
+
+  const DATA = [
+    // ---------------- BCI / NEUROTECH ----------------
+    {
+      ticker:"MDT", exch:"NYSE", name:"Medtronic plc", cats:["bci"],
+      case:"Weltmarktführer bei Deep-Brain-Stimulation-Implantaten (Parkinson, Tremor, Epilepsie) und Rückenmarkstimulation; forscht an KI-gestützten adaptiven Hirnschrittmachern.",
+      price:93.099998, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:73.31, high:106.33, entryLow:85.9, entryHigh:93.7,
+      trend:"Erholung von 2026er-Tiefs, seitwärts-volatil", status:"good",
+      wave:"Kurs notiert in der klassischen 38,2&ndash;50&thinsp;%-Fibonacci-Zone einer Erholung nach dem Einbruch vom Allzeithoch (~$136). Solange die Zone hält, ist ein Aufwärtsschub Richtung altes Hoch das wahrscheinlichere Szenario einer Welle&nbsp;4/B-Erholung.",
+      invalid:"Unter $73 (52-Wochen-Tief) wäre die Korrekturzählung verletzt.",
+      source:"Keine aktuelle HKCM-Analyse gefunden; ältere EW-Textanalyse (investing.com, 08/2024, nicht mehr aktuell).", sourceUrl:"https://www.investing.com/analysis/medtronic-in-corrective-recovery-set-to-resume-downtrend-200650875",
+      flag:"Unbestätigte Marktgerüchte (06/2026) über Fusionsgespräche mit Boston Scientific &mdash; vor Order prüfen.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"BSX", exch:"NYSE", name:"Boston Scientific Corp.", cats:["bci"],
+      case:"Neuromodulation via Vercise-DBS-System und Rückenmarkstimulation; direkter Konkurrent zu Medtronic im Neurostim-Feld.",
+      price:46.95, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:42.2, high:109.5, entryLow:null, entryHigh:null,
+      trend:"-55% seit ATH (09/2025), akuter Ausverkauf", status:"bad",
+      wave:"Kein belastbares Wellenmuster: Der Absturz ist ein fundamentaler Sondereffekt (Cyberangriff, Lieferkettenstörung, Rückruf), kein reiner technischer Zyklus. Eine Bodenbildung ist noch nicht bestätigt.",
+      invalid:"Weitere neue Tiefs unter $42 wären ein Warnsignal für Fortsetzung des Abwärtstrends.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.cnbc.com/2026/08/26/medical-device-maker-boston-scientific-is-being-hit-by-a-cyber-attack-the-shares-are-falling.html",
+      flag:"Cyberangriff & Produktrückruf Aug. 2026 als Auslöser &mdash; antizyklische Chance oder Fortsetzung des Abwärtstrends noch offen.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"INSP", exch:"NYSE", name:"Inspire Medical Systems", cats:["bci"],
+      case:"Implantierbarer Nervenstimulator (Hypoglossus-Nerv) gegen Schlafapnoe &mdash; Closed-Loop-Neurostimulation, thematisch nah an BCI-Prinzipien.",
+      price:62.14, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:38.91, high:147.029999, entryLow:null, entryHigh:null,
+      trend:"-58% vom Hoch, frisches 52-Wochen-Tief", status:"bad",
+      wave:"Regulatorisch getriebener Einbruch (Medicare-Erstattungsunsicherheit, gesenkte Guidance, Insiderverkäufe) &mdash; keine verlässliche Wellenzählung möglich, solange keine höhere Tief-Bestätigung vorliegt.",
+      invalid:"Keine belastbare Zone; auf stabile Bodenbildung (höheres Tief + Volumen) warten.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.sahmcapital.com/news/content/inspire-medical-systems-insp-cuts-2026-outlook-amid-medicare-uncertainty-and-insider-sale-whats-changed-2026-05-24",
+      flag:"Regulatorisches Risiko (Medicare) dominiert &mdash; fundamental, nicht nur technisch.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"LIVN", exch:"NASDAQ", name:"LivaNova PLC", cats:["bci"],
+      case:"Vagusnervstimulation (VNS Therapy) bei therapieresistenter Epilepsie, in Erforschung auch für Depression &mdash; direkte Hirn-Nerven-Schnittstellen-Technologie.",
+      price:81.2, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:48.82, high:85.760002, entryLow:67.3, entryHigh:71.6,
+      trend:"Starker Aufwärtstrend, nahe Jahreshoch", status:"warn",
+      wave:"Kurs läuft oberhalb der 38,2&thinsp;%-Zone &mdash; vermutlich in Welle&nbsp;3 oder späte Welle&nbsp;5 des laufenden Impulses. Aktuell eher Nachkaufen auf Rücksetzer als Neueinstieg auf Höchstständen.",
+      invalid:"Unter $48,8 (52-Wochen-Tief) wäre die Aufwärtsstruktur beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/stocks/livn/",
+      flag:"Starke Q2/2026-Zahlen mit angehobener Guidance; Analystenkonsens Buy.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"NPCE", exch:"NASDAQ", name:"NeuroPace, Inc.", cats:["bci"],
+      case:"Direktester BCI-Pure-Play im Radar: RNS-System liest Hirnwellen in Echtzeit (Closed-Loop) und stimuliert responsiv bei erkannter epileptischer Aktivität.",
+      price:14.75, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:8.883, high:19.6, entryLow:12.96, entryHigh:15.49,
+      trend:"Mittig in der 52-Wochen-Range", status:"good",
+      wave:"Kurs liegt in der 50&ndash;61,8&thinsp;%-Retracement-Zone einer laufenden Aufwärtsbewegung ab dem Jahrestief &mdash; klassisches Welle-2/4-Einstiegsfenster, sofern das Tief bei $8,85 hält.",
+      invalid:"Unter $8,85 wäre die Wellenzählung ungültig.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden; Analystenkonsens Strong Buy, Kursziel $20,22.", sourceUrl:"https://stockanalysis.com/stocks/npce/",
+      flag:null,
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"CBRS", exch:"NASDAQ", name:"Cerebras Systems, Inc.", cats:["bci","aiagent"],
+      case:"Wafer-Scale-KI-Chips als Nvidia-Alternative &mdash; zentrale Recheninfrastruktur für die im Interview beschriebene ASI-These; erst seit Mai 2026 börsennotiert.",
+      price:190.44, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:160.81, high:386.339996, entryLow:null, entryHigh:null,
+      trend:"-54% vom IPO-Hoch, extrem volatil", status:"bad",
+      wave:"Zu junge Kurshistorie (&lt;4 Monate) für eine belastbare Elliott-Wave-Zählung &mdash; die Methode setzt mehrere abgeschlossene Wellen voraus. Rein spekulativ zu behandeln.",
+      invalid:"IPO-Tief bei $160,81 als grobe Orientierungsmarke, keine EW-Validierung möglich.",
+      source:"Keine seriöse/verifizierte Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/stocks/cbrs/",
+      flag:"Größter Tech-IPO 2026 (5,5 Mrd. $ Emissionsvolumen); Analystenkonsens Strong Buy trotz hoher Schwankung.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"ARKG", exch:"NYSE Arca", name:"ARK Genomic Revolution ETF", cats:["bci"],
+      case:"Thematischer ETF mit Exposure zu Biotech-/Genomik-Innovation inkl. neurotech-naher Holdings &mdash; diversifizierter Zugang statt Einzeltitelrisiko.",
+      price:47.2, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:24.200001, high:50.535, entryLow:37.4, entryHigh:40.5,
+      trend:"+89% auf 12 Monate, nahe Jahreshoch", status:"warn",
+      wave:"Kurs läuft deutlich über der 38,2&thinsp;%-Zone der letzten Aufwärtsbewegung &mdash; für einen Neueinstieg attraktiver wäre ein Rücksetzer in die $37&ndash;40-Zone.",
+      invalid:"Unter $24,20 wäre die Aufwärtsstruktur beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/etf/arkg/",
+      flag:null,
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"ROBO", exch:"NYSE Arca", name:"ROBO Global Robotics &amp; Automation ETF", cats:["bci","robotics"],
+      case:"Breiter thematischer Zugang zu Robotik/Automation als Diversifikation zu Einzeltiteln im Humanoide-Roboter-Feld.",
+      price:79.77, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:62.243999, high:90.510002, entryLow:72.9, entryHigh:79.6,
+      trend:"+26% auf 12 Monate, solider Aufwärtstrend", status:"good",
+      wave:"Kurs liegt knapp in bzw. an der 38,2&thinsp;%-Zone der Aufwärtsbewegung &mdash; ordentliches, wenn auch flaches Rücksetzer-Fenster innerhalb eines intakten Trends.",
+      invalid:"Unter $62 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/etf/robo/",
+      flag:null,
+      etoro:"yes", yuh:"maybe"
+    },
+
+    // ---------------- KI-AGENTEN / ASI ----------------
+    {
+      ticker:"NVDA", exch:"NASDAQ", name:"NVIDIA Corp.", cats:["aiagent","robotics"],
+      case:"GPU-/Rechenzentrums-Standard für Training und Inferenz von Agenten- und Foundation-Modellen; über Jetson/Isaac auch Infrastruktur-Layer für humanoide Robotik.",
+      price:228.45, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:164.070007, high:236.539993, entryLow:191.8, entryHigh:208.9,
+      trend:"+34% vom Jahrestief, nahe Allzeithoch", status:"warn",
+      wave:"Läuft oberhalb der 38,2&thinsp;%-Zone &mdash; intakter Aufwärtsimpuls laut mehreren EW-Quellen (u.&nbsp;a. ElliottWave-Forecast: &bdquo;Rally Resumes &ndash; Path Toward All-Time Highs&ldquo;). Für besseres Chance-Risiko-Verhältnis auf Rücksetzer in die $192&ndash;209-Zone warten. GEGENSTIMME: HKCM warnt im dedizierten Video &bdquo;Die Warnsignale häufen sich!&ldquo; (vor 3 Wochen) vor &bdquo;vier größten Risiken&ldquo; für Nvidia (fundamental und charttechnisch) &mdash; deutlich vorsichtigeres Framing als die ältere EW-Forecast-Quelle.",
+      invalid:"Unter $164 (52-Wochen-Tief) wäre der Impuls infrage gestellt.",
+      source:"HKCM: &bdquo;Die Warnsignale häufen sich!&ldquo; (vor 3 Wochen, dediziert) &mdash; Beschreibung gelesen (Volltranskript aus Zeitgründen nicht geöffnet); zusätzlich ElliottWave-Forecast &bdquo;NVDA Leading Diagonal Pattern Targets $193&ldquo;. WICHTIG: Die beiden Quellen widersprechen sich im Sentiment (Warnung vs. Rally-Fortsetzung) &mdash; die aktuellere HKCM-Einschätzung ist die vorsichtigere.", sourceUrl:"https://www.youtube.com/watch?v=dehC-wwNApU",
+      flag:"HKCM warnt aktuell (vor 3 Wochen) vor vier Risikofaktoren &mdash; im Widerspruch zur älteren, bullischeren ElliottWave-Forecast-Einschätzung; Quellenlage uneindeutig.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"MSFT", exch:"NASDAQ", name:"Microsoft Corp.", cats:["aiagent"],
+      case:"Copilot-Agenten in der gesamten Office-/Azure-Suite, größter OpenAI-Partner &mdash; breitester &bdquo;Agenten-in-der-Fläche&ldquo;-Case unter den Mega-Caps.",
+      price:510.12, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:349.200012, high:553.719971, entryLow:427.3, entryHigh:475.6,
+      trend:"+48% seit Juni-Tief, starke Cloud-Zahlen", status:"warn",
+      wave:"Kurs läuft über der 38,2&thinsp;%-Zone &mdash; für einen Einstieg mit Sicherheitsmarge eignet sich eher ein Rücksetzer in die $427&ndash;476-Zone als der aktuelle Stand nahe am Hoch. HKCM erwartete im dedizierten Video &bdquo;Wer darauf nicht vorbereitet ist, muss mit massiven Verlusten rechnen&ldquo; (vor 6 Monaten) auf EW-Basis Rückgänge von bis zu 50&thinsp;% in der nächsten Bewegung, sah den langfristigen Aufwärtstrend aber als intakt (nur Korrektur, kein Strukturbruch).",
+      invalid:"Unter $349 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"HKCM: &bdquo;Wer darauf nicht vorbereitet ist, muss mit massiven Verlusten rechnen&ldquo; (vor 6 Monaten, dediziert) &mdash; Beschreibung gelesen (Volltranskript nicht geöffnet). Einziger dedizierter MSFT-Fund der drei Zielkanäle; mit 6 Monaten Alter ggf. teilweise überholt.", sourceUrl:"https://www.youtube.com/watch?v=DEIcEdaLwuc",
+      flag:null,
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"PLTR", exch:"NASDAQ", name:"Palantir Technologies", cats:["aiagent"],
+      case:"AIP (Artificial Intelligence Platform) ist einer der am weitesten fortgeschrittenen kommerziellen Agentic-AI-Stacks für Behörden und Unternehmen.",
+      price:182.53, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:106.370003, high:207.520004, entryLow:40, entryHigh:72,
+      trend:"-3,5% am 01.09. (Twelve Data) &mdash; bleibt in der vom Analysten beschriebenen \"absoluten Midrange\" zwischen $100 und $207", status:"warn",
+      wave:"Phantom by HKCM (10.08.2026, &bdquo;Geschichte wurde geschrieben&hellip; jetzt bereit machen!&ldquo;, vollständig transkribiert ausgewertet) sieht zwei Szenarien: PRIMÄR (höher gewichtet) eine laufende X-Well-Korrektur mit maximal noch $186, Invalidierung bei Schlusskurs über $207 &mdash; danach erwartet der Analyst eine Verkaufsreaktion in die Kaufzielzone $40&ndash;$72. ALTERNATIV (~33&thinsp;% gewichtet, bullisch): Welle-4-Boden bereits bei ~$106 gesehen, aktuell in Welle-3-Bewegung Richtung $200, bei Fortsetzung Ziele $234&ndash;$313 (neues Allzeithoch). Der Analyst selbst stuft die aktuelle Lage ausdrücklich als &bdquo;Hold&ldquo; ein &mdash; keine Nachkäufe auf dem jetzigen Niveau ($186), da beide Szenarien in der &bdquo;absoluten Midrange zwischen 100 und 207&ldquo; technisch gültig bleiben. Die Zielzone unten ($40&ndash;$72) gilt NUR im Baisse-Szenario, nicht als aktueller Kaufaufruf.",
+      invalid:"Schlusskurs über $207 würde das primäre (bärische) Szenario kippen &mdash; dann wäre das bullische Alternativszenario (Ziel $234&ndash;$313) leitend. Unter $106 (52-Wochen-Tief/Welle-4-Boden laut Alternativszenario) wäre auch dieses verletzt.",
+      source:"Phantom by HKCM: &bdquo;Geschichte wurde geschrieben&hellip; jetzt bereit machen!&ldquo; (10.08.2026) &mdash; Video/Transkript vollständig angesehen und ausgewertet.", sourceUrl:"https://www.youtube.com/watch?v=j3vQ84Cd3ao",
+      flag:"Bester HKCM-Treffer im gesamten Radar. WICHTIG: Analyst selbst stuft PLTR aktuell als reinen Hold-Kandidaten ein &mdash; kein aktiver Kaufaufruf auf dem $186-Niveau.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"CRM", exch:"NYSE", name:"Salesforce, Inc.", cats:["aiagent"],
+      case:"Agentforce ist Salesforces dediziertes KI-Agenten-Produkt für autonome CRM-Workflows; erweiterte Partnerschaft mit Anthropic.",
+      price:264.43, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:146.320007, high:269.109985, entryLow:193.2, entryHigh:222.2,
+      trend:"+20% nach Q2-Zahlen &amp; Anthropic-Partnerschaft, nahe Hoch", status:"warn",
+      wave:"Kurs läuft nahe am Jahreshoch, oberhalb der 38,2&thinsp;%-Zone &mdash; für ein besseres Risiko/Rendite-Verhältnis eignet sich ein Rücksetzer in die $193&ndash;222-Zone besser als der aktuelle Stand.",
+      invalid:"Unter $146 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"Keine dedizierte HKCM- oder Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.etoro.com/markets/crm",
+      flag:null,
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"NOW", exch:"NYSE", name:"ServiceNow, Inc.", cats:["aiagent"],
+      case:"Positioniert sich explizit als &bdquo;AI Agent Orchestration&ldquo;-Plattform für Enterprise-Workflows (Now Assist/AI Agents).",
+      price:145.59, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:81.239998, high:194.725998, entryLow:124.6, entryHigh:151.4,
+      trend:"+70% vom Jahrestief, aber klar unter Jahreshoch", status:"good",
+      wave:"Kurs liegt in der 38,2&ndash;50&thinsp;%-Zone der Erholung vom Jahrestief &mdash; solide Position für eine fortgesetzte Aufwärtsbewegung, sofern die Zone hält.",
+      invalid:"Unter $81 (52-Wochen-Tief) wäre die Erholungsstruktur beschädigt.",
+      source:"Keine dedizierte Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.etoro.com/markets/now",
+      flag:null,
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"AVGO", exch:"NASDAQ", name:"Broadcom Inc.", cats:["aiagent"],
+      case:"Custom-AI-ASICs (u.&nbsp;a. für Google-TPUs) plus Netzwerk-Silizium für AI-Cluster; vermutete Anthropic-Chip-Kooperation befeuert den Kurs.",
+      price:357.16, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:289.959991, high:495.0, entryLow:366.6, entryHigh:391.1,
+      trend:"-26% vom Hoch, Q3-Zahlen am 02.09.2026", status:"good",
+      wave:"Kurs notiert nahe der tiefen 61,8&thinsp;%-Retracement-Zone &mdash; klassische Endzone einer Welle-4-Korrektur vor Fortsetzung. Bevorstehende Quartalszahlen (02.09.) sind ein binäres Risiko für diese Einschätzung.",
+      invalid:"Unter $287 (52-Wochen-Tief) wäre die Korrekturzählung verletzt.",
+      source:"Keine dedizierte HKCM-Analyse auf Haupt- oder Nebenkanal gefunden.", sourceUrl:"https://www.finanznachrichten.de/nachrichten-2026-04/68219905-broadcom-auf-allzeithoch-google-und-anthropic-befeuern-ki-hype-um-die-avgo-aktie-das-muessen-anleger-wissen-536.htm",
+      flag:"Q3-Zahlen am 02.09.2026 &mdash; kurzfristig erhöhtes Ereignisrisiko rund um die Einstiegszone.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"CRWV", exch:"NASDAQ", name:"CoreWeave, Inc.", cats:["aiagent"],
+      case:"AI-native Cloud-/GPU-Infrastruktur, praktisch reine Rechenkapazität für Agenten- und Foundation-Model-Training; IPO März 2025.",
+      price:84.56, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:60.549999, high:153.199997, entryLow:60.6, entryHigh:95.9,
+      trend:"-46% vom Hoch, sehr volatil", status:"warn",
+      wave:"Kurs liegt bereits unterhalb der 61,8&thinsp;%-Zone &mdash; tiefe Kapitulationsphase, möglicher (aber unbestätigter) Wellentief-Bereich nahe $60,55. &bdquo;Phantom by HKCM&ldquo; hat CRWV/ORCL analysiert, Kernaussage nicht verifizierbar.",
+      invalid:"Unter $60,55 (52-Wochen-Tief) wäre ein tieferer Boden zu erwarten &mdash; enger Stop empfohlen.",
+      source:"&bdquo;Phantom by HKCM&ldquo; (Nebenkanal): CoreWeave + Oracle Technical Analysis, 30.04.2026.", sourceUrl:"https://www.youtube.com/watch?v=DYnxhaknzpY",
+      flag:"Umsatz 2025 +168%, aber weiterhin hoher Verlust &mdash; spekulativ.",
+      downgradeReason:"Kein bestätigter Wellentief-Boden &mdash; $60,55 kann noch unterschritten werden.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"SOUN", exch:"NASDAQ", name:"SoundHound AI, Inc.", cats:["aiagent"],
+      case:"Reinster Small-Cap-Play auf autonome Sprach-/Voice-Agenten (Restaurants, Call-Center, Automotive) &mdash; früheste, unbewiesenste Technologiephase im Radar.",
+      price:6.74, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:5.65, high:22.17, entryLow:null, entryHigh:null,
+      trend:"-30 bis -35% YTD, nahe 52-Wochen-Tief", status:"bad",
+      wave:"Kurs liegt weit unter allen klassischen Retracement-Zonen &mdash; möglich, aber unbestätigt, dass dies eine finale Welle-5/C-Erschöpfung ist. Ohne höheres Tief plus Volumenbestätigung kein valides Einstiegssignal.",
+      invalid:"Auf Reversal-Bestätigung (höheres Tief) warten, bevor gehandelt wird.",
+      source:"Keine dedizierte Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.etoro.com/markets/soun",
+      flag:"Höchstes Einzeltitel-Risiko im KI-Agenten-Feld &mdash; kein stabiler Gewinn, sehr kleine Marktkapitalisierung.",
+      etoro:"yes", yuh:"no"
+    },
+
+    // ---------------- HUMANOIDE ROBOTIK ----------------
+    {
+      ticker:"TSLA", exch:"NASDAQ", name:"Tesla, Inc.", cats:["robotics"],
+      case:"Optimus-Humanoidroboter als potenziell größter Werttreiber neben dem Kerngeschäft; Robotaxi-Flotte als Brücke zu autonomer Robotik/KI.",
+      price:376.365, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:297.380005, high:498.829987, entryLow:271, entryHigh:367,
+      trend:"-3,2% am 01.09. (Twelve Data), weiter -29% vom Allzeithoch", status:"good",
+      wave:"Phantom by HKCM ist am 23.07.2026 in TSLA eingestiegen (Primärszenario ~67&thinsp;% gewichtet; Video vom 17.08.2026, &bdquo;Die meisten werden diesen massiven Anstieg verpassen!&ldquo;, vollständig transkribiert ausgewertet): Primäre Stützzone im 61,8&ndash;78,6&thinsp;%-Retracement, Ausreizung bis $271 möglich ohne Invalidierung der These. Bestätigung für &bdquo;Boden bereits gesehen&ldquo;: Ausbruch über $367 (der aktuelle Kurs $364,77 steht knapp davor). Mittelfristiges Kursziel (interne Welle&nbsp;3, 162&ndash;262&thinsp;%-Extension): $761&ndash;$1.049; langfristig (übergeordneter Bullenmarkt, 262&thinsp;%-Extension): rund $1.300 (vergleichbar mit Cathie Woods/ARK &bdquo;Regular Case&ldquo; von $1.200). Alternativszenario (33&thinsp;% gewichtet, &bdquo;kein Beinbruch&ldquo;): Range $106&ndash;$190 wäre eine noch attraktivere Nachkaufzone, falls erreicht. Deckt sich mit der ElliottWave-Forecast-Einschätzung ($774-Ziel, Schlüsselunterstützung ~$293).",
+      invalid:"Primärszenario bliebe bis $271 gültig (Ausreizung ohne Bruch der These); alternative, deutlich vorsichtigere Zone bei $106&ndash;$190. Strukturell: unter $293 (ElliottWave-Forecast-Schlüsselunterstützung) bzw. $297 (52-Wochen-Tief) wäre die bullische Zählung gefährdet.",
+      source:"Phantom by HKCM: &bdquo;Die meisten werden diesen massiven Anstieg verpassen!&ldquo; (17.08.2026) &mdash; Video/Transkript vollständig angesehen und ausgewertet; der Analyst ist seit 23.07.2026 selbst investiert (eine Tranche, +7,23&thinsp;% zum Zeitpunkt des Videos, bewusst vorsichtig gestaffelt). Ergänzt die bestehende ElliottWave-Forecast-Textquelle.", sourceUrl:"https://www.youtube.com/watch?v=hyk4npMqFn0",
+      flag:null,
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"ABBN", exch:"SIX", name:"ABB Ltd", cats:["robotics"],
+      case:"Schweizer Industriekonzern mit Top-3-Robotik-Sparte weltweit (neben Fanuc/Yaskawa); ausgebaute Nvidia-Kooperation für KI-Infrastruktur (06/2026).",
+      price:82.78, cur:"CHF", asOf:"14.08.2026", low:52.66, high:89.14, entryLow:66.6, entryHigh:75.2,
+      trend:"+54% im Jahresverlauf, nahe Jahreshoch", status:"warn",
+      wave:"Kurs läuft deutlich über der 38,2&thinsp;%-Zone der Aufwärtsbewegung &mdash; für einen Neueinstieg attraktiver wäre ein Rücksetzer in die CHF 67&ndash;75-Zone.",
+      invalid:"Unter CHF 52,7 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/quote/swx/ABBN/",
+      flag:"Als Schweizer SIX-Titel besonders relevant für Yuh.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"ROK", exch:"NYSE", name:"Rockwell Automation", cats:["robotics"],
+      case:"Führender US-Anbieter für Industrieautomatisierung/Steuerungstechnik (Allen-Bradley) &mdash; Kernprofiteur der Fabrikautomatisierungs-Welle.",
+      price:428.28, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:332.709991, high:497.359985, entryLow:415.0, entryHigh:434.5,
+      trend:"+28% vom Jahrestief, neues 52-Wochen-Hoch erreicht, leichter Pullback", status:"good",
+      wave:"Kurs liegt in der flachen 38,2&ndash;50&thinsp;%-Retracement-Zone nach neuem Jahreshoch &mdash; typisches Muster einer laufenden Welle&nbsp;3 mit kurzer Verschnaufpause.",
+      invalid:"Unter $333 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"Keine dedizierte Elliott-Wave-Quelle gefunden.", sourceUrl:"https://www.etoro.com/markets/rok",
+      flag:null,
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"ISRG", exch:"NASDAQ", name:"Intuitive Surgical", cats:["robotics"],
+      case:"Medizinrobotik (da-Vinci-Chirurgiesysteme) &mdash; hoher technologischer Burggraben, thematisch nah an Robotik/Automation im Gesundheitswesen.",
+      price:369.83, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:328.570007, high:603.880005, entryLow:null, entryHigh:null,
+      trend:"-38% vom Hoch nach enttäuschender Guidance", status:"warn",
+      wave:"Kurs liegt bereits unterhalb der 61,8&thinsp;%-Zone, nahe am 52-Wochen-Tief &mdash; mögliche, aber unbestätigte Welle-C-Bodenbildung. Vor Einstieg auf ein höheres Tief warten.",
+      invalid:"Unter $328,6 (52-Wochen-Tief) droht weitere Abwärtsdynamik.",
+      source:"HKCM GLOBAL: &bdquo;Why We See Long-Term Potential in This Ai Stock!&ldquo; (vor 1 Jahr) &mdash; per Suche gefunden (strukturierte EW-Analyse laut Kapitelmarken: Intro/Wave Count/Alternative Scenario/Indicators), Inhalt nicht geöffnet/gelesen. Einziger dedizierter Treffer der Zielkanäle für ISRG, aber 1 Jahr alt und damit ggf. überholt.", sourceUrl:"https://www.youtube.com/results?search_query=Intuitive+Surgical+HKCM&sp=CAI%3D",
+      flag:"Guidance-Enttäuschung Mitte Juli 2026 als Auslöser des Rückgangs.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"TER", exch:"NASDAQ", name:"Teradyne, Inc.", cats:["robotics"],
+      case:"Halbleiter-Testequipment für den KI-Chip-Boom plus eigene Robotik-Sparte (Universal Robots, MiR &mdash; kollaborative Roboter/AMRs).",
+      price:338.59, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:109.559998, high:487.910004, entryLow:254.1, entryHigh:343.4,
+      trend:"Mehr als verdreifacht vom Jahrestief, Pullback vom Hoch", status:"warn",
+      wave:"Kurs läuft noch im oberen Teil der extrem weiten Jahresrange &mdash; für ein besseres Chance-Risiko-Verhältnis eignet sich ein Rücksetzer in die $254&ndash;343-Zone besser als der aktuelle Stand.",
+      invalid:"Unter $110 (52-Wochen-Tief) wäre die Struktur grundlegend beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/stocks/ter/",
+      flag:"Q2/2026: Umsatz +100%, EPS +300% YoY dank KI-Testnachfrage.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"SYM", exch:"NASDAQ", name:"Symbotic Inc.", cats:["robotics"],
+      case:"KI-gestützte Lager-/Logistikautomatisierung (u.&nbsp;a. Walmart-Partner) &mdash; zentraler Automation-Baustein, wenn auch kein humanoider Roboter.",
+      price:41.6, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:37.68, high:87.879997, entryLow:null, entryHigh:null,
+      trend:"-55% vom Hoch, nahe 52-Wochen-Tief trotz Umsatzwachstum", status:"warn",
+      wave:"Kurs liegt weit unterhalb aller klassischen Retracement-Zonen, direkt am 52-Wochen-Tief &mdash; deutet auf eine mögliche finale Welle-5/C-Erschöpfung hin, da Umsatz (+22% YoY) und Kurs deutlich auseinanderlaufen. Ein Quellen-Hinweis (newsline.com) nennt explizit eine EW-Zählung, Details nicht verifizierbar.",
+      invalid:"Unter $38,19 (52-Wochen-Tief) wäre auch dieses Szenario hinfällig.",
+      source:"newsline.com: &bdquo;Is Symbotic (SYM) stock weakening &ndash; Elliott Wave Count&ldquo;, 18.04.2026 (Inhalt nicht vollständig verifizierbar).", sourceUrl:"https://www.etoro.com/markets/sym",
+      flag:"Deutliche Divergenz zwischen fundamentalem Wachstum und Kursentwicklung &mdash; hohes Risiko, hohe potenzielle Gegenbewegung.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"BOTZ", exch:"NASDAQ", name:"Global X Robotics &amp; AI ETF", cats:["robotics"],
+      case:"Diversifiziertes Exposure über Robotik-/Automations-/KI-Titel (u.&nbsp;a. Fanuc, Yaskawa, ABB, Nvidia) &mdash; reduziert Einzeltitelrisiko.",
+      price:35.81, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:31.875, high:41.709999, entryLow:35.6, entryHigh:36.8,
+      trend:"+7,5% auf 12 Monate, moderater Aufwärtstrend", status:"good",
+      wave:"Kurs notiert direkt in der 50&ndash;61,8&thinsp;%-Retracement-Zone der jüngsten Aufwärtsbewegung &mdash; solides, defensives Einstiegsfenster für einen diversifizierten Robotik-Zugang.",
+      invalid:"Unter $31,9 (52-Wochen-Tief) wäre die Struktur beschädigt.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden.", sourceUrl:"https://stockanalysis.com/etf/botz/",
+      flag:null,
+      etoro:"yes", yuh:"maybe"
+    },
+
+    // ---------------- KRYPTO / CBDC ----------------
+    {
+      ticker:"BTC", exch:"Krypto", name:"Bitcoin", cats:["crypto"], detail:true,
+      case:"Basisassett des Krypto-/Tokenisierungs-Trends und Referenzwert für alle CBDC-/Stablecoin-Narrative.",
+      price:79615.62, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:57800.19, high:126199.63, entryLow:28530, entryHigh:40030,
+      trend:"-2,0% (24h, Twelve Data) &mdash; korrektives Hoch bei $82.300 knapp unter der 38,2&thinsp;%-Fibo-Widerstandszone, bärische RSI/MACD-Divergenz seit 21.08.", status:"warn",
+      wave:"Eigene quantitative Elliott-Wave-/Fibonacci-Konfluenz-Analyse (Twelve-Data-Tagesschlusskurse, 23.04.2025&ndash;04.09.2026): Seit dem Allzeithoch $126.200 (Okt. 2025) läuft eine A-B-Korrektur mit sauberen Fibonacci-Verhältnissen (Zwischenhoch $97.924 am 14.01. = 38,0&thinsp;%-Retracement der ersten Abwärtswelle; aktuelles Erholungshoch $82.300 am 03.09. = 61,1&thinsp;%-Retracement der dritten Abwärtswelle ab $97.924 auf das Zyklustief $57.800). Primär: Korrekturhoch im Bereich $79.600&ndash;$83.900 (knapp unter der 38,2&thinsp;%-Fibo-Zone $83.929), danach Welle&nbsp;C Richtung $28.530&ndash;$40.030 &mdash; bestätigt durch bärische RSI-Divergenz (Hoch 85,9 am 21.08. vs. nur 73,0 am 03.09. bei höherem Kurshoch) und MACD-Bär-Crossover (Hist. von +1.670 auf -52 gedreht). Deckt sich mit HKCM/Philip Hopf (&bdquo;BTC: Hier sehe ich jetzt das Top!&ldquo;, 28.08.2026, Volltranskript ausgewertet): Reversal-Zone rund $82.822, danach Ziel bis Ende Oktober 2026 (&plusmn;1 Monat). Alternative (32&thinsp;%): Zyklustief bereits gesehen, laufende Rally = Welle&nbsp;1 einer neuen Bullbewegung, Dip-Kaufzone $70.050&ndash;$72.940. Ausführliche Primär-/Alternativzählung, Konfluenz-Score, CRV und Chart mit Zielzonen: Detailanalyse-Button unten.",
+      invalid:"Primär: Tagesschluss über $97.924 (Welle-2-Hoch) kippt die Zählung zur Alternative; hart: neues Allzeithoch über $126.200. Alternative: Tagesschluss unter $57.800 (Zyklustief).",
+      source:"HKCM (Philip Hopf): &bdquo;BTC: Hier sehe ich jetzt das Top!&ldquo; (28.08.2026) &mdash; Video/Transkript vollständig angesehen und ausgewertet, bestätigt/vertieft die frühere &bdquo;Willkommen im Bitcoin-Bärenmarkt!&ldquo;-Einschätzung.", sourceUrl:"https://www.youtube.com/watch?v=e9jQc-ByTww",
+      flag:null,
+      downgradeReason:"HKCM stuft die Lage weiterhin als Bärenmarkt-Kapitulation ein und erwartet den echten Boden erst Ende Oktober 2026 (&plusmn;1 Monat) &mdash; Zone technisch erreicht, aber selbst der Analyst rät aktuell NICHT zum Spot-Kauf.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"ETH", exch:"Krypto", name:"Ethereum", cats:["crypto"], detail:true,
+      case:"Führende Smart-Contract-Plattform, trägt den Großteil der Stablecoin-/Tokenisierungs-Infrastruktur (USDC, PYUSD) &mdash; wahrscheinliche Abwicklungsschicht für KI-Agenten-Zahlungen.",
+      price:2457.61, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:1507.050049, high:4765.410156, entryLow:959, entryHigh:1506,
+      trend:"-2,0% (24h, Twelve Data) &mdash; Erholung von $2.566 (27.08.) aus der 32,5&thinsp;%-Retracement-Zone, bärische RSI/MACD-Divergenz seit 21.08.", status:"warn",
+      wave:"Eigene quantitative Elliott-Wave-/Fibonacci-Konfluenz-Analyse: Seit dem 52-Wochen-Hoch $4.765 (Sep. 2025) läuft eine Korrektur zum Zyklustief $1.507 (06.06.2026), aktuell in einer Erholungswelle (bisher nur 32,5&thinsp;% der Gesamtkorrektur zurückgeholt). Primär (58&thinsp;%, deckt sich mit HKCMs aktuellem Update vom 03.09.2026): Erholung setzt sich fort Richtung $3.136&ndash;$3.521 (50&ndash;61,8&thinsp;%-Fibo-Zone, überschneidet sich mit HKCMs $3.232&ndash;$3.640), davor kurze Verschnaufpause $2.152&ndash;$2.244 möglich; danach Welle&nbsp;C auf $959&ndash;$1.506. Alternative (42&thinsp;%, gestützt durch die bereits jetzt sichtbare RSI-Divergenz: 88,3 am 21.08. vs. nur 62,8 am 04.09.): Erholungshoch bereits bei $2.566,53 (27.08.) abgeschlossen, direkte Korrektur auf $1.507&ndash;$1.912. Konfluenz-Score, CRV, Wachstumsszenarien und Chart: Detailanalyse-Button unten.",
+      invalid:"Primär: Tagesschluss unter $1.507 (Zyklustief). Alternative: Tagesschluss über $2.566,53 (altes Erholungshoch).",
+      source:"HKCM: &bdquo;Im nächsten Ethereum-Run sind 1.000% locker möglich!&ldquo; (vor 1 Monat) &mdash; direktester verfügbarer HKCM-Fund, ersetzt die bisherige unverifizierte hoehle-loewen.de-Sekundärquelle als Hauptreferenz (die $12.000&ndash;15.000-Langfristprognose bleibt trotzdem spekulativ und ungelesen).", sourceUrl:"https://www.youtube.com/results?search_query=Ethereum+HKCM&sp=CAI%3D",
+      flag:"Extremste und am wenigsten gesicherte Prognose im gesamten Radar &mdash; mit besonderer Vorsicht behandeln.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"XRP", exch:"Krypto", name:"XRP (Ripple)", cats:["crypto"],
+      case:"Cross-Border-Payment-Netzwerk mit ISO-20022-Kompatibilität, häufig als Brücken-Asset für Interbanken-/CBDC-nahe Abwicklung diskutiert.",
+      price:1.4532, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:0.9862, high:3.1858, entryLow:0.99, entryHigh:1.83,
+      trend:"-57% vom Hoch", status:"warn",
+      wave:"Kurs liegt unterhalb der 61,8&thinsp;%-Zone, nahe am Jahrestief &mdash; tiefe Werteregion, aber noch keine bestätigte Trendwende. Mehrere englischsprachige EW-Videos nennen langfristige Zielzonen um $20&ndash;28, Quellen nicht abschließend verifiziert. Aktueller Direktfund: HKCM, &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen, gemeinsam mit LINK und ADA) &mdash; Beschreibung gelesen: prüft, ob der Zyklus-Boden erreicht ist; erste Einstiege des Analysten bereits deutlich im Plus &mdash; tendenziell bullische/optimistische Einschätzung.",
+      invalid:"Unter $0,987 (52-Wochen-Tief) wäre die Zone verletzt.",
+      source:"HKCM: &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen) &mdash; aktuellste HKCM-Quelle für XRP, ersetzt die bisherige, kanalseitig nicht verifizierte Quelle.", sourceUrl:"https://www.youtube.com/watch?v=QD8HHYUfNBU",
+      flag:null,
+      downgradeReason:"Keine bestätigte Trendwende &mdash; nur langfristige, nicht verifizierte Kurszielspekulationen.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"LINK", exch:"Krypto", name:"Chainlink", cats:["crypto"],
+      case:"Oracle-/Interoperabilitäts-Infrastruktur (CCIP), zentral für institutionelle Tokenisierungs-Pilotprojekte (SWIFT, DTCC) und potenziell für automatisierte On-Chain-Zahlungen von KI-Agenten.",
+      price:12.039, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:6.996, high:25.64, entryLow:6.998, entryHigh:14.75,
+      trend:"-57% vom Hoch, aber +30% auf Wochensicht &mdash; starke Erholung", status:"good",
+      wave:"Kurs liegt noch unter der 61,8&thinsp;%-Zone, doch die scharfe Wochenrallye (+30,4%) deutet auf einen möglichen frühen Wendepunkt hin. Bestätigung durch weitere höhere Tiefs abwarten, bevor die Position aufgestockt wird. HKCM bestätigt in &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen, gemeinsam mit XRP und ADA) eine bullische/optimistische Grundtendenz &mdash; deckt sich mit der beobachteten starken Wochenrallye.",
+      invalid:"Unter $7,0 (52-Wochen-Tief) wäre die Trendwende-These hinfällig.",
+      source:"HKCM: &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen) &mdash; ergänzt die bisherige Brave-New-Coin-Textquelle als aktuellste Direktquelle.", sourceUrl:"https://www.youtube.com/watch?v=QD8HHYUfNBU",
+      flag:"Frühindikator-Charakter &mdash; Bestätigung noch ausstehend trotz &bdquo;Grün&ldquo;-Einstufung.",
+      etoro:"yes", yuh:"maybe"
+    },
+    {
+      ticker:"COIN", exch:"NASDAQ", name:"Coinbase Global", cats:["crypto"],
+      case:"Größte US-Krypto-Börse/Custodian, Partner von Circle bei USDC &mdash; direkter Profiteur institutioneller Krypto-Adoption.",
+      price:192.7, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:139.11, high:402.160004, entryLow:null, entryHigh:null,
+      trend:"-6,3% (24h), Bewegung im Einklang mit BTC-Bärenmarkt", status:"bad",
+      wave:"Elliott Wave International identifizierte am 21.11.2025 eine bärische Welle &bdquo;(iii) von ((iii))&ldquo; &mdash; die daraufhin prognostizierte ~40%-Korrektur binnen 50 Tagen ist laut Quelle eingetreten. Die Wellenzählung könnte noch nicht abgeschlossen sein &mdash; auf Bestätigung eines Wellentiefs warten. Zusatzfund: Phantom-by-HKCM-Livestream &bdquo;FINTECH RETTUNG?! Block EXPLODIERT nach Earnings! Coinbase vor MEGA Chance?!&ldquo; (vor 3 Monaten) &mdash; Coinbase wird darin nur am Rande behandelt (Fokus liegt auf Block/Square), daher nicht als Hauptquelle verwendet.",
+      invalid:"Keine belastbare Zone, solange die (iii)-Abwärtswelle laut EWI nicht bestätigt beendet ist.",
+      source:"Elliott Wave International: &bdquo;Coinbase (COIN) Decline Anticipated&ldquo; &amp; &bdquo;Coinbase and the 1.618 Multiple&ldquo; &mdash; bleibt die dedizierteste, aktuellste Quelle für COIN (dem gefundenen HKCM-Livestream fehlt der COIN-Fokus).", sourceUrl:"https://www.elliottwave.com/articles/coinbase-coin-decline-anticipated/",
+      flag:null,
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"MSTR", exch:"NASDAQ", name:"Strategy (MicroStrategy)", cats:["crypto"],
+      case:"Größter korporativer Bitcoin-Treasury-Halter, gehebelter Bitcoin-Proxy, positioniert sich als &bdquo;Bitcoin Development Company&ldquo;.",
+      price:144.82, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:81.809998, high:365.209991, entryLow:null, entryHigh:null,
+      trend:"-7,3% (24h), im Einklang mit BTC-Schwäche", status:"warn",
+      wave:"ElliottWave-Forecast beschreibt die laufende Korrekturwelle als &bdquo;Approaching Final Stages&ldquo; &mdash; ein Boden könnte nahen, ist aber unbestätigt. Als gehebelter BTC-Proxy trägt MSTR zusätzliches Hebel-Risiko gegenüber Bitcoin direkt. HKCM bestätigt in &bdquo;Das ist ein GANZ schlechtes Zeichen für Bitcoin!&ldquo; (vor 3 Monaten, dediziert zu Strategy) laut Suchergebnis-Snippet ein Warnsignal-Framing (&bdquo;Strategy steht erneut im Fokus, nachdem die Aktie seit unserem Einstieg bereits mehr als 50&hellip;&ldquo;, Snippet abgeschnitten) &mdash; konsistent mit der bärischen HKCM-Einschätzung zu Bitcoin selbst.",
+      invalid:"Solange BTC selbst keine Bodenbildung zeigt, bleibt auch MSTR ungesichert.",
+      source:"HKCM: &bdquo;Das ist ein GANZ schlechtes Zeichen für Bitcoin!&ldquo; (vor 3 Monaten) &mdash; ergänzt die bestehende ElliottWave-Forecast-Quelle; Volltext nicht geöffnet, nur Titel/Kanal/Snippet bestätigt.", sourceUrl:"https://www.youtube.com/results?search_query=Strategy+MicroStrategy+HKCM&sp=CAI%3D",
+      flag:"Höheres Risiko als Bitcoin direkt wegen Bilanz-Hebel.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"CRCL", exch:"NYSE", name:"Circle Internet Group", cats:["crypto"],
+      case:"Emittent von USDC, dem dominanten Fiat-gedeckten Stablecoin &mdash; direktester Pure-Play auf tokenisierte Dollar/Stablecoin-Infrastruktur als Blaupause bzw. Konkurrenz zu CBDCs.",
+      price:103.23, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:49.900002, high:159.470001, entryLow:null, entryHigh:null,
+      trend:"-71% vom IPO-Hoch", status:"bad",
+      wave:"Zu junge Kurshistorie (IPO Mitte 2025) für eine seriöse Wellenzählung. Der Kurs liegt tief unter selbst der 78,6&thinsp;%-Zone des IPO-Anstiegs &mdash; klassisches Post-IPO-Ausverkaufsmuster ohne belastbare Struktur.",
+      invalid:"IPO-Tief bei $49,82 als grobe Orientierung, keine EW-Validierung möglich.",
+      source:"Keine dedizierte Elliott-Wave-Quelle gefunden (zu kurze Historie).", sourceUrl:"https://www.etoro.com/markets/crcl",
+      flag:"Analystenkonsens &bdquo;Moderate Buy&ldquo;, Kursziel ~$95 &mdash; fundamental vs. technisch stark divergent.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"PYPL", exch:"NASDAQ", name:"PayPal Holdings", cats:["crypto"],
+      case:"Eigener Stablecoin PYUSD, Venmo/PayPal-Zahlungsschienen mit &bdquo;Agentic Commerce&ldquo;-Partnerschaften &mdash; konkreter Bezug zu automatisierten KI-Agenten-Zahlungen.",
+      price:56.82, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:38.459999, high:79.214996, entryLow:null, entryHigh:null,
+      trend:"-35% vom Hoch, -13% auf Wochensicht &mdash; Momentum weiter abwärts", status:"warn",
+      wave:"Kurs liegt bereits unterhalb der klassischen 61,8&thinsp;%-Zone ($55,2&ndash;$65,5), nahe am 52-Wochen-Tief &mdash; die einstmals &bdquo;ideale&ldquo; Zone wurde bereits unterschritten. Wertmäßig interessant, aber ohne bestätigte Bodenbildung kein sauberes Einstiegsfenster; das kurzfristige Momentum zeigt weiter nach unten. Stabilisierung (höheres Tief) vor Einstieg abwarten.",
+      invalid:"Unter $38,4 (52-Wochen-Tief) wäre die Zone verletzt.",
+      source:"Phantom by HKCM: &bdquo;PayPal bricht ENDLICH aus!&ldquo; (vor 1 Monat, dediziert) &mdash; Beschreibung gelesen (Volltranskript aus Zeitgründen nicht geöffnet). Grosser Fund ggü. bisherigem &bdquo;keine Quelle&ldquo;.", sourceUrl:"https://www.youtube.com/watch?v=napM8ZgwTqE",
+      flag:"Übernahmeangebot laut HKCM-Video vorbörslich kurstreibend erwähnt &mdash; vor Order aktuelle Nachrichtenlage separat prüfen.",
+      etoro:"yes", yuh:"maybe"
+    },
+
+    // ---------------- QUANTENCOMPUTING ----------------
+    {
+      ticker:"QBTS", exch:"NYSE", name:"D-Wave Quantum Inc.", cats:["quantum"],
+      case:"Marktführer im Quantum-Annealing-Verfahren für Optimierungsprobleme, mit kommerziellen Kontrakten u.&nbsp;a. im US-Public-Sector &mdash; positioniert an der kommerziellen Schwelle des Quantencomputing-Trends, den der Zukunftsforscher als direkte Analogie zu BCI nennt.",
+      price:16.82, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:12.75, high:46.75, entryLow:12.75, entryHigh:25.7,
+      trend:"-63% vom Rekordhoch (Herbst 2025), extrem volatil (Beta 2,84)", status:"warn",
+      wave:"ElliottWave-Forecast sah im Okt. 2025 eine abgeschlossene Welle&nbsp;(3) bei $41&ndash;44 und empfiehlt, Korrekturen zu kaufen statt auf Höchstständen nachzukaufen. Der Kurs ist seither deutlich weiter gefallen als die klassische 38,2&ndash;61,8&thinsp;%-Zone ($25,7&ndash;$33,8) &mdash; er notiert jetzt nahe dem 52-Wochen-Tief, also in einer noch tieferen Korrekturzone als ursprünglich erwartet. Das deckt sich mit der EWI-Empfehlung, Korrekturen zu kaufen, ist aber deutlich schärfer ausgefallen; RSI-Werte widersprechen sich zudem stark zwischen Quellen, daher Einstufung als Beobachtungsposition statt bestätigtes Signal. HKCM (nicht Phantom, wie zuvor vermutet) behandelt QBTS im Sammelvideo &bdquo;Diese Titel sollten jetzt in keinem Portfolio fehlen&ldquo; (vor 3 Monaten, mit RGTI, Molina Healthcare, Estée Lauder): &bdquo;entscheidende Szenarien, Zielzonen und Preismarken&ldquo; laut Beschreibung, Detailzahlen nur im nicht geöffneten Transkript.",
+      invalid:"Unter $12,75 (52-Wochen-Tief) wäre die Aufwärtsstruktur seit 2025 grundlegend infrage gestellt.",
+      source:"ElliottWave-Forecast.com (14.10.2025); HKCM &bdquo;Diese Titel sollten jetzt in keinem Portfolio fehlen&ldquo; (vor 3 Monaten) &mdash; Beschreibung gelesen, Kanal jetzt korrekt als HKCM (nicht Phantom) verifiziert.", sourceUrl:"https://www.youtube.com/watch?v=RfYQmxHP6ss",
+      flag:"Analystenkonsens Strong Buy (Kursziel $35), aber RSI-Quellen widersprechen sich deutlich (40 vs. 62) &mdash; vor Order mehrere Datenanbieter gegenprüfen. Kurs ist bereits deutlich tiefer korrigiert als die ursprünglich anvisierte Fibonacci-Zone.",
+      downgradeReason:"Stark widersprüchliche RSI-Daten (40 vs. 62) und extreme Volatilität (Beta 2,84) &mdash; Zone erreicht, aber Signalqualität unsicher.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"RGTI", exch:"NASDAQ", name:"Rigetti Computing, Inc.", cats:["quantum"],
+      case:"Supraleitendes Gate-Modell-Quantencomputing als Konkurrenzansatz zu D-Waves Annealing-Verfahren &mdash; Frühphasen-Play auf universelle Quantenprozessoren.",
+      price:15.18, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:12.53, high:58.150002, entryLow:12.53, entryHigh:30.0,
+      trend:"-73% vom Jahreshoch, extrem volatil (Beta 3,02)", status:"warn",
+      wave:"Ältere ElliottWave-Forecast-Zählung (01/2025, vor der 2025er-Rally auf $58) ist überholt. Kurs liegt tief unter der 61,8&thinsp;%-Zone der jüngsten Rally, nahe am 52-Wochen-Tief &mdash; Bodenbildung nicht bestätigt, MACD bärisch. NEUER Fund: HKCM behandelt RGTI im selben Sammelvideo wie QBTS, &bdquo;Diese Titel sollten jetzt in keinem Portfolio fehlen&ldquo; (vor 3 Monaten) &mdash; Beschreibung gelesen, Detailzahlen nur im nicht geöffneten Transkript.",
+      invalid:"Unter $12,53 (52-Wochen-Tief) wäre auch die letzte Unterstützung verletzt.",
+      source:"HKCM: &bdquo;Diese Titel sollten jetzt in keinem Portfolio fehlen&ldquo; (vor 3 Monaten) &mdash; ersetzt die bisherige &bdquo;keine aktuelle HKCM-Analyse&ldquo;-Einstufung; ergänzt die ältere TradingLounge/EW-Forecast-Quelle.", sourceUrl:"https://www.youtube.com/watch?v=RfYQmxHP6ss",
+      flag:"Höchste Kursschwankung (Beta) der drei Quantencomputing-Titel im Radar.",
+      downgradeReason:"Keine bestätigte Bodenbildung, MACD bärisch und höchste Volatilität im gesamten Radar (Beta 3,02).",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"IONQ", exch:"NYSE", name:"IonQ, Inc.", cats:["quantum"],
+      case:"Führender Anbieter der Trapped-Ion-Technologie im Quantencomputing, gilt vielen Analysten als Technologie-Leader im Gate-Modell-Segment.",
+      price:39.02, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:25.889999, high:84.639999, entryLow:25.89, entryHigh:33.4,
+      trend:"-53% vom Jahreshoch, Korrektur seit Nov. 2025", status:"warn",
+      wave:"ElliottWave-Forecast (19.11.2025): Welle&nbsp;(I) bei $84,64 abgeschlossen, aktuell in Welle-(II)-Korrektur mit Zielzone $25,77&ndash;$33,38 für deren Ende &mdash; der aktuelle Kurs ($39,71) liegt noch darüber, die ideale Zone ist also noch nicht erreicht.",
+      invalid:"Unter $25,77 (EWI-Zielzone) bzw. $25,89 (52-Wochen-Tief) wäre die Welle-(II)-These zu hinterfragen.",
+      source:"ElliottWave-Forecast.com: &bdquo;IONQ: Temporary Pause, Opportunity&ldquo; (19.11.2025).", sourceUrl:"https://elliottwave-forecast.com/stock-market/ionq-temporary-pause-opportunity/",
+      flag:null,
+      etoro:"yes", yuh:"no"
+    },
+
+    // ---------------- BIOTECH / PHARMA ----------------
+    {
+      ticker:"CRSP", exch:"NASDAQ", name:"CRISPR Therapeutics AG", cats:["biotech"],
+      case:"Pionier der CRISPR-Cas9-Genom-Editierung; erstes zugelassenes Gentherapie-Produkt (Casgevy, mit Vertex) erzielt bereits reale Umsätze &mdash; Übergang von Forschung zu Kommerzialisierung.",
+      price:56.49, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:44.119999, high:78.480003, entryLow:56.5, entryHigh:65.4,
+      trend:"Erholt vom Jahrestief, zuletzt Rücksetzer (-3% Woche)", status:"good",
+      wave:"Kurs notiert direkt an der unteren Kante der 61,8&thinsp;%-Retracement-Zone der Erholung vom Jahrestief ($57,2, gerundet) &mdash; klassisches, wenn auch schwach mit externen Quellen belegtes Einstiegsfenster. NEUER Fund: Phantom by HKCM, &bdquo;Diese Pharma Aktie ist mein sicherster 10x-Kandidat von allen!&ldquo; (vor 1 Monat, dediziert CRISPR Therapeutics) &mdash; explizit bullische Einordnung.",
+      invalid:"Unter $44,12 (52-Wochen-Tief) wäre die Erholungsstruktur beschädigt.",
+      source:"Phantom by HKCM: &bdquo;Diese Pharma Aktie ist mein sicherster 10x-Kandidat von allen!&ldquo; (vor 1 Monat) &mdash; Transkript liess sich technisch nicht öffnen, nur Beschreibung ausgewertet: klar bullische Einordnung mit erwähnten Unterstützungen/Widerständen, Detailzahlen nicht extrahierbar. Grosser Fund ggü. bisheriger &bdquo;keine Quelle&ldquo;-Einstufung.", sourceUrl:"https://www.youtube.com/watch?v=YnFUg7eqb8g",
+      flag:"Casgevy-Umsatz FY25: $116 Mio. &mdash; kommerzielle Traktion vorhanden, aber noch früh.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"NVO", exch:"NYSE", name:"Novo Nordisk A/S (ADR)", cats:["biotech"],
+      case:"Weltmarktführer bei GLP-1-Präparaten (Ozempic/Wegovy) für Adipositas und Diabetes, zusätzlich Forschung in Neurowissenschaft/Alzheimer &mdash; stark gefallener Kurs als potenziell antizyklischer Pharma-Einstieg.",
+      price:47.51, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:35.119999, high:64.160004, entryLow:35.12, entryHigh:46.2,
+      trend:"Scharfer Einbruch nach Guidance-Crash, deutlich unter allen gleitenden Durchschnitten", status:"warn",
+      wave:"Kurs notiert nahe/unter der tiefen 61,8&thinsp;%-Zone &mdash; technisch eine klassische Endzone, aber der CEO warnte bei der Guidance-Senkung selbst, dass es &bdquo;schlimmer wird, bevor es besser wird&ldquo; (Generika-/Compounding-Konkurrenz bei Ozempic/Wegovy). Ältere Elliott-Wave-Zählungen von vor dem Crash (2023/2024) sind hinfällig.",
+      invalid:"Unter $35,12 (52-Wochen-Tief) droht eine weitere fundamentale Abwärtsspirale.",
+      source:"HKCM-Video &bdquo;Ist der Boden endlich drin bei Novo Nordisk?&ldquo; gefunden und geöffnet &mdash; die angezeigte Videobeschreibung passte jedoch NICHT zum Titel (Text handelte tatsächlich von einem völlig anderen Interview-Thema) &mdash; klare Metadaten-Inkonsistenz bei HKCM selbst. Deshalb NICHT als Quelle verwendet; bisherige CNBC-Nachrichtenquelle bleibt bestehen. Konkretes Beispiel für genau die Art von Verifizierungslücke, vor der dieses Dashboard grundsätzlich warnt.", sourceUrl:"https://www.cnbc.com/2026/02/04/novo-nordisk-stock-ceo-earnings-guidance-ozempic-wegovy.html",
+      flag:"CEO-Warnung vom 04.02.2026 (Guidance-Crash, -17 bis -22% an einem Tag) noch nicht ausgestanden &mdash; fundamentales Risiko bleibt hoch trotz technisch tiefer Bewertung.",
+      downgradeReason:"CEO warnte selbst vor weiterer Verschlechterung (&bdquo;wird schlimmer, bevor es besser wird&ldquo;) &mdash; fundamentales Risiko überwiegt die technische Zone.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"TEAM", exch:"NASDAQ", name:"Atlassian Corp", cats:["aiagent"],
+      case:"Jira/Confluence-Anbieter mit autonomem KI-Agenten-Produkt &bdquo;Rovo&ldquo; &mdash; konkreter kommerzieller Beleg für den vom Zukunftsforscher beschriebenen Wandel von KI-Tools zu eigenständigen Agenten.",
+      price:194.68, cur:"$", asOf:"03.09.2026 (Twelve Data live)", low:56.009998, high:198.599899, entryLow:137, entryHigh:168,
+      trend:"Pullback hat begonnen: -3,7% am 01.09. (Twelve Data) &mdash; passt zur von Phantom by HKCM erwarteten Welle-4-Korrektur Richtung $137&ndash;168", status:"warn",
+      wave:"Phantom by HKCM (Video vom 31.08.2026, &bdquo;Wir werden nicht aufhören zu kaufen!&ldquo;, vollständig transkribiert ausgewertet) bestätigt den Boden bei $56 (88,7&thinsp;%-Retracement) und meldet das kurzfristige Kursziel (Welle&nbsp;3, 162&thinsp;%-Extension) bereits erreicht &mdash; der Kurs lief über $182. Jetzt wird eine Korrektur (Welle&nbsp;4) in die Pullback-Zone $137&ndash;$168 erwartet; DAS ist laut Analyst die aktuell interessante Nachkaufzone, nicht der jetzige Höchststand nahe $195. Alternatives Bull-Case-Ziel ohne Welle-4-Korrektur: $264; langfristig (3&ndash;10 Jahre, 262&thinsp;%-Extension vom $56-Boden): über $483 (1365&ndash;2200&thinsp;% Gesamtrendite vom Boden).",
+      invalid:"Invalidierung der Primärzählung laut Analyst unter $119 &mdash; dort sieht er selbst eine &bdquo;massive Kaufgelegenheit&ldquo;. Ein Bruch unter $56 (bestätigter Boden) wäre das ultimative Warnsignal.",
+      source:"Phantom by HKCM: &bdquo;Wir werden nicht aufhören zu kaufen!&ldquo; (31.08.2026) &mdash; Video/Transkript vollständig angesehen und ausgewertet. Der Analyst hat bereits 15&thinsp;% seiner TEAM-Position realisiert, hält 75&thinsp;% weiter.", sourceUrl:"https://www.youtube.com/watch?v=uPEJijwK0rI",
+      flag:"Q4-Zahlen Anfang August 2026 lösten +35%-Tagessprung aus (Cloud-Wachstum, Rovo-AI-Momentum) &mdash; fundamental stark, aber technisch überhitzt. Aktuelle Kaufzielzone laut Analyst ist der Pullback ($137&ndash;168), nicht der jetzige Kurs.",
+      etoro:"yes", yuh:"no"
+    },
+
+    // ---------------- KRYPTO (Erweiterung) ----------------
+    {
+      ticker:"SOL", exch:"Krypto", name:"Solana", cats:["crypto"],
+      case:"High-Performance-Smart-Contract-Plattform (Sub-Sekunden-Finalität, hoher Durchsatz) mit breitem DeFi-/Payments-Ökosystem; seit 2026 als US-Spot-ETF zugelassen.",
+      price:104.0, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:60.13, high:253.51, entryLow:66, entryHigh:152.8,
+      trend:"-65% vom Zyklushoch, aber +20% Wochenrally nach ETF-Zuflüssen", status:"warn",
+      wave:"Kurs liegt tief unter der 61,8&thinsp;%-Zone &mdash; strukturell im Bärenmarkt-Bereich. Der jüngste RSI von ~79 (überkauft, Tagesbasis) nach der scharfen Kurzfristrally mahnt aber zur Vorsicht vor einem Neueinstieg auf diesem Niveau. Bestätigter Direktfund: Phantom by HKCM, &bdquo;Wer diese Chance nicht nutzt ist selbst schuld!&ldquo; (vor 11 Tagen, exklusiv Solana). Zusatzfund: &bdquo;Ich habe gekauft: Solana ist jetzt meine größte Altcoin-Position!&ldquo; (HKCM, vor 1 Monat) &mdash; Analyst hat SOL laut Titel zu seiner größten Altcoin-Position aufgebaut, bestätigt bullisches Sentiment über zwei Videos.",
+      invalid:"Unter $66 (52-Wochen-Tief) wäre auch dieser Bereich verletzt.",
+      source:"Phantom by HKCM: &bdquo;Wer diese Chance nicht nutzt ist selbst schuld!&ldquo; (vor 11 Tagen) &mdash; Kanal/Titel/Aktualität per Suchergebnis bestätigt, Volltext nicht geöffnet. Ersetzt die bisherige, nicht verifizierte Quelle.", sourceUrl:"https://www.youtube.com/results?search_query=Solana+Phantom+by+HKCM&sp=CAI%3D",
+      flag:"Über $4 Mrd. Short-Liquidationen und Rekord-ETF-Zuflüsse trieben die jüngste Rally &mdash; Momentum kurzfristig heiß gelaufen.",
+      downgradeReason:"RSI ~79 (überkauft) nach der scharfen Kurzfristrally &mdash; Zone strukturell erreicht, Timing kurzfristig ungünstig.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"HBAR", exch:"Krypto", name:"Hedera", cats:["crypto"],
+      case:"Enterprise-DLT (Hashgraph-Konsens) mit Governing Council (u.&nbsp;a. Google, IBM, Boeing); Fokus auf Tokenisierung, Stablecoins und ISO-20022-Kompatibilität &mdash; direkter Bezug zu institutioneller/CBDC-naher Infrastruktur.",
+      price:0.07901, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:0.06429, high:0.25481, entryLow:null, entryHigh:null,
+      trend:"Bärisch/seitwärts nahe Mehrjahrestiefs, -2,3% (24h)", status:"warn",
+      wave:"Keine belastbare 52-Wochen-Spanne verifiziert. Zwei unabhängige (nicht-HKCM) Quellen sehen ein mögliches Welle-3-Setup im Kontext einer anstehenden HBAR-ETF-Entscheidung als Katalysator &mdash; als Szenario, nicht als bestätigten Fakt zu behandeln.",
+      invalid:"Ohne verifizierte Spanne keine belastbare Invalidierungsmarke &mdash; Positionsgröße entsprechend vorsichtig wählen.",
+      source:"Brave New Coin: &bdquo;Hedera Shows Bullish Divergence as ISO 20022 Catalyst Watch Intensifies&ldquo;; crypto.news: &bdquo;Hedera price Elliot wave points to a surge ahead of HBAR ETF decision&ldquo;.", sourceUrl:"https://bravenewcoin.com/insights/hedera-shows-bullish-divergence-as-iso-20022-catalyst-watch-intensifies",
+      flag:"ETF-Entscheidung als möglicher kurzfristiger Katalysator &mdash; Termin vor Order prüfen.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"AVAX", exch:"Krypto", name:"Avalanche", cats:["crypto"],
+      case:"Layer-1 mit individualisierbaren &bdquo;Subnets&ldquo; für Enterprise-/Institutions-Deployments, u.&nbsp;a. Tokenisierung realer Assets &mdash; positioniert als Infrastruktur für regulierte, institutionelle Blockchain-Anwendungen.",
+      price:7.495, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:5.681, high:36.16, entryLow:null, entryHigh:null,
+      trend:"-69% im Jahresvergleich, klarer Abwärtstrend unter allen gleitenden Durchschnitten", status:"bad",
+      wave:"Keine belastbare 52-Wochen-Spanne verifiziert (ATH $144,96 liegt weit zurück). Kurs notiert unter EMA20/50/200 ohne positives Momentum-Signal &mdash; ohne Trendwende-Bestätigung kein Einstiegsfenster erkennbar.",
+      invalid:"Erst ein Ausbruch über die gleitenden Durchschnitte würde die Abwärtsstruktur infrage stellen.",
+      source:"&bdquo;AVAX Price Eyes $147 as Elliott Wave Setup Signals Macro Bottom&ldquo; (The Market Periodical) &mdash; spekulative Makro-Boden-These, nicht HKCM, nicht weiter verifiziert. Zusatzfund: HKCM, &bdquo;Sind Altcoins tot oder gibt es noch Hoffnung?&ldquo; (vor 3 Monaten, gemeinsam mit Solana) &mdash; per Suche gefunden, Inhalt nicht geöffnet/gelesen.", sourceUrl:"https://themarketperiodical.com/2026/02/14/avax-price-eyes-147-as-elliott-wave-setup-signals-macro-bottom",
+      flag:null,
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"ADA", exch:"Krypto", name:"Cardano", cats:["crypto"],
+      case:"Peer-reviewed, akademisch fundierte Smart-Contract-Plattform mit Fokus auf Identität und institutionelle Pilotprojekte &mdash; aktuell jedoch mit erheblichem fundamentalem Gegenwind.",
+      price:0.2211, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:0.1382, high:0.954, entryLow:null, entryHigh:null,
+      trend:"Bärenmarkt, &gt;75% Verlust im Jahresvergleich, Mehrjahrestief im Juni 2026", status:"bad",
+      wave:"Charles Hoskinson kündigte 2026 eine &bdquo;Pause&ldquo; an und warnte vor einer &bdquo;Welle von Ausfällen&ldquo; im Ökosystem; die Analytics-Plattform TapTools wurde eingestellt. ElliottWave-Forecast führt eine aktive Zählung mit Warnung vor weiterer Abwärtsbewegung, die zitierten Referenzpreise wirken jedoch inkonsistent mit dem aktuellen Niveau und sind mit Vorsicht zu lesen. AUFFÄLLIGER WIDERSPRUCH: HKCM zeigt sich im Video &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen, gemeinsam mit XRP und LINK) technisch tendenziell bullisch/optimistisch für ADA &mdash; das steht in deutlichem Kontrast zu den fundamentalen Warnsignalen (Hoskinson-Pause, TapTools-Einstellung). Technisches Bild und fundamentale Lage widersprechen sich hier auffällig.",
+      invalid:"Unter $0,16 (bestätigtes Mehrjahrestief 06/2026) wäre ein neuer Basisboden zu suchen.",
+      source:"ElliottWave-Forecast.com (Cardano-Sektion), Datenstand teils inkonsistent; CoinDesk zu den fundamentalen Auslösern. Zusätzlich: HKCM, &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen) &mdash; Beschreibung gelesen.", sourceUrl:"https://elliottwave-forecast.com/cardano-ada",
+      flag:"Fundamentale Unsicherheit (Team-Pause, Ökosystem-Warnung) überlagert aktuell jede rein technische Einschätzung.",
+      etoro:"yes", yuh:"yes"
+    },
+    {
+      ticker:"SUI", exch:"Krypto", name:"Sui", cats:["crypto"],
+      case:"Layer-1 mit Move-Programmiersprache und paralleler Transaktionsverarbeitung; wachsende institutionelle Partnerschaften und Stablecoin-/RWA-Aktivität.",
+      price:0.7752, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:0.5597, high:3.9765, entryLow:0.635, entryHigh:1.91,
+      trend:"-76% im Jahresvergleich, nahe 52-Wochen-Tief, extrem volatil", status:"warn",
+      wave:"Kurs liegt tief unter der 61,8&thinsp;%-Zone, nahe am Jahrestief. Innerhalb weniger Tage wechselten Quellen von &bdquo;überkauft nahe $0,95&ldquo; zu &bdquo;überverkauft nahe $0,70&ldquo; &mdash; extrem widersprüchliche kurzfristige Signale. Zusatzfund: HKCM, &bdquo;Krypto Altcoins: Absicherung und Nachkauf bei diesen 2 Coins!&ldquo; (vor 11 Monaten, gemeinsam mit Solana, dediziert) &mdash; per Suche gefunden, Inhalt nicht geöffnet/gelesen, 11 Monate alt und damit ggf. überholt.",
+      invalid:"Unter $0,635 (52-Wochen-Tief) wäre auch der letzte Support gebrochen.",
+      source:"Reine Preis-/RSI-Artikel mit widersprüchlichen Aussagen; einziger HKCM-Fund (&bdquo;Krypto Altcoins: Absicherung und Nachkauf bei diesen 2 Coins!&ldquo;) ist 11 Monate alt und ungelesen.", sourceUrl:"https://cryptonews.net/news/analytics/33200470",
+      flag:"Auf Yuh nicht in der gesichteten Liste enthalten &mdash; Handelbarkeit ausschließlich über eToro bestätigt.",
+      downgradeReason:"Extrem widersprüchliche kurzfristige RSI-Signale binnen weniger Tage, keine Elliott-Wave-Abdeckung gefunden.",
+      etoro:"yes", yuh:"no"
+    },
+    {
+      ticker:"KAS", exch:"Krypto", name:"Kaspa", cats:["crypto"],
+      case:"Proof-of-Work-Blockchain mit GHOSTDAG/BlockDAG-Architektur für sehr hohen Durchsatz bei PoW-Sicherheit &mdash; positioniert sich als schnellste PoW-Chain.",
+      price:0.0276, cur:"$", asOf:"31.08.2026", low:null, high:null, entryLow:null, entryHigh:null,
+      trend:"Bärenmarkt, deutlich unter Allzeithoch ($0,2074, 07/2024)", status:"bad",
+      wave:"RSI(7-Tage) bei 28,45 zeigt eine überverkaufte Lage, die technisch für einen Bounce sprechen könnte &mdash; das eigentliche Problem liegt aber bei der Broker-Handelbarkeit (siehe Hinweis), nicht bei der Chartlage. NEUER Fund: STA Solutions (dritter Zielkanal, 92.100 Abonnenten, schulz-technical-analysis.com) mit &bdquo;Altcoin: KAS Kaspa bildet seinen BODEN!&ldquo; (vor 9 Monaten, dediziert) &mdash; bullische Bodenbildungs-These, erster bestätigter Treffer dieses Kanals im gesamten Radar.",
+      invalid:"Ohne bestätigte Broker-Handelbarkeit ist eine Einstiegsdiskussion verfrüht.",
+      source:"STA Solutions: &bdquo;Altcoin: KAS Kaspa bildet seinen BODEN!&ldquo; (vor 9 Monaten) &mdash; Beschreibung gelesen, Kanal verifiziert (92.100 Abonnenten). Ersetzt bisherige, nicht zuordenbare Video-Funde.", sourceUrl:"https://www.youtube.com/watch?v=IXzT2mDXiAo",
+      flag:"Erfüllt das eToro/Yuh-Kriterium nach aktuellem Rechercheergebnis nicht.",
+      etoro:"no", yuh:"no",
+      brokerWarning:"Auf eToro nachweislich nicht handelbar; auf Yuh nicht in der gesichteten Krypto-Liste enthalten &mdash; vor jeder Umsetzung selbst prüfen oder Alternative erwägen."
+    },
+    {
+      ticker:"DOT", exch:"Krypto", name:"Polkadot", cats:["crypto"],
+      case:"Multi-Chain-/Parachain-Architektur für interoperable Blockchains (&bdquo;Internet der Blockchains&ldquo;), relevant für Interoperabilität zwischen Institutionen/DeFi-Protokollen.",
+      price:0.879, cur:"$", asOf:"04.09.2026 (Twelve Data live)", low:0.633, high:4.882, entryLow:0.7112, entryHigh:2.30,
+      trend:"Klarer Bärenmarkt, -10% Wochensicht, nahe 52-Wochen-Tief", status:"warn",
+      wave:"Kurs notiert direkt am 52-Wochen-Tief, tief unter der 61,8&thinsp;%-Zone &mdash; strukturell im tiefsten Wertbereich der Spanne, aber ohne bestätigte Trendwende (RSI im bärischen 40er-Bereich). NEUER, kanalseitig verifizierter Fund: Phantom by HKCM, &bdquo;Niemand, wirklich Niemand glaubt mehr an dieses Comeback!&ldquo; (vor 1 Monat, exklusiv Polkadot) &mdash; Beschreibung gelesen: Polkadot sei &bdquo;auf den letzten Metern der übergeordneten Korrektur&ldquo; und bereits in der langfristigen Kaufzone &mdash; bullische Nahe-Boden-Einordnung.",
+      invalid:"Unter $0,71 (52-Wochen-Tief) wäre ein neuer Bärenmarkt-Boden zu suchen.",
+      source:"Phantom by HKCM: &bdquo;Niemand, wirklich Niemand glaubt mehr an dieses Comeback!&ldquo; (vor 1 Monat) &mdash; Kanal jetzt sicher verifiziert, ersetzt die bisherige, nicht abschließend zuordenbare TradingLounge/Video-Quelle als aktuellste Referenz.", sourceUrl:"https://www.youtube.com/watch?v=qxxqkKfW61k",
+      flag:"Kraken-Delisting von Hydration (größte Polkadot-DeFi-Plattform) belastete das Ökosystem-Sentiment zusätzlich.",
+      downgradeReason:"RSI weiter im bärischen 40er-Bereich, Ökosystem-Belastung durch Kraken-Delisting &mdash; keine bestätigte Trendwende trotz Zonentiefstand.",
+      etoro:"yes", yuh:"yes"
+    }
+  ];
+
+  // Technische Indikatoren (RSI-14, MACD, Squeeze) je Ticker &mdash; separat von DATA gepflegt,
+  // Stand 27.-31.08.2026, primär Investing.com (RSI/MACD) bzw. Barchart als Zweitquelle.
+  const IND = {
+    MDT:  { rsi:61.7, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 1,63 unter Signallinie 1,86 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    BSX:  { rsi:44.0, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,031 unter Signallinie 0,410 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    INSP: { rsi:59.8, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 2,26 unter Signallinie 2,45 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    LIVN: { rsi:53.7, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,263 über Signallinie 0,057 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    NPCE: { rsi:51.2, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD -0,044 über Signallinie -0,166 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    CBRS: { rsi:46.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -8,52 unter Signallinie -5,84 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    ARKG: { rsi:58.0, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 1,76 unter Signallinie 2,04 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    ROBO: { rsi:44.0, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,609 unter Signallinie -0,255 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    NVDA: { rsi:59.2, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 3,25 über Signallinie 2,78 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    MSFT: { rsi:66.1, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 16,34 unter Signallinie 18,24 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    PLTR: { rsi:60.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 8,97 unter Signallinie 10,31 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    CRM:  { rsi:81.9, rsiNote:"Twelve Data live, 03.09.2026 (überkauft: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 20,38 über Signallinie 15,23 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    NOW:  { rsi:65.7, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 7,84 über Signallinie 6,80 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    AVGO: { rsi:37.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -8,50 unter Signallinie -7,07 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    CRWV: { rsi:46.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -1,28 unter Signallinie -0,046 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    SOUN: { rsi:45.4, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,020 unter Signallinie 0,082 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    TSLA: { rsi:60.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 4,07 über Signallinie 0,002 (Twelve Data live, 03.09.2026)", squeeze:"on", squeezeText:"Bollinger-Band-Squeeze aktiv, Stand 31.08.2026 (Blockchain.news) &mdash; nicht über Twelve Data nachgeführt" },
+    ABBN: { rsi:41.6, rsiNote:"schwach", macd:"neutral", macdText:"MACD ≈0, keine klare Richtung", squeeze:"nv" },
+    ROK:  { rsi:42.5, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -8,25 unter Signallinie -7,99 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    ISRG: { rsi:44.8, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -3,11 unter Signallinie -2,04 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    TER:  { rsi:40.7, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -9,30 unter Signallinie -3,44 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    SYM:  { rsi:51.3, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,631 unter Signallinie -0,611 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    BOTZ: { rsi:47.6, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,236 unter Signallinie -0,126 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    BTC:  { rsi:66.3, rsiNote:"Eigene Berechnung aus Twelve-Data-Tagesschlusskursen, 04.09.2026 &mdash; fallend von 85,9 (21.08.) trotz höherem Kurshoch = bärische Divergenz", macd:"bear", macdText:"MACD 3.403 unter Signallinie 3.455 (Hist. -52, seit 02.09. negativ) &mdash; bärischer Crossover", squeeze:"nv" },
+    ETH:  { rsi:62.8, rsiNote:"Eigene Berechnung aus Twelve-Data-Tagesschlusskursen, 04.09.2026 &mdash; fallend von 88,3 (21.08.) trotz ähnlichem Kursniveau = bärische Divergenz", macd:"bear", macdText:"MACD 123,5 unter Signallinie 135,2 (Hist. -11,6, seit 01.09. negativ) &mdash; bärischer Crossover", squeeze:"nv" },
+    XRP:  { rsi:66.6, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,079 unter Signallinie 0,081 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    LINK: { rsi:68.9, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,6510 unter Signallinie 0,6934 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    COIN: { rsi:60.9, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 7,44 über Signallinie 5,63 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    MSTR: { rsi:67.8, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 9,12 über Signallinie 6,52 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    CRCL: { rsi:68.4, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 6,97 über Signallinie 5,53 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    PYPL: { rsi:48.6, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,1208 unter Signallinie 0,9813 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    QBTS: { rsi:40.9, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,8475 unter Signallinie -0,5567 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    RGTI: { rsi:42.8, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,4596 unter Signallinie -0,2056 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    IONQ: { rsi:45.2, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD -0,8988 unter Signallinie -0,4101 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    CRSP: { rsi:52.9, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 1,40 unter Signallinie 1,63 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    NVO: { rsi:53.2, rsiNote:"Twelve Data live, 03.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD -0,2855 über Signallinie -0,3719 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    TEAM: { rsi:75.3, rsiNote:"Twelve Data live, 03.09.2026 (überkauft: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 19,70 über Signallinie 19,60 (Twelve Data live, 03.09.2026)", squeeze:"nv" },
+    SOL: { rsi:67.3, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 6,48 unter Signallinie 6,55 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    HBAR: { rsi:63.3, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0018 über Signallinie 0,0018 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    AVAX: { rsi:60.5, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,1870 unter Signallinie 0,1952 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    ADA: { rsi:63.0, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0062 über Signallinie 0,0061 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    SUI:  { rsi:55.9, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,0113 unter Signallinie 0,0116 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
+    KAS:  { rsi:28.5, rsiNote:"überverkauft (7-Tage)", macd:"neutral", macdText:"schwach, kein exakter Wert verifiziert", squeeze:"nv" },
+    DOT: { rsi:55.8, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0142 über Signallinie 0,0130 (Twelve Data live, 04.09.2026)", squeeze:"nv" }
+  };
+
+  // Klassifikation je Titel, WIE die zitierte Quelle recherchiert werden konnte:
+  // 'video-read' = ein YouTube-Video von HKCM/Phantom by HKCM/STA Solutions wurde am 31.08.2026 per Live-Browser
+  //                tatsächlich geöffnet und inhaltlich ausgewertet (Volltranskript oder zumindest Beschreibungstext/
+  //                Suchergebnis-Snippet mit echter inhaltlicher Aussage) &mdash; NICHT nur der Titel gefunden.
+  // 'text'  = lesbare Analyse-Seite (elliottwave-forecast.com, elliottwave.com, bravenewcoin.com, tradinglounge.com,
+  //           hkcmanagement.de, hoehle-loewen.de u.ä.) wurde tatsächlich als Text abgerufen/gelesen.
+  // 'video' = nur ein YouTube-Video (Titel/Kanal/Datum) wurde per Suche gefunden; Inhalt nicht gelesen/geöffnet.
+  // 'none'  = kein spezifischer HKCM-/Phantom-/STA-Fund trotz gezielter Suche am 31.08.2026; der verlinkte Link ist
+  //           nur eine allgemeine Preis-/News-Quelle.
+  // Basiert auf einer manuellen Durchsicht der 44 Quellenangaben, nicht auf einer automatischen Heuristik über die
+  // reine Existenz von sourceUrl (die frühere Version dieser Badge war dadurch fehlerhaft).
+  const SOURCE_STATUS = {
+    MDT:'text', BSX:'none', INSP:'none', LIVN:'none', NPCE:'none', CBRS:'none', ARKG:'none', ROBO:'none',
+    NVDA:'video-read', MSFT:'video-read', PLTR:'video-read', CRM:'none', NOW:'none', AVGO:'none', CRWV:'video', SOUN:'none',
+    TSLA:'video-read', ABBN:'none', ROK:'none', ISRG:'video', TER:'none', SYM:'none', BOTZ:'none',
+    BTC:'video-read', ETH:'video-read', XRP:'video-read', LINK:'video-read', COIN:'text', MSTR:'video-read', CRCL:'none', PYPL:'video-read',
+    QBTS:'video-read', RGTI:'video-read', IONQ:'text', CRSP:'video-read', NVO:'none', TEAM:'video-read',
+    SOL:'video-read', HBAR:'text', AVAX:'text', ADA:'video-read', SUI:'video', KAS:'video-read', DOT:'video-read'
+  };
+
+  // Versionshistorie/Release-Notes, sichtbar im Dashboard über den "Was ist neu?"-Button.
+  // Neueste zuerst. kind: 'manual' = von Claude im direkten Chat mit dem Nutzer erarbeitet/geprüft,
+  // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
+  // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
+  const CHANGELOG = [
+    { version:"v10", date:"04.09.2026", kind:"manual", summary:"BTC/ETH-Detailanalyse ergänzt: eigene quantitative Elliott-Wave-Zählung (Primär- &amp; Alternativszenario mit exakten Invalidierungsmarken) auf Basis von 500 Tagesschlusskursen (Twelve Data), verzahnt mit Fibonacci-Retracements/-Extensions als Konfluenz-System, RSI(14)/MACD-Divergenzanalyse, Wahrscheinlichkeits-Score, CRV-Berechnung und Wachstumsszenarien &mdash; abrufbar über neuen &bdquo;Detailanalyse&ldquo;-Button auf den BTC-/ETH-Kacheln, inkl. Kurschart mit Zielzonen. Cross-Check gegen das aktuelle HKCM-Tagesupdate (03.09.2026) zeigt weitgehende Übereinstimmung der Fibonacci-Zonen." },
+    { version:"Sync-04.09.2026", date:"04.09.2026", kind:"auto", summary:"Täglicher Twelve-Data-Sync: 42 von 44 Titeln aktualisiert (Kurs/RSI/MACD); übersprungen: ABBN (Schweizer SIX-Börse, benötigt Twelve-Data Pro-/Venture-Plan, nicht im Free-Plan abgedeckt), KAS (Symbol KAS/USD bei Twelve Data nicht gefunden)." },
+    { version:"v9", date:"02.09.2026", kind:"manual", summary:"Release-Notes/&bdquo;Was ist neu?&ldquo;-Panel eingeführt (dieses hier). Neue wöchentliche, geräte-gebundene Aufgabe eingerichtet, die per YouTube-RSS-Feed automatisch neue Videos von HKCM, Phantom by HKCM und STA Solutions erkennt, per Live-Browser liest und auswertet &mdash; inkl. einer Warteliste (&bdquo;YouTube-Watch&ldquo;) für Funde, die (noch) nicht sicher genug ausgewertet werden konnten." },
+    { version:"v8", date:"02.09.2026", kind:"manual", summary:"Echte ZigZag-Schwungpunkt-/Fibonacci-Analyse aus Twelve-Data-Kurshistorie entwickelt und validiert (TEAM, BTC/USD) &mdash; ersetzt künftig die statische 52-Wochen-Heuristik für Titel ohne Analysten-Quelle. Automatisierung eingerichtet: täglicher Twelve-Data-Sync (Kurs/RSI/MACD) und wöchentliche Schwungpunkt-Analyse." },
+    { version:"v7", date:"02.09.2026", kind:"manual", summary:"Twelve-Data-Connector angebunden (statt eToro-Konto &mdash; sicherheitsbewusst ohne Handelsberechtigung). Live-Kurs/RSI/MACD für TEAM, PLTR, BTC, TSLA als Proof of Concept übernommen." },
+    { version:"v6", date:"31.08.2026", kind:"manual", summary:"Echte YouTube-Recherche eingearbeitet: 18 Videos von HKCM/Phantom by HKCM/STA Solutions per Live-Browser geöffnet und ausgewertet (4 per Volltranskript)." },
+    { version:"v5", date:"31.08.2026", kind:"manual", summary:"Quellen-Transparenz korrigiert: YouTube-Funde waren zuvor nie wirklich gelesen worden &mdash; SOURCE_STATUS-Kennzeichnung eingeführt." },
+    { version:"v4", date:"31.08.2026", kind:"manual", summary:"Status-Herabstufungen (Zone erreicht, aber &bdquo;Beobachten&ldquo; wegen Risiko-Overlay) im Dashboard sichtbar gemacht." },
+    { version:"v3", date:"31.08.2026", kind:"manual", summary:"Fibonacci-Zonen-Bug behoben (Zone lag teils ausserhalb der 52-Wochen-Spanne) und Indikator-Konflikt-Hinweise ergänzt." },
+    { version:"v2", date:"31.08.2026", kind:"manual", summary:"Erste vollständige Fassung mit allen 44 Titeln, Indikatoren und Broker-Flags." }
+  ];
+
+  // Von automatisierten Hintergrund-Tasks per Live-Browser gefundene, aber (noch) nicht sicher genug
+  // ausgewertete Videos (z. B. kein zugängliches Transkript, mehrdeutiger Themenbezug). Wird im Dashboard
+  // als Hinweisleiste angezeigt, damit nichts unbemerkt untergeht. Automatisierte Tasks dürfen hier Einträge
+  // hinzufügen (push) und Einträge entfernen, sobald sie ausgewertet und ins jeweilige wave-Feld übernommen wurden.
+  const YOUTUBE_WATCH = [];
+
+  const CAT_LABEL = { bci:"BCI / Neurotech", aiagent:"KI-Agenten / ASI", robotics:"Humanoide Robotik", quantum:"Quantencomputing", biotech:"Biotech / Pharma", crypto:"Krypto / CBDC" };
+  const STATUS_LABEL = { good:"Im Einstiegsfenster", warn:"Beobachten", bad:"Abwarten" };
+
+  function fmtPrice(item){
+    const p = item.price;
+    const formatted = p >= 1000 ? p.toLocaleString('de-CH', {maximumFractionDigits:0}) : p.toLocaleString('de-CH', {minimumFractionDigits: p < 10 ? 3 : 2, maximumFractionDigits: p < 10 ? 3 : 2});
+    return (item.cur === "CHF" ? "CHF " : item.cur) + formatted;
+  }
+  function fmtBound(v, cur){
+    if(v == null) return "";
+    const s = v >= 1000 ? v.toLocaleString('de-CH', {maximumFractionDigits:0}) : v.toLocaleString('de-CH', {minimumFractionDigits: v < 10 ? 2 : 2, maximumFractionDigits: v < 10 ? 2 : 2});
+    return (cur === "CHF" ? "CHF " : cur) + s;
+  }
+
+  function rangeBarHTML(item){
+    if(item.low == null || item.high == null){
+      return `<div class="no-range-note">Keine belastbare 52-Wochen-Spanne recherchiert &mdash; Chartaufbau vor Order selbst prüfen.</div>`;
+    }
+    // Zieht die Achse auf, falls die Einstiegszone (z.B. ein spekulatives tieferes Kursziel)
+    // ausserhalb der recherchierten 52-Wochen-Spanne liegt, statt sie am Rand zu verstecken.
+    const effLow = Math.min(item.low, item.entryLow != null ? item.entryLow : item.low);
+    const effHigh = Math.max(item.high, item.entryHigh != null ? item.entryHigh : item.high);
+    const span = effHigh - effLow;
+    const pct = v => Math.max(0, Math.min(100, ((v - effLow) / span) * 100));
+    const markerPct = pct(item.price);
+    let zoneHTML = "";
+    if(item.entryLow != null && item.entryHigh != null){
+      const zLeft = pct(item.entryLow), zRight = pct(item.entryHigh);
+      zoneHTML = `<div class="range-zone" style="left:${zLeft}%; width:${Math.max(zRight - zLeft, 1.5)}%;"></div>`;
+    } else {
+      zoneHTML = `<div class="range-zone hatch" style="left:0%; width:100%;"></div>`;
+    }
+    const extended = effLow < item.low || effHigh > item.high;
+    return `
+      <div class="range">
+        <div class="range-track">
+          ${zoneHTML}
+          <div class="range-marker" style="left:${markerPct}%;"></div>
+        </div>
+        <div class="range-labels"><span>${fmtBound(effLow, item.cur)}${extended ? "*" : ""}</span><span>${fmtBound(effHigh, item.cur)}${extended ? "*" : ""}</span></div>
+        ${extended ? `<div class="ind-note">* Achse erweitert &mdash; Zielzone liegt ausserhalb der recherchierten 52-Wochen-Spanne (${fmtBound(item.low, item.cur)}&ndash;${fmtBound(item.high, item.cur)})</div>` : ""}
+        <div class="entry-line">${item.entryLow != null ? `Einstiegsfenster: <b>${fmtBound(item.entryLow, item.cur)}&ndash;${fmtBound(item.entryHigh, item.cur)}</b>` : `<span style="color:var(--ink-faint)">Noch keine belastbare Zone &mdash; Bodenbildung abwarten</span>`}</div>
+      </div>`;
+  }
+
+  function brokerBadge(state, label){
+    const cls = state === "yes" ? "yes" : state === "maybe" ? "maybe" : "no";
+    const icon = state === "yes" ? "&#10003;" : state === "maybe" ? "?" : "&ndash;";
+    return `<span class="badge ${cls}">${icon} ${label}</span>`;
+  }
+
+  function macdBadge(macd, text){
+    const cls = macd === "bull" ? "bull" : macd === "bear" ? "bear" : "neutral";
+    const label = macd === "bull" ? "Bullisch" : macd === "bear" ? "Bärisch" : "Neutral";
+    return `<span class="mini-badge ${cls}">${label}</span><span class="ind-note">${text || ""}</span>`;
+  }
+
+  function squeezeBadge(ind){
+    if(ind.squeeze === "on"){
+      return `<span class="mini-badge warn" style="background:var(--warn-soft); color:var(--warn);">Squeeze aktiv</span><span class="ind-note">${ind.squeezeText || ""}</span>`;
+    }
+    return `<span class="mini-badge nv">n/v</span><span class="ind-note">Öffentlich nicht auffindbar</span>`;
+  }
+
+  function conflictReasons(item, ind){
+    // Elliott-Wave/Fibonacci-Status ist strukturell (mittelfristig); RSI/MACD sind kurzfristige
+    // Momentum-Signale. Beide können legitim auseinanderlaufen — das wird hier sichtbar gemacht,
+    // statt die Statusfarbe künstlich anzugleichen.
+    const reasons = [];
+    if(!ind) return reasons;
+    if(item.status === "good"){
+      if(ind.rsi != null && ind.rsi >= 70) reasons.push(`RSI überkauft (${ind.rsi.toFixed(1)})`);
+      if(ind.macd === "bear") reasons.push("MACD bärisch");
+    }
+    if(item.status === "bad"){
+      if(ind.rsi != null && ind.rsi <= 30) reasons.push(`RSI überverkauft (${ind.rsi.toFixed(1)})`);
+      if(ind.macd === "bull") reasons.push("MACD bullisch");
+    }
+    return reasons;
+  }
+
+  function sourceAccessBadge(item){
+    // Macht sichtbar, ob eine zitierte Quelle tatsächlich als Text gelesen/ausgewertet werden konnte,
+    // oder ob (v.a. bei YouTube/HKCM) nur ein plausibel klingender Video-Titel per Suche gefunden wurde,
+    // dessen Inhalt (Zielzonen, genaue Wellenzählung) nicht zugänglich war. Basiert auf SOURCE_STATUS
+    // (manuelle Durchsicht von Domain + Beschreibungstext je Titel), nicht auf der reinen sourceUrl-Domain,
+    // da z. B. „etoro.com/markets/…“- oder „stockanalysis.com/…“-Links keine Analysten-Quelle sind, obwohl
+    // sourceUrl gesetzt ist.
+    const status = SOURCE_STATUS[item.ticker] || 'none';
+    if(status === 'none'){
+      return `<p class="ind-note">Kein spezifischer HKCM-/Phantom-/STA-Solutions-Fund für diesen Titel trotz gezielter Suche (31.08.2026) &mdash; Einordnung basiert allein auf der eigenen Fibonacci-Heuristik. Der Link oben ist nur eine allgemeine Preis-/News-Quelle, keine Wellenanalyse.</p>`;
+    }
+    if(status === 'video'){
+      return `<p class="ind-note">📺 Video von HKCM/Phantom by HKCM gefunden (Titel/Kanal/Datum bestätigt) &mdash; Inhalt aus Zeitgründen nicht geöffnet/gelesen. Bitte Video selbst prüfen, bevor die Einschätzung übernommen wird.</p>`;
+    }
+    if(status === 'video-read'){
+      return `<p class="ind-note">▶️ YouTube-Video von HKCM/Phantom by HKCM/STA Solutions am 31.08.2026 live geöffnet und inhaltlich ausgewertet (Transkript oder Beschreibung/Snippet) &mdash; konkrete Aussagen des Analysten sind oben eingeflossen. Kein Ersatz für eigene Prüfung.</p>`;
+    }
+    return `<p class="ind-note">✓ Textquelle gefunden und gelesen &mdash; konkrete Aussagen sind in die Einordnung eingeflossen (Einschränkungen ggf. siehe Quellentext oben).</p>`;
+  }
+
+  function conflictNote(item, ind){
+    const reasons = conflictReasons(item, ind);
+    if(!reasons.length) return "";
+    const msg = item.status === "good"
+      ? `Kurzfristiges Momentum widerspricht dem Wellenbild: ${reasons.join(" &amp; ")} &mdash; Einstiegsfenster strukturell intakt, Timing ggf. abwarten.`
+      : `Kurzfristiges Momentum widerspricht der Abwarten-Einstufung: ${reasons.join(" &amp; ")} &mdash; mögliches frühes Wendesignal, Wellenbild aber weiter negativ/unklar.`;
+    return `<div class="conflict-note">⚠ <span><b>Indikator-Konflikt:</b> ${msg}</span></div>`;
+  }
+
+  function indicatorsHTML(item){
+    const ind = IND[item.ticker];
+    if(!ind) return "";
+    const rsiPct = ind.rsi != null ? Math.max(0, Math.min(100, ind.rsi)) : null;
+    const rsiDisplay = ind.rsi != null ? ind.rsi.toFixed(1) : "n/v";
+    return `
+      <div class="indicators">
+        <div class="indicator">
+          <span class="ind-label">RSI(14)</span>
+          <span class="ind-value num">${rsiDisplay}</span>
+          ${rsiPct != null ? `<div class="rsi-track"><div class="rsi-zone-os"></div><div class="rsi-zone-ob"></div><div class="rsi-marker" style="left:${rsiPct}%;"></div></div>` : ""}
+          <span class="ind-note">${ind.rsiNote || ""}</span>
+        </div>
+        <div class="indicator">
+          <span class="ind-label">MACD</span>
+          ${macdBadge(ind.macd, ind.macdText)}
+        </div>
+        <div class="indicator">
+          <span class="ind-label">Squeeze Mom.</span>
+          ${squeezeBadge(ind)}
+        </div>
+      </div>
+      ${conflictNote(item, ind)}`;
+  }
+
+  // =====================================================================
+  // BTC/ETH DETAILANALYSE ("Konfluenz-System": Elliott-Wave + Fibonacci +
+  // Twelve-Data RSI/MACD). Eigene Berechnung aus 500 Twelve-Data-Tages-
+  // schlusskursen (23.04.2025-04.09.2026, symbol BTC/USD bzw. ETH/USD),
+  // Pivots per ZigZag-Algorithmus (6-10%-Schwelle), RSI(14)/MACD(12,26,9)
+  // aus denselben Schlusskursen berechnet. Cross-Check gegen das aktuelle
+  // HKCM-Tagesupdate vom 03.09.2026 (Markt.pdf) ist in den Texten vermerkt.
+
+  // Kompakte Kurschart-Stützpunkte (Twelve-Data-Tagesschluss, jeder 4. Tag +
+  // die letzten 15 Tage lückenlos), 23.04.2025-04.09.2026, zum Zeichnen der
+  // SVG-Sparkline in der Detailanalyse. Vor DEEPDIVE deklariert, da referenziert.
+  var DD_CHART_BTC = [93691,93749,96490,94734,102972,104104,103127,109644,109004,105590,105858,104288,110274,105415,104887,100964,106947,107147,107984,108923,117420,118630,117265,118341,118062,113298,114130,116462,123306,117405,112500,110112,108377,111240,110188,113960,115268,117074,112651,109643,114049,122391,123306,114959,108194,110532,111005,112898,110098,103885,104723,99692,92215,85129,87370,90802,93430,90395,92513,86432,88137,87486,87877,87648,91530,91100,91296,95551,88428,89225,89300,76968,62910,70138,68854,67504,67976,67988,65776,70891,68432,70930,73909,68918,71337,66011,66902,68854,72963,74132,75692,78178,78658,76347,79861,80193,80504,78148,77552,77065,73618,71409,61056,61730,64458,64509,63312,59794,60260,62583,63364,63819,64756,64723,65099,63756,62888,64107,64963,63480,62900,73025,78338,77075,77734,78993,78539,79024,80250,77846,78230,77682,78581,77439,77340,81270,79616];
+  var DD_CHART_ETH = [1795,1791,1838,1820,2345,2680,2475,2551,2551,2631,2607,2475,2816,2531,2525,2228,2416,2487,2508,2614,2942,3375,3757,3704,3797,3488,3612,4261,4749,4472,4225,4376,4360,4325,4273,4349,4605,4588,4199,4032,4145,4487,4526,4154,3895,3979,3935,3979,3875,3425,3584,3233,3030,2767,2960,2989,3189,3060,3237,2965,2980,2965,2949,2972,3145,3106,3096,3296,2940,2953,3011,2270,1827,2105,2049,1991,1974,2056,1939,2073,1994,2093,2318,2086,2169,1984,2057,2107,2245,2322,2350,2374,2369,2257,2347,2307,2275,2181,2129,2100,2010,2007,1582,1640,1681,1750,1707,1568,1613,1759,1771,1788,1918,1872,1878,1893,1863,1870,1917,1880,1876,2327,2516,2423,2463,2482,2443,2507,2511,2443,2458,2417,2468,2419,2392,2508,2458];
+
+  const DEEPDIVE = {
+    BTC: {
+      name:"Bitcoin", ticker:"BTC", unit:"$",
+      statusHeadline:"Korrekturhoch in Bildung",
+      statusTone:"warn",
+      asOf:"04.09.2026 &middot; Twelve Data (Tagesschluss) &middot; eigene Berechnung",
+      currentPrice:79615.62, change24h:-2.04,
+      tradingBox:"Kein aktives Einstiegsfenster im Bereich $79.600&ndash;$83.900 &mdash; das ist die erwartete Widerstands-/Ausstiegszone für bestehende Long-Positionen bzw. eine mögliche taktische Short-Zone (Stop 1&ndash;2&thinsp;% über $97.924). Das eigentliche Long-Einstiegsfenster für Neuengagements liegt tiefer, im Ziel-Band $28.530&ndash;$40.030 (Welle&nbsp;C) &mdash; dort in Tranchen (nicht als Einmalkauf) akkumulieren und auf Bestätigung per 4h-/1h-Umkehrsignal warten, nicht blind auf Basis der Tageskerze in die Zone hineinkaufen.",
+      whatHappened:"BTC erreichte am 03.09.2026 mit $82.300 ein neues Erholungshoch seit dem Zyklustief bei $57.800 (01.07.2026), fiel danach aber auf $79.615,62 zurück (-2,0&thinsp;% zum Vortag). Der RSI(14) fällt bereits seit dem 21.08. (Hoch 85,9), obwohl der Kurs zwischenzeitlich neue Hochs markierte &mdash; ein klassisches bärisches Momentum-Divergenzmuster. Der MACD ist am 02.09. erstmals seit dem 18.08. unter seine Signallinie gefallen (Histogramm -52).",
+      primary:{
+        label:"Primärszenario &mdash; Welle B/4 topt an der 38,2%-Fibo-Zone",
+        probability:68,
+        text:"Seit dem Allzeithoch $126.200 (Okt. 2025) läuft eine A-B-Korrektur: Welle&nbsp;(1) $126.200&rarr;$80.600 (21.11.2025), Welle&nbsp;(2) $80.600&rarr;$97.924 (14.01.2026, 38,0&thinsp;% Retracement &mdash; nahezu exakt die 38,2%-Fibonacci-Marke), Welle&nbsp;(3) $97.924&rarr;$57.800 (01.07.2026, Zyklustief), aktuell Welle&nbsp;(4)/B: Erholung auf $82.300 (03.09.) = 61,1&thinsp;% Retracement der Welle&nbsp;(3) &mdash; wieder nahezu exakt eine Fibonacci-Marke (61,8&thinsp;%). Der Gesamtkorrektur (ATH&rarr;Zyklustief, $68.399 Spanne) 38,2%-Widerstand liegt bei $83.929 &mdash; die Rally hat diese Zone fast erreicht, aber (noch) nicht überwunden. Konfluenz mit HKCM/Philip Hopf (&bdquo;BTC: Hier sehe ich jetzt das Top!&ldquo;, 28.08.2026, Volltranskript ausgewertet): Reversal-Zone rund $82.822, danach primär weitere Abverkäufe. Nach Abschluss der Korrektur (Welle C, Ziel s.&nbsp;u.) wird der übergeordnete Bullenmarkt als intakt erwartet.",
+        invalidation:"Tagesschluss über $97.924 (Welle-2-Hoch) bricht das &bdquo;tiefere Hochs&ldquo;-Muster und kippt die Zählung zur Alternative. Hart: neues Allzeithoch über $126.200 negiert die Korrekturzählung vollständig.",
+      },
+      alternative:{
+        label:"Alternativszenario &mdash; Zyklustief bereits gesehen",
+        probability:32,
+        text:"Das Tief bei $57.800 (01.07.2026) markiert bereits das Ende der gesamten Korrektur; die laufende Rally ist Welle&nbsp;1 einer neuen, höhergradigen Bullbewegung. In diesem Fall wäre ein flacher Welle-2-Pullback in die 38,2&ndash;50%-Retracement-Zone der Rally $57.800&rarr;$82.300 (also $70.050&ndash;$72.940) eine Nachkaufgelegenheit vor Fortsetzung Richtung neuer Hochs über $97.924 und später $126.200.",
+        invalidation:"Tagesschluss unter $57.800 (Zyklustief) invalidiert diese Zählung vollständig zugunsten des Primärszenarios."
+      },
+      outlook:"Übergeordnet (mehrjährig) bleibt die Struktur seit dem Bärenmarkttief 2022 bullisch: Nach Abschluss der laufenden Korrektur (ob im Ziel-Band $28.530&ndash;$40.030 oder &mdash; im Alternativfall &mdash; bereits ab $57.800) wird ein neuer Anstieg Richtung und über das Allzeithoch $126.200 erwartet. HKCM nennt hierfür langfristig eine rote Zielzone von $237.518&ndash;$285.738 (nicht eigenständig neu berechnet, sondern als externe Referenz übernommen) &mdash; das entspräche vom Ziel-Band aus einem Wachstumspotenzial von grob +590&ndash;900%.",
+      confluence:[
+        {label:"Elliott-Struktur", value:"sauber", note:"Wellen (2)/(4) treffen 38,2%/61,8%-Fibo nahezu exakt"},
+        {label:"Fibo-Konfluenz", value:"hoch", note:"Kurs an der 38,2%-Zone der Gesamtkorrektur"},
+        {label:"RSI/MACD", value:"bärisch", note:"Divergenz + MACD-Bär-Crossover bestätigt"}
+      ],
+      crv:{ risk:"$97.924 (Stop) &minus; $81.150 (Ø Zone) = $16.774 (&asymp;21%)", reward:"$81.150 &minus; $34.280 (Ziel-Mitte) = $46.870 (&asymp;58%)", ratio:"&asymp; 1 : 2,8" },
+      growth:[
+        {label:"Ziel-Band-Mitte ($34.280) &rarr; Allzeithoch-Retest ($126.200)", pct:"+268%"},
+        {label:"Ziel-Band-Mitte ($34.280) &rarr; HKCM-Langfristziel (Mitte $261.628)", pct:"+663%"}
+      ],
+      supports:[ {label:"Ziel-Band Welle C (Long-Einstieg)", value:"$28.530 &ndash; $40.030"}, {label:"Erweitert bei Strukturbruch", value:"$15.480 &ndash; $23.960"}, {label:"Zyklustief (52W)", value:"$57.800"} ],
+      resistances:[ {label:"Aktuelle Korrekturzone (Ausstieg/Short)", value:"$79.600 &ndash; $83.900"}, {label:"Welle-2-Hoch (Invalidierung Primär)", value:"$97.924"}, {label:"Allzeithoch", value:"$126.200"} ],
+      timing:"Trend/Struktur: Tages- und 4h-Kerzen (s.&nbsp;o.). Timing innerhalb der Zielzonen: 1h-Kerzen &mdash; z.&nbsp;B. RSI(1h)-Erholung aus &lt;30 oder Bruch einer kurzfristigen Abwärtstrendlinie als Trigger, statt pauschal auf Tagesbasis zu handeln.",
+      crossCheck:"Cross-Check HKCM (Markt.pdf, 03.09.2026): HKCM erwartet ein korrektives Hoch unterhalb $82.822 und danach eine grüne Zielzone $34.739&ndash;$23.961 &mdash; beide Werte liegen innerhalb weniger Prozent der hier unabhängig berechneten Fibonacci-Zonen ($83.929 bzw. $28.530&ndash;$40.030). Die Übereinstimmung zweier unabhängiger Methoden (eigene ZigZag-/Fibo-Rechnung vs. HKCM-Wellenzählung) erhöht die Konfluenz-Bewertung des Primärszenarios.",
+      ath:126199.63, cycleLow:57800.19,
+      longZone:[28530,40030], shortZone:[79600,83900],
+      chart: DD_CHART_BTC
+    },
+    ETH: {
+      name:"Ethereum", ticker:"ETH", unit:"$",
+      statusHeadline:"Erholung in der Retracement-Zone",
+      statusTone:"warn",
+      asOf:"04.09.2026 &middot; Twelve Data (Tagesschluss) &middot; eigene Berechnung",
+      currentPrice:2457.61, change24h:-1.99,
+      tradingBox:"Aktuell kein sauberes Einstiegsfenster: Der Kurs steht mitten in der Erholung (32,5&thinsp;% der Gesamtkorrektur zurückgeholt), weder klar im Long-Ziel-Band ($959&ndash;$1.506 bzw. $1.507&ndash;$1.912) noch schon an der oberen Ausstiegs-/Short-Zone ($3.136&ndash;$3.521). Bestehende Positionen: Teilgewinne bei Annäherung an $2.566 (altes Erholungshoch) erwägen. Neue Longs am ehesten auf Rücksetzer in $2.152&ndash;$2.244 (Primär) oder &mdash; falls die Alternative eintrifft &mdash; im Band $1.507&ndash;$1.912.",
+      whatHappened:"ETH markierte am 27.08.2026 mit $2.566,53 ein Erholungshoch, notiert aktuell bei $2.457,61 (-2,0&thinsp;% zum Vortag). Wie bei BTC zeigt der RSI(14) eine bärische Divergenz: 88,3 am 21.08. vs. nur noch 62,8 am 04.09. bei ähnlichem/leicht höherem Kursniveau. Der MACD ist am 01.09. unter seine Signallinie gedreht (Histogramm -11,6).",
+      primary:{
+        label:"Primärszenario &mdash; Erholung (Welle B) noch nicht abgeschlossen",
+        probability:58,
+        text:"Seit dem 52-Wochen-Hoch $4.765,41 (13.09.2025) läuft die Korrektur zum Zyklustief $1.507,05 (06.06.2026, Spanne $3.258,36). Die laufende Erholung hat davon bislang erst 32,5&thinsp;% zurückgeholt &mdash; deutlich weniger als die 38,2&ndash;61,8%-Fibonacci-Zone, in der Erholungswellen typischerweise enden. Erwartete Fortsetzung Richtung $3.136&ndash;$3.521 (50&ndash;61,8%-Retracement) &mdash; deckt sich mit HKCMs aktuellem Tagesupdate (03.09.2026, Markt.pdf), das $3.232&ndash;$3.640 als Ziel vor der nächsten Abwärtsphase nennt. Die schon jetzt sichtbare RSI/MACD-Divergenz spricht für eine Verschnaufpause zuerst: Rücksetzer in die 38,2&ndash;50%-Zone der Rally $1.507&rarr;$2.567 (also $2.152&ndash;$2.244) wäre eine Bestätigung, dass der Aufwärtsversuch danach fortgesetzt wird.",
+        invalidation:"Tagesschluss unter $1.507 (Zyklustief) invalidiert diese Zählung vollständig."
+      },
+      alternative:{
+        label:"Alternativszenario &mdash; Erholungshoch bereits am 27.08. gesehen",
+        probability:42,
+        text:"Die bereits jetzt ausgeprägte RSI/MACD-Divergenz deutet darauf hin, dass die Erholung schon bei $2.566,53 (27.08.2026) geendet hat, ohne die 50%-Fibo-Zone zu erreichen (eine sogenannte &bdquo;truncated&ldquo; bzw. schwache B-Welle). In diesem Fall würde die Korrektur der Rally direkt fortgesetzt, Ziel-/Einstiegszone $1.507&ndash;$1.912 (61,8&ndash;100%-Retracement der Rally $1.507&rarr;$2.567).",
+        invalidation:"Tagesschluss über $2.566,53 (altes Erholungshoch) verwirft diese Zählung zugunsten des Primärszenarios."
+      },
+      outlook:"Übergeordnet erwartet auch HKCM nach Abschluss der Korrektur eine mehrjährige Rally: grüne Zielzone $560&ndash;$1.061 als Korrekturtief, danach ein Anstieg bis in die rote Zielzone $11.968&ndash;$15.757 (externe Referenz, nicht eigenständig neu berechnet). Die hier berechnete Welle-C-Zielzone ($959&ndash;$1.506) überschneidet sich mit dem oberen Rand von HKCMs Zone.",
+      confluence:[
+        {label:"Elliott-Struktur", value:"uneindeutig", note:"Erholung erst bei 32,5% &mdash; zwischen zwei Fibo-Marken"},
+        {label:"Fibo-Konfluenz", value:"mittel", note:"Ziel-Zone $3.136&ndash;$3.521 noch nicht erreicht"},
+        {label:"RSI/MACD", value:"bärisch", note:"Divergenz + MACD-Bär-Crossover bestätigt"}
+      ],
+      crv:{ risk:"$1.700 (Ø Alt.-Zone) &minus; $1.350 (Stop) = $350 (&asymp;21%)", reward:"$3.300 (Fortsetzungsziel) &minus; $1.700 = $1.600 (&asymp;94%)", ratio:"&asymp; 1 : 4,6 (Alternativ-Einstieg)" },
+      growth:[
+        {label:"Alt.-Einstiegszone (Mitte $1.700) &rarr; Allzeithoch-Retest ($4.765)", pct:"+180%"},
+        {label:"Alt.-Einstiegszone (Mitte $1.700) &rarr; HKCM-Langfristziel (Mitte $13.862)", pct:"+715%"}
+      ],
+      supports:[ {label:"Ziel-Band Welle C (Primär)", value:"$959 &ndash; $1.506"}, {label:"Ziel-/Einstiegszone (Alternative)", value:"$1.507 &ndash; $1.912"}, {label:"Zyklustief (52W)", value:"$1.507"} ],
+      resistances:[ {label:"Fortsetzungsziel Welle B (Primär)", value:"$3.136 &ndash; $3.521"}, {label:"Altes Erholungshoch (Invalidierung Alt.)", value:"$2.566,53"}, {label:"52-Wochen-Hoch", value:"$4.765,41"} ],
+      timing:"Trend/Struktur: Tages- und 4h-Kerzen. Timing innerhalb der Zielzonen: 1h-Kerzen &mdash; auf Umkehrsignal (z.&nbsp;B. bullishe/bärische Divergenz auf 1h-RSI) warten statt pauschal in die Zone hineinzukaufen/-verkaufen.",
+      crossCheck:"Cross-Check HKCM (Markt.pdf, 03.09.2026): HKCM erwartet &bdquo;primär imminent Anstiege bis in die rote Zielzone $3.232&ndash;$3.640&ldquo;, danach einen Rücklauf in die grüne Zielzone $560,33&ndash;$1.061 &mdash; strukturell identisch mit dem hier als Primärszenario berechneten Pfad (Fortsetzung Richtung $3.136&ndash;$3.521, danach Welle C auf $959&ndash;$1.506). Die eigene RSI/MACD-Divergenzanalyse liefert zusätzlich ein Warnsignal, das HKCMs Primärszenario etwas Konkurrenz durch die hier ergänzte Alternative macht.",
+      ath:4765.41, cycleLow:1507.05,
+      longZone:[959,1506], shortZone:[3136,3521],
+      chart: DD_CHART_ETH
+    }
+  };
+
+  function ddFmt(n){
+    if(n == null) return "n/v";
+    return n.toLocaleString('de-CH', {maximumFractionDigits: n < 100 ? 2 : 0});
+  }
+
+  function buildDDChart(dd){
+    const W = 860, H = 300, padL = 8, padR = 8, padT = 14, padB = 8;
+    const prices = dd.chart;
+    const zoneLow = Math.min(dd.longZone[0], dd.shortZone[0]) * 0.94;
+    const zoneHigh = Math.max(dd.longZone[1], dd.shortZone[1], dd.ath) * 1.04;
+    const yMin = Math.min(zoneLow, Math.min.apply(null, prices));
+    const yMax = Math.max(zoneHigh, Math.max.apply(null, prices));
+    const x = i => padL + (i/(prices.length-1)) * (W-padL-padR);
+    const y = v => padT + (1 - (v-yMin)/(yMax-yMin)) * (H-padT-padB);
+    const path = prices.map((p,i) => `${i===0?'M':'L'}${x(i).toFixed(1)},${y(p).toFixed(1)}`).join(' ');
+    const rectFor = (lo,hi,cls) => `<rect x="${padL}" y="${y(hi).toFixed(1)}" width="${W-padL-padR}" height="${Math.max(1,(y(lo)-y(hi))).toFixed(1)}" class="${cls}" />`;
+    const lineFor = (v,dash) => `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W-padR}" y2="${y(v).toFixed(1)}" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="${dash}" />`;
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Kursverlauf ${dd.name} mit Zielzonen">
+      ${rectFor(dd.longZone[0], dd.longZone[1], 'dd-zone-long')}
+      ${rectFor(dd.shortZone[0], dd.shortZone[1], 'dd-zone-short')}
+      ${lineFor(dd.ath,'2,3')}
+      ${lineFor(dd.cycleLow,'2,3')}
+      <path d="${path}" fill="none" stroke="var(--ink)" stroke-width="1.6" />
+      <circle cx="${x(prices.length-1).toFixed(1)}" cy="${y(prices[prices.length-1]).toFixed(1)}" r="3.2" fill="var(--accent)" />
+    </svg>`;
+  }
+
+  function ddScenarioHTML(sc, tone){
+    const probCls = sc.probability >= 60 ? 'high' : 'mid';
+    return `<div class="dd-scenario">
+      <div class="dd-scenario-head"><b>${sc.label}</b><span class="dd-prob ${probCls}">${sc.probability}%</span></div>
+      <p style="margin:0 0 4px;">${sc.text}</p>
+      <div class="dd-invalid"><b>Invalidierung:</b> ${sc.invalidation}</div>
+    </div>`;
+  }
+
+  function ddLevelsHTML(items){
+    return `<div class="dd-levels">${items.map(l => `<div class="lvl"><span class="k">${l.label}</span><span>${l.value}</span></div>`).join('')}</div>`;
+  }
+
+  function renderDeepDive(ticker){
+    const dd = DEEPDIVE[ticker];
+    if(!dd) return;
+    const changeCls = dd.change24h < 0 ? 'bad' : 'good';
+    document.getElementById('ddModal').innerHTML = `
+      <div class="dd-head">
+        <div>
+          <div class="dd-sub">${dd.ticker} &middot; Detailanalyse &middot; ${dd.asOf}</div>
+          <h2>${dd.name}</h2>
+          <span class="dd-status-badge status-pill ${dd.statusTone}">${dd.statusHeadline}</span>
+        </div>
+        <button class="dd-close" id="ddCloseBtn" aria-label="Schließen">&times;</button>
+      </div>
+      <div class="dd-body">
+        <div class="price-row"><span class="price num">${dd.unit}${ddFmt(dd.currentPrice)}</span><span class="trend num" style="color:var(--${changeCls})">${dd.change24h > 0 ? '+' : ''}${dd.change24h}% (24h)</span></div>
+        <div class="dd-box">${dd.tradingBox}</div>
+        <div class="dd-section"><h4>Was ist passiert?</h4><p>${dd.whatHappened}</p></div>
+        <div class="dd-conf">
+          ${dd.confluence.map(c => `<div class="dd-conf-item"><div class="v" style="font-size:1.1rem;">${c.value}</div><div class="l">${c.label}</div><div style="font-size:.68rem;color:var(--ink-soft);margin-top:4px;">${c.note}</div></div>`).join('')}
+        </div>
+        ${ddScenarioHTML(dd.primary)}
+        ${ddScenarioHTML(dd.alternative)}
+        <div class="dd-section"><h4>Übergeordneter Ausblick</h4><p>${dd.outlook}</p></div>
+        <div class="dd-chart-wrap">
+          ${buildDDChart(dd)}
+          <div class="dd-chart-legend">
+            <span><i class="dd-swatch" style="background:color-mix(in srgb, var(--good) 35%, transparent)"></i>Long-Zielzone ${dd.unit}${ddFmt(dd.longZone[0])}&ndash;${ddFmt(dd.longZone[1])}</span>
+            <span><i class="dd-swatch" style="background:color-mix(in srgb, var(--bad) 30%, transparent)"></i>Ausstiegs-/Short-Zone ${dd.unit}${ddFmt(dd.shortZone[0])}&ndash;${ddFmt(dd.shortZone[1])}</span>
+            <span><i class="dd-swatch" style="background:var(--ink-faint)"></i>ATH / Zyklustief (gestrichelt)</span>
+          </div>
+        </div>
+        <div class="dd-grid2">
+          <div class="dd-section"><h4>Unterstützungen</h4>${ddLevelsHTML(dd.supports)}</div>
+          <div class="dd-section"><h4>Widerstände</h4>${ddLevelsHTML(dd.resistances)}</div>
+        </div>
+        <div class="dd-grid2">
+          <div class="dd-section"><h4>CRV (Chance-Risiko-Verhältnis)</h4><div class="dd-levels">
+            <div class="lvl"><span class="k">Risiko</span><span>${dd.crv.risk}</span></div>
+            <div class="lvl"><span class="k">Chance</span><span>${dd.crv.reward}</span></div>
+            <div class="lvl"><span class="k">CRV</span><span><b>${dd.crv.ratio}</b></span></div>
+          </div></div>
+          <div class="dd-section"><h4>Wachstumspotenzial</h4><div class="dd-growth">
+            ${dd.growth.map(g => `<div class="g-row"><span>${g.label}</span><span class="pct">${g.pct}</span></div>`).join('')}
+          </div></div>
+        </div>
+        <div class="dd-section"><h4>Timing (Multi-Timeframe-Konfluenz)</h4><p>${dd.timing}</p></div>
+        <div class="dd-cross"><b>HKCM-Abgleich:</b> ${dd.crossCheck}</div>
+      </div>`;
+    document.getElementById('ddOverlay').hidden = false;
+    document.getElementById('ddCloseBtn').addEventListener('click', closeDeepDive);
+  }
+  function closeDeepDive(){ document.getElementById('ddOverlay').hidden = true; }
+  document.getElementById('ddOverlay').addEventListener('click', (e) => { if(e.target.id === 'ddOverlay') closeDeepDive(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeDeepDive(); });
+
+  function cardHTML(item){
+    const tags = item.cats.map(c => `<span class="tag">${CAT_LABEL[c]}</span>`).join("");
+    const hasConflict = conflictReasons(item, IND[item.ticker]).length > 0;
+    return `
+    <article class="card" data-cats="${item.cats.join(' ')}" data-status="${item.status}" data-conflict="${hasConflict ? '1' : '0'}" data-search="${(item.ticker + ' ' + item.name).toLowerCase()}">
+      <div class="card-top">
+        <div>
+          <div class="ticker-block"><span class="ticker">${item.ticker}</span><span class="exch">${item.exch}</span></div>
+          <div class="name">${item.name}</div>
+        </div>
+        <span class="status-pill ${item.status}"><span class="dot"></span>${STATUS_LABEL[item.status]}</span>
+      </div>
+      <div class="tags">${tags}</div>
+      <p class="case-text">${item.case}</p>
+      ${item.brokerWarning ? `<div class="broker-warning">⚠ ${item.brokerWarning}</div>` : ""}
+      <div class="price-row"><span class="price num">${fmtPrice(item)}</span><span class="trend">${item.trend}</span></div>
+      ${rangeBarHTML(item)}
+      ${item.downgradeReason ? `<div class="downgrade-note">↓ <span><b>Trotz Preis in der Zone auf &bdquo;${STATUS_LABEL[item.status]}&ldquo; eingestuft:</b> ${item.downgradeReason}</span></div>` : ""}
+      ${indicatorsHTML(item)}
+      <details>
+        <summary>Elliott-Wave-Einordnung &amp; Quellen</summary>
+        <div class="detail-body">
+          <div><span class="lbl">Einordnung</span><p>${item.wave}</p></div>
+          <div><span class="lbl">Invalidierung</span><p class="invalid">${item.invalid}</p></div>
+          <div><span class="lbl">Quelle</span><p>${item.source} ${item.sourceUrl ? `&mdash; <a class="src-link" href="${item.sourceUrl}" target="_blank" rel="noopener">Link</a>` : ""}</p>${sourceAccessBadge(item)}</div>
+          ${item.flag ? `<div><span class="lbl">Zu beachten</span><p>${item.flag}</p></div>` : ""}
+        </div>
+      </details>
+      ${item.detail && DEEPDIVE[item.ticker] ? `<button class="detail-btn" data-detail-ticker="${item.ticker}">📊 Detailanalyse (Elliott/Fibo/Konfluenz)</button>` : ""}
+      <div class="card-foot">
+        <div class="brokers">${brokerBadge(item.etoro,"eToro")}${brokerBadge(item.yuh,"Yuh")}</div>
+        <span style="font-size:.7rem; color:var(--ink-faint);">Stand ${item.asOf}</span>
+      </div>
+    </article>`;
+  }
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = DATA.map(cardHTML).join("");
+  grid.querySelectorAll('[data-detail-ticker]').forEach(btn => {
+    btn.addEventListener('click', () => renderDeepDive(btn.dataset.detailTicker));
+  });
+
+  // ---- stats ----
+  const counts = { all: DATA.length, good:0, warn:0, bad:0, conflict:0 };
+  DATA.forEach(d => {
+    counts[d.status]++;
+    if(conflictReasons(d, IND[d.ticker]).length > 0) counts.conflict++;
+  });
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="n num">${counts.all}</div><div class="l">Titel im Radar</div></div>
+    <div class="stat good"><div class="n num">${counts.good}</div><div class="l">Im Einstiegsfenster</div></div>
+    <div class="stat warn"><div class="n num">${counts.warn}</div><div class="l">Beobachten</div></div>
+    <div class="stat bad"><div class="n num">${counts.bad}</div><div class="l">Abwarten</div></div>
+    <div class="stat warn"><div class="n num">${counts.conflict}</div><div class="l">Indikator-Konflikte</div></div>
+  `;
+
+  // ---- changelog / "Was ist neu?" ----
+  const changelogPanel = document.getElementById('changelogPanel');
+  const changelogToggle = document.getElementById('changelogToggle');
+  const changelogBadge = document.getElementById('changelogBadge');
+  changelogBadge.textContent = CHANGELOG.length;
+  changelogPanel.innerHTML = CHANGELOG.map(c => `
+    <div class="changelog-entry">
+      <div class="cl-head">
+        <span class="cl-version">${c.version}</span>
+        <span class="cl-date">${c.date}</span>
+        <span class="cl-kind ${c.kind === 'auto' ? 'auto' : ''}">${c.kind === 'auto' ? 'automatisch' : 'geprüft'}</span>
+      </div>
+      <div class="cl-summary">${c.summary}</div>
+    </div>
+  `).join("");
+  changelogToggle.addEventListener('click', () => {
+    const open = !changelogPanel.hidden;
+    changelogPanel.hidden = open;
+    changelogToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  // ---- YouTube-Watch (automatisch gefundene, offene Videos) ----
+  const ytWatchWrap = document.getElementById('ytWatchWrap');
+  const ytWatchList = document.getElementById('ytWatchList');
+  if(YOUTUBE_WATCH.length > 0){
+    ytWatchWrap.hidden = false;
+    ytWatchList.innerHTML = YOUTUBE_WATCH.map(y => `
+      <div class="yt-watch-item">
+        📺 <a href="${y.videoUrl}" target="_blank" rel="noopener">${y.videoTitle}</a>
+        <span class="yt-meta">${y.channel} &middot; ${y.publishedDate} &middot; betrifft vermutlich: ${y.ticker || "?"} &middot; ${y.note || "noch nicht ausgewertet"}</span>
+      </div>
+    `).join("");
+  }
+
+  // ---- filters ----
+  let activeCat = "all", activeStatus = "all", searchTerm = "";
+  function applyFilters(){
+    let visible = 0;
+    document.querySelectorAll('.card').forEach(card => {
+      const cats = card.dataset.cats.split(' ');
+      const status = card.dataset.status;
+      const searchBlob = card.dataset.search;
+      const catOk = activeCat === "all" || cats.includes(activeCat);
+      const statusOk = activeStatus === "all" || (activeStatus === "conflict" ? card.dataset.conflict === "1" : status === activeStatus);
+      const searchOk = searchTerm === "" || searchBlob.includes(searchTerm);
+      const show = catOk && statusOk && searchOk;
+      card.hidden = !show;
+      if(show) visible++;
+    });
+    document.getElementById('resultCount').textContent = `${visible} von ${DATA.length} Titeln`;
+    let noRes = document.getElementById('noResults');
+    if(visible === 0){
+      if(!noRes){
+        noRes = document.createElement('div');
+        noRes.id = 'noResults';
+        noRes.className = 'no-results';
+        noRes.textContent = 'Keine Titel gefunden — Suche oder Filter anpassen.';
+        grid.appendChild(noRes);
+      }
+    } else if(noRes){
+      noRes.remove();
+    }
+  }
+  document.querySelectorAll('.pill[data-filter="cat"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pill[data-filter="cat"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.value;
+      applyFilters();
+    });
+  });
+  document.querySelectorAll('.pill[data-filter="status"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pill[data-filter="status"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeStatus = btn.dataset.value;
+      applyFilters();
+    });
+  });
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', () => {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    applyFilters();
+  });
+  applyFilters();
+})();
+</script>
+
+</body></html>
