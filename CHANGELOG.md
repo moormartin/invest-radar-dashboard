@@ -4,6 +4,19 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v24 — 05.09.2026
+
+**ABB Ltd (ABBN) aus dem Radar entfernt.** Als an der Schweizer SIX-Börse gelisteter Titel benötigt eine echte Kurshistorie für die ZigZag-/Fibonacci-Methodik dieses Dashboards den kostenpflichtigen Twelve-Data Pro-/Venture-Plan — im kostenlosen Tier, auf dem dieses Projekt bewusst aufgebaut ist, nicht abgedeckt. In der Praxis bedeutete das: ABBN zeigte durchgehend nur eine veraltete Momentaufnahme (zuletzt Stand 14.08.2026) statt echter Live-Daten wie alle anderen 40 Titel — eine methodische Inkonsistenz, die mit der Entfernung aufgelöst wird. Das Radar zählt damit neu **40 statt 41 Titel**.
+
+Ausserdem volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für drei weitere Titel ergänzt: **Novo Nordisk (NVO)**, **Atlassian (TEAM)** und **Intuitive Surgical (ISRG)**.
+
+Methodik: eigene ZigZag-Pivot-/Fibonacci-Analyse aus je 500 Twelve-Data-Tagesschlusskursen pro Titel, RSI(14)/MACD(12,26,9) live abgerufen, Analystenkonsens für alle drei live per Web-Fetch aus stockanalysis.com verifiziert. Alle Katalysatoren zusätzlich per Websuche gegengeprüft.
+
+Bemerkenswerte Funde:
+- **NVO**: Binnen acht Monaten von zwei unabhängigen fundamentalen Schocks getroffen — dem bekannten CEO-Guidance-Crash vom 04.02.2026 sowie einem zweiten Schock am 04.08.2026 (trotz Gewinnbeat und angehobener Jahresprognose: DKK 6,3 Mrd. Pipeline-Abschreibungen, gescheiterte ZEUS-Studie, Marktanteilsverlust an Eli Lilly). Aktuell Rücksetzer in die 38,2%-Fibo-Zone bei frischem MACD-Bullen-Crossover — der Analystenkonsens bleibt aber auffällig zurückhaltend: Das Median-Kursziel ($45,20) liegt unter dem aktuellen Kurs.
+- **TEAM**: Durchlief seit dem alten Hoch $198,69 (08.04.2025) einen vollständigen Vollzyklus — Absturz auf das 52-Wochen-Tief $56,01 (-71,8%), dann Erholung bis zu einem neuen 52-Wochen-Hoch von $198,60 (03.09.2026), das das alte Hoch auf $0,09 genau trifft. Frisches bärisches MACD-Crossover direkt am Widerstand bei weiterhin überkauftem RSI — ein klassisches Doppeltop-Warnsignal trotz starker fundamentaler Nachrichtenlage (Kurszielerhöhungen von BofA und Jefferies).
+- **ISRG**: Nach der Guidance-Enttäuschung Mitte Juli 2026 (-45,6% vom Allzeithoch) erholte sich der Kurs bis $405,34, der aktuelle Rücksetzer auf $366,70 trifft die 50%-Fibo-Marke dieser Erholungsrally nahezu exakt — ein klassischer, gesunder Pullback, sofern die Zone hält.
+
 ## v23 — 05.09.2026
 
 Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für vier weitere Titel ergänzt: **Nvidia (NVDA)**, **Microsoft (MSFT)**, **Palantir (PLTR)** und **Salesforce (CRM)**.
