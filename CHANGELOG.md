@@ -4,6 +4,13 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v22 — 05.09.2026
+
+Zwei UI-Fixes:
+
+1. **Detailanalyse-Header auf Mobile "eingefroren".** Nutzer-Feedback: Beim Scrollen in der Detailanalyse auf Mobile blieb der Titel/Header stehen, statt korrekt sticky mitzuscrollen — der Bildschirm wirkte wie eingefroren. Ursache: `document.body.style.overflow = 'hidden'` allein reicht auf iOS Safari nicht aus, um Hintergrund-Touch-Scroll zuverlässig zu unterbinden — Touch-Gesten werden teils am inneren, eigentlich scrollbaren Overlay vorbei an den fixierten Hintergrund durchgereicht, wodurch nichts mehr sauber scrollt. Fix: robusteres Scroll-Lock-Pattern (`document.body.style.position = 'fixed'` mit gespeichertem `-scrollY`-Offset, exakte Wiederherstellung beim Schliessen) plus `-webkit-overflow-scrolling: touch` und `overscroll-behavior: contain` auf `.dd-overlay`. Auf mobilem Viewport (375×812) verifiziert: Overlay scrollt korrekt, sticky Header bleibt nur um die beabsichtigten 5vh Padding versetzt oben, Hintergrundseite bleibt unbeweglich.
+2. **Filter "⚠ Indikator-Konflikte" entfernt.** Die Status-Pille, der zugehörige Zähler in der Statistikleiste und die Filterlogik wurden entfernt. Der Hinweis (RSI/MACD widerspricht dem strukturellen Wellen-Status) ist methodisch beabsichtigt und bleibt als erklärender Text direkt bei den Indikatoren jeder Karte erhalten — als eigener, oft aktiver Filter stiftete er aber mehr Verwirrung als Nutzen, insbesondere seit mehrere frisch aktualisierte Karten (ROBO, BOTZ, LINK, CRSP) gleichzeitig als "Konflikt" markiert waren.
+
 ## v21 — 05.09.2026
 
 Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für vier weitere Titel ergänzt: **Fetch.ai (FET)**, **Chainlink (LINK)**, **CRISPR Therapeutics (CRSP)** und **Boston Scientific (BSX)**.

@@ -386,6 +386,7 @@
     position:fixed; inset:0; background:rgba(8,12,18,.6); backdrop-filter:blur(2px);
     z-index:80; display:flex; align-items:flex-start; justify-content:center;
     padding:5vh 16px 40px; overflow-y:auto;
+    -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
   }
   .dd-overlay[hidden]{ display:none; }
   .dd-modal{
@@ -501,7 +502,6 @@
       <button class="pill" data-filter="status" data-value="good" data-active-accent>Im Einstiegsfenster</button>
       <button class="pill" data-filter="status" data-value="warn" data-active-accent>Beobachten</button>
       <button class="pill" data-filter="status" data-value="bad" data-active-accent>Abwarten</button>
-      <button class="pill" data-filter="status" data-value="conflict" data-active-accent>⚠ Indikator-Konflikte</button>
     </div>
     <div class="search-wrap">
       <input type="text" class="search-input" id="searchInput" placeholder="Titel suchen…" autocomplete="off">
@@ -523,7 +523,7 @@
       <p>Frische IPOs (&lt; 12 Monate Kurshistorie, z.&nbsp;B. Cerebras, CoreWeave, Circle) und Titel mit einem laufenden fundamentalen Schock ohne Bodenbildung (z.&nbsp;B. Boston Scientific, Inspire Medical) werden bewusst <strong>nicht</strong> in eine Wellenzählung gezwungen, da die EW-Methode eine belastbare Wellenhistorie voraussetzt.</p>
       <p><strong>Indikatoren (RSI, MACD, Squeeze Momentum/TTM Squeeze):</strong> RSI(14) und MACD stammen primär von Investing.com bzw. Barchart (Stand 27.&ndash;31.08.2026); wo beide Quellen spürbar abweichen, ist das im Detailbereich vermerkt. Der Squeeze-/TTM-Squeeze-Indikator ist auf frei zugänglichen Finanzseiten praktisch nicht verfügbar (meist hinter TradingView-/ThinkorSwim-Bezahlschranken) &mdash; wo kein verifizierter Status auffindbar war, zeigt das Dashboard das ehrlich als &bdquo;n/v&ldquo; statt einen Wert zu erfinden.</p>
       <p><strong>Wichtig &mdash; Status ist Zone plus Risiko-Overlay, nicht rein mechanisch:</strong> Der Ampel-Status startet bei der Fibonacci-/Wellenzone, wird aber auf &bdquo;Beobachten&ldquo; heruntergestuft, wenn konkrete Risikofaktoren vorliegen &mdash; z.&nbsp;B. stark widersprüchliche Kursdaten zwischen Quellen, unbestätigte Bodenbildung, extreme Volatilität oder ein laufender fundamentaler Schock. Bei 9 von 44 Titeln liegt der Kurs aktuell zwar in der Zone, der Status ist aber trotzdem gelb &mdash; diese Karten zeigen dafür explizit einen Hinweis (&bdquo;↓ Trotz Preis in der Zone auf &lsquo;Beobachten&rsquo; eingestuft: [Grund]&ldquo;), damit dieser Judgment Call nachvollziehbar bleibt statt sich hinter der Ampelfarbe zu verstecken.</p>
-      <p><strong>Getrennt davon:</strong> RSI, MACD und Squeeze (kurzfristiges Momentum) fliessen <strong>nicht</strong> in den Status ein, weil sie einer anderen Zeitebene folgen und legitim von der Wellen-Einordnung abweichen können. Widerspricht die Indikatorenlage dem Status (z.&nbsp;B. Grün bei überkauftem RSI), zeigt die Karte einen separaten gelben &bdquo;Indikator-Konflikt&ldquo;-Hinweis &mdash; filterbar über die Status-Pille &bdquo;⚠ Indikator-Konflikte&ldquo;.</p>
+      <p><strong>Getrennt davon:</strong> RSI, MACD und Squeeze (kurzfristiges Momentum) fliessen <strong>nicht</strong> in den Status ein, weil sie einer anderen Zeitebene folgen und legitim von der Wellen-Einordnung abweichen können. Widerspricht die Indikatorenlage dem Status (z.&nbsp;B. Grün bei überkauftem RSI), zeigt die Karte einen separaten gelben &bdquo;Indikator-Konflikt&ldquo;-Hinweis direkt bei den Indikatoren.</p>
       <p><strong>Wichtige Einschränkung &mdash; YouTube-Analysten (HKCM, Phantom by HKCM, STA Solutions):</strong> Am 31.08.2026 wurde per Live-Browser-Zugriff (mit einem werbefreien YouTube-Abo) für alle 44 Titel gezielt nach dem jeweils neuesten Video dieser drei Kanäle gesucht (Suche sortiert nach Upload-Datum). Bei <strong>18 Titeln</strong> (u.&nbsp;a. Tesla, Bitcoin, Palantir, Atlassian, Nvidia, PayPal, D-Wave, Rigetti, CRISPR Therapeutics, Solana, Polkadot, Kaspa &mdash; STA Solutions) konnte das gefundene Video tatsächlich geöffnet werden; bei vier davon (Atlassian, Palantir, Bitcoin, Tesla) wurde das vollständige Transkript ausgewertet, bei den übrigen zumindest die Beschreibung bzw. das Suchergebnis-Snippet mit einer echten inhaltlichen Aussage. Diese Titel tragen die Markierung &bdquo;▶️ Video gelesen&ldquo;. Bei <strong>3 Titeln</strong> (CoreWeave, Intuitive Surgical, Sui) wurde ein passendes Video gefunden, aber aus Zeitgründen nicht geöffnet &mdash; nur Titel/Kanal/Datum sind bestätigt (&bdquo;📺&ldquo;). Bei <strong>5 Titeln</strong> stammt die Analysten-Einschätzung aus anderen, tatsächlich gelesenen Textquellen (ElliottWave-Forecast.com, Elliott Wave International u.&nbsp;a.), nicht aus einem der drei Zielkanäle. Bei den übrigen <strong>18 Titeln</strong> wurde trotz gezielter Suche kein dediziertes Video dieser drei Kanäle gefunden &mdash; der verlinkte &bdquo;Quelle&ldquo;-Link ist dort nur eine allgemeine Preis-/News-Seite. Ein Sonderfall: Bei Novo Nordisk wurde ein HKCM-Video mit passendem Titel geöffnet, dessen Beschreibungstext aber nachweislich zu einem völlig anderen Thema gehörte (Metadaten-Inkonsistenz bei HKCM selbst) &mdash; es wurde deshalb bewusst NICHT als Quelle verwendet. Diese Einordnung beruht auf einer manuellen Durchsicht jeder einzelnen Quellenangabe, nicht auf der blossen Existenz eines Links. Jede Karte zeigt unter &bdquo;Quelle&ldquo; einen Hinweis, welcher der vier Fälle vorliegt.</p>
       <div class="legend">
         <div class="legend-row"><span class="status-pill good"><span class="dot"></span>Im Fenster</span> Kurs in der Zone einer intakten Aufwärtsstruktur, ohne bekannte Gegenrisiken.</div>
@@ -1097,6 +1097,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v22", date:"05.09.2026", kind:"manual", summary:"Zwei UI-Fixes: (1) Auf Mobile blieb der Detailanalyse-Header beim Scrollen wie eingefroren stehen, statt korrekt sticky mitzuscrollen &mdash; Ursache war, dass reines &bdquo;body overflow:hidden&ldquo; auf iOS Safari nicht zuverlässig verhindert, dass Touch-Scroll-Gesten am inneren Overlay vorbei an den (fixierten) Hintergrund durchgereicht werden. Body wird beim Öffnen jetzt zusätzlich per &bdquo;position:fixed&ldquo; mit korrektem Scroll-Offset gesperrt und beim Schliessen exakt an die ursprüngliche Position zurückgesetzt; Overlay erhielt zusätzlich &bdquo;-webkit-overflow-scrolling:touch&ldquo; und &bdquo;overscroll-behavior:contain&ldquo;. (2) Den Status-Filter &bdquo;⚠ Indikator-Konflikte&ldquo; entfernt (Pille, Zähler in der Statistikleiste, Filterlogik) &mdash; der Hinweis blieb im letzten Monat bei jeder frisch aktualisierten Karte praktisch dauerhaft aktiv, da kurzfristiges Momentum (RSI/MACD) und die mittelfristige Wellen-Einordnung methodisch legitim oft auseinanderlaufen; als eigener Filter stiftete das mehr Verwirrung als Nutzen. Der erklärende Text pro Karte bleibt erhalten." },
     { version:"v21", date:"05.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für Fetch.ai (FET), Chainlink (LINK), CRISPR Therapeutics (CRSP) und Boston Scientific (BSX) ergänzt. FET zeigt einen frischen Bounce mit bullischem MACD-Crossover am 05.09., bleibt aber tief in der Korrekturzone (-84% vom 52W-Hoch). LINK ist seit dem Zyklustief (06.06.) um +71% gestiegen und nähert sich der 38,2%-Fibo-Marke, RSI bereits erhöht. CRSP konsolidiert seit fünf Monaten in einer $44&ndash;62-Range, deren Obergrenze dreifach getestet wurde und nahezu exakt mit der 50%-Fibo-Marke zusammenfällt. Bei BSX wurde die Lage neu eingeordnet: Der ursprüngliche -61%-Absturz datiert vor dem Cyberangriff (25.08.); zusätzlich verschärfte sich ein separater Sicherheitsrückruf (Infinion-CX-Elektroden) mit inzwischen &gt;1.000 gemeldeten schweren Verletzungen (Stand 04.09., live per Websuche verifiziert) &mdash; bei gleichzeitig via Update vom 03.09. grösstenteils wiederhergestellter Versandfähigkeit. Analystenkonsens für CRSP und BSX live per Web-Fetch verifiziert (stockanalysis.com); für die Krypto-Titel (FET, LINK) nicht anwendbar." },
     { version:"v20", date:"05.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für ROBO Global Robotics &amp; Automation ETF, Tesla (TSLA), Rockwell Automation (ROK) und Global X Robotics &amp; AI ETF (BOTZ) ergänzt. Eigene ZigZag-Analysen zeigen bei allen vier Titeln reale Fibonacci-Konfluenzen: ROBO und BOTZ testen bzw. konsolidieren nahe der 38,2%- resp. 50%-Marke ihrer jüngsten Korrekturen vom jeweiligen Allzeithoch; ROK bounct aus der 38,2&ndash;61,8%-Zone der Frühjahrsrally mit einem am 04.09. frisch vollzogenen bullischen MACD-Crossover. Bei TSLA zeigt die eigene Wellenzählung seit dem Allzeithoch $498,83 eine auffällige A=C-Symmetrie (Verhältnis 0,95) &mdash; der Kurs fiel am 04.09.2026 um -5,9% exakt an der 38,2%-Fibo-Marke zurück, ausgelöst durch ein enttäuschendes Cybercab-Launch-Event und eine neu eröffnete NHTSA-Untersuchung (live per Websuche verifiziert). Analystenkonsens für TSLA und ROK live per Web-Fetch verifiziert (stockanalysis.com); für die beiden ETFs (ROBO, BOTZ) ist kein Analystenkonsens verfügbar." },
     { version:"v19", date:"05.09.2026", kind:"manual", summary:"Zwei UI-Bugs behoben: (1) Die rotierende Sweep-Animation im Hero-Bereich war auf breiten Bildschirmen kaum sichtbar, da ihre Position (&bdquo;right:-10%&ldquo;) relativ zum vollen, breiten Hero-Container statt zur zentrierten, schmaleren Inhaltsspalte berechnet wurde &mdash; die Animation ist jetzt an die Inhaltsspalte gebunden (fester Versatz, korrekte Stapelreihenfolge) und dadurch auf jeder Bildschirmbreite sichtbar. (2) Im Detailanalyse-Overlay lief beim Scrollen der Seiteninhalt unter dem eigentlich sticky positionierten Header durch, weil &mdash; anders als bei den übrigen Modals (Impressum, Story/Vision) &mdash; das Sperren des Hintergrund-Scrolls (&bdquo;body overflow:hidden&ldquo;) beim Öffnen vergessen worden war; dadurch scrollte die Hintergrundseite unkontrolliert mit. Jetzt wird der Hintergrund beim Öffnen der Detailanalyse korrekt gesperrt (und beim Schliessen wieder freigegeben), sodass ausschliesslich das Overlay selbst scrollt." },
@@ -2042,10 +2043,30 @@
     const ddOverlay = document.getElementById('ddOverlay');
     ddOverlay.hidden = false;
     ddOverlay.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
     document.getElementById('ddCloseBtn').addEventListener('click', closeDeepDive);
   }
-  function closeDeepDive(){ document.getElementById('ddOverlay').hidden = true; document.body.style.overflow = ''; }
+  let ddLockedScrollY = 0;
+  function lockBodyScroll(){
+    // Reines overflow:hidden reicht auf iOS Safari nicht: Touch-Scroll wird trotzdem an den
+    // Hintergrund durchgereicht, das interne Overlay-Scrollen wirkt dadurch "eingefroren" bzw.
+    // der sticky Header scheint nicht mitzuscrollen. Body daher zusätzlich fixieren.
+    ddLockedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${ddLockedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockBodyScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, ddLockedScrollY);
+  }
+  function closeDeepDive(){ document.getElementById('ddOverlay').hidden = true; unlockBodyScroll(); }
   document.getElementById('ddOverlay').addEventListener('click', (e) => { if(e.target.id === 'ddOverlay') closeDeepDive(); });
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeDeepDive(); });
 
@@ -2093,17 +2114,13 @@
   });
 
   // ---- stats ----
-  const counts = { all: DATA.length, good:0, warn:0, bad:0, conflict:0 };
-  DATA.forEach(d => {
-    counts[d.status]++;
-    if(conflictReasons(d, IND[d.ticker]).length > 0) counts.conflict++;
-  });
+  const counts = { all: DATA.length, good:0, warn:0, bad:0 };
+  DATA.forEach(d => { counts[d.status]++; });
   document.getElementById('stats').innerHTML = `
     <div class="stat"><div class="n num">${counts.all}</div><div class="l">Titel im Radar</div></div>
     <div class="stat good"><div class="n num">${counts.good}</div><div class="l">Im Einstiegsfenster</div></div>
     <div class="stat warn"><div class="n num">${counts.warn}</div><div class="l">Beobachten</div></div>
     <div class="stat bad"><div class="n num">${counts.bad}</div><div class="l">Abwarten</div></div>
-    <div class="stat warn"><div class="n num">${counts.conflict}</div><div class="l">Indikator-Konflikte</div></div>
   `;
 
   // ---- changelog / "Was ist neu?" ----
@@ -2165,7 +2182,7 @@
       const status = card.dataset.status;
       const searchBlob = card.dataset.search;
       const catOk = activeCat === "all" || cats.includes(activeCat);
-      const statusOk = activeStatus === "all" || (activeStatus === "conflict" ? card.dataset.conflict === "1" : status === activeStatus);
+      const statusOk = activeStatus === "all" || status === activeStatus;
       const searchOk = searchTerm === "" || searchBlob.includes(searchTerm);
       const show = catOk && statusOk && searchOk;
       card.hidden = !show;
