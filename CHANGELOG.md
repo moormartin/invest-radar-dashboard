@@ -4,6 +4,18 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v20 — 05.09.2026
+
+Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System, gleiche Tiefe wie BTC/ETH/IONQ/NPCE/AVGO/NOW/MDT) für vier weitere Titel ergänzt: **ROBO Global Robotics & Automation ETF**, **Tesla (TSLA)**, **Rockwell Automation (ROK)** und **Global X Robotics & AI ETF (BOTZ)**.
+
+Methodik: eigene ZigZag-Pivot-/Fibonacci-Analyse aus je 500 Twelve-Data-Tagesschlusskursen (09.09.2024–04.09.2026) pro Titel, RSI(14)/MACD(12,26,9) live abgerufen, Analystenkonsens für die beiden Einzeltitel (TSLA, ROK) live per Web-Fetch aus stockanalysis.com verifiziert (für die zwei ETFs nicht verfügbar/nicht anwendbar).
+
+Bemerkenswerte Funde:
+- **ROBO**: Allzeithoch $90,51 (03.06.2026), Korrektur bis $75,76 (29.07.2026) mit Bounce nahezu exakt an der 61,8%-Fibo-Marke ($85,01 vs. berechnete $84,87). Aktueller Kurs testet die 23,6–38,2%-Zone der Gesamtrally seit dem Zoll-Crash-Tief $43,89 von oben.
+- **TSLA**: Seit dem Allzeithoch $498,83 (22.12.2025) läuft eine A-B-C-Korrektur mit auffälliger A=C-Symmetrie (Wellenlängen $155,58 bzw. $147,89, Verhältnis 0,95). Die Erholung auf $376,37 (03.09.) traf fast exakt die 38,2%-Marke der C-Welle, bevor ein enttäuschendes Cybercab-Launch-Event (kein Livestream, Musk abwesend) plus eine neu eröffnete NHTSA-Untersuchung zur Selbstzertifizierung den Kurs am 04.09.2026 um -5,9% auf $354,08 drückten — live per Websuche verifiziert und in die Analyse eingearbeitet.
+- **ROK**: Korrekturtief $417,53 (01.09.2026) traf nahe der 50%-Fibo-Marke ($422,93) der März-Juni-2026-Rally; am 04.09. vollzog der MACD ein frisches bullisches Signal-Crossover (Histogramm von -0,26 auf +0,50).
+- **BOTZ**: Erholungshoch $37,82 (13.08.2026) traf nahezu exakt die 50%-Fibo-Marke ($37,70) der Korrektur vom Allzeithoch $41,71; Kurs konsolidiert seither unterhalb der 38,2%-Marke.
+
 ## v19 — 05.09.2026
 
 Zwei UI-Bugs behoben:
