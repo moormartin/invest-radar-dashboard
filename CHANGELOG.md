@@ -4,6 +4,18 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v23 — 05.09.2026
+
+Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für vier weitere Titel ergänzt: **Nvidia (NVDA)**, **Microsoft (MSFT)**, **Palantir (PLTR)** und **Salesforce (CRM)**.
+
+Methodik: eigene ZigZag-Pivot-/Fibonacci-Analyse aus je 500 Twelve-Data-Tagesschlusskursen pro Titel, RSI(14)/MACD(12,26,9) live abgerufen, Analystenkonsens für alle vier live per Web-Fetch aus stockanalysis.com verifiziert. Alle Katalysatoren zusätzlich per Websuche gegengeprüft.
+
+Bemerkenswerte Funde:
+- **NVDA**: Q2-Zahlen am 26.08.2026 mit Rechenzentrumsumsatz +116,6% YoY (Rekordwert $89,02 Mrd., Blackwell-Ultra-Rampe) lösten einen +8,7%-Kurssprung aus. Die Korrektur vom Allzeithoch $236,54 zum Zwischentief $190,01 wurde dadurch vollständig aufgeholt — Kurs testet nun das Allzeithoch direkt (nur 2,6% entfernt).
+- **MSFT**: Kräftige +48%-Erholung vom 52-Wochen-Tief $349,20 auf das August-Hoch $517,78, das die eigene 78,6%-Fibo-Marke ($509,95) der Korrektur seit dem Allzeithoch $553,72 knapp überschritt. Aktuell Konsolidierung in der 61,8–78,6%-Zone.
+- **PLTR**: Rally vom Zyklustief $106,37 auf $187,94 (+76,7%) endete nahezu exakt an der eigenen 78,6%-Fibo-Marke ($185,87) — ein klassisches Topp-Muster. Der anschliessende scharfe Rücksetzer (-6% am 02.09., -4,5% am 04.09.) wurde durch Gewinnmitnahmen (Bewertung zeitweise 144x Gewinn) und geopolitisches Risk-off (US-Luftangriffe auf den Iran) ausgelöst — nicht durch unternehmensspezifisch negative News (neuer Army-TITAN-Vertrag, neue Führungskraft von AIG waren positiv).
+- **CRM**: Zwei aufeinanderfolgende Ergebnis-Beats (26.08. und 03.09.2026, getrieben von Agentforce/Data 360/Slack) katapultierten den Kurs in nur zehn Wochen um +83% vom 52-Wochen-Tief $146,32 bis auf $268,27 — nur 0,3% unter dem Allzeithoch $269,11 (25.07.2025). RSI(14) bei 76,6 deutlich überkauft; der Analystenkonsens (Ø-Kursziel $270,37) liegt praktisch exakt auf dem aktuellen Retest-Niveau.
+
 ## v22 — 05.09.2026
 
 Zwei UI-Fixes:
