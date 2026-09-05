@@ -91,8 +91,8 @@
   }
   .hero-inner{ max-width:1180px; margin:0 auto; position:relative; z-index:1; }
   .sweep{
-    position:absolute; top:-30%; right:-10%; width:640px; height:640px;
-    border-radius:50%;
+    position:absolute; top:-30%; right:-118px; width:640px; height:640px;
+    border-radius:50%; z-index:-1;
     background: conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--accent) 22%, transparent) 18deg, transparent 46deg, transparent 360deg);
     animation: spin 14s linear infinite;
     pointer-events:none;
@@ -458,8 +458,8 @@
 </style>
 
 <div class="hero">
-  <div class="sweep" aria-hidden="true"></div>
   <div class="hero-inner">
+    <div class="sweep" aria-hidden="true"></div>
     <div class="eyebrow"><span class="dot"></span> Marktradar · Zukunftstechnologien 2026&ndash;2035</div>
     <h1>Schwellenradar</h1>
     <p class="lede">41 Wertschriften an der technologischen Schwelle &mdash; BCI/Neurotech, KI-Agenten &amp; ASI, humanoide Robotik, Quantencomputing, Biotech/Pharma, Krypto/CBDC &mdash; gefiltert auf Handelbarkeit über eToro oder Yuh, eingeordnet mit einer Elliott-Wave-Heuristik, RSI/MACD/Squeeze-Indikatoren und öffentlich auffindbaren Analysten-Stimmen (u.&nbsp;a. HKCM).</p>
@@ -1097,6 +1097,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v19", date:"05.09.2026", kind:"manual", summary:"Zwei UI-Bugs behoben: (1) Die rotierende Sweep-Animation im Hero-Bereich war auf breiten Bildschirmen kaum sichtbar, da ihre Position (&bdquo;right:-10%&ldquo;) relativ zum vollen, breiten Hero-Container statt zur zentrierten, schmaleren Inhaltsspalte berechnet wurde &mdash; die Animation ist jetzt an die Inhaltsspalte gebunden (fester Versatz, korrekte Stapelreihenfolge) und dadurch auf jeder Bildschirmbreite sichtbar. (2) Im Detailanalyse-Overlay lief beim Scrollen der Seiteninhalt unter dem eigentlich sticky positionierten Header durch, weil &mdash; anders als bei den übrigen Modals (Impressum, Story/Vision) &mdash; das Sperren des Hintergrund-Scrolls (&bdquo;body overflow:hidden&ldquo;) beim Öffnen vergessen worden war; dadurch scrollte die Hintergrundseite unkontrolliert mit. Jetzt wird der Hintergrund beim Öffnen der Detailanalyse korrekt gesperrt (und beim Schliessen wieder freigegeben), sodass ausschliesslich das Overlay selbst scrollt." },
     { version:"v18", date:"05.09.2026", kind:"manual", summary:"Neue Seite portfolio.html ergänzt: eigenes, echtes Portfolio seit Investment-Start (heute) mit Performance, Gewinn/Verlust nach Sparte und Titel, Kuchendiagramm der Positionsverteilung, sowie einer Trefferquote der Prognose (nicht zu verwechseln mit &bdquo;Kauf in Zone?&ldquo;: prüft retrospektiv anhand der vollständigen Kurshistorie, ob die berechnete Einstiegszone seit ihrer Entstehung &mdash; relativ zum jeweiligen Allzeithoch, ohne Lookahead-Bias &mdash; tatsächlich als Boden hielt und danach ein Kursanstieg folgte). Erste zwei Trades erfasst: NeuroPace (NPCE, $100, Kauf $0,06 ausserhalb der Zielzone, Prognose bislang &bdquo;Treffer&ldquo; mit +17,8% seit Zonentest) und Broadcom (AVGO, $100, Kauf innerhalb der Zielzone, Prognose noch &bdquo;offen&ldquo;). Von der Hauptseite aus verlinkt (&bdquo;💼 Mein Portfolio&ldquo;)." },
     { version:"v17", date:"05.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für Broadcom (AVGO), ServiceNow (NOW) und Medtronic (MDT) ergänzt. Eigene ZigZag-Analysen zeigen bei allen drei Titeln reale, klare Fibonacci-Konfluenzen: AVGO testet die 38,2%-Marke ($353,49) der Rally seit dem Zoll-Crash-Tief 04/2025 zweifach (26.08. und nach den Q3-Zahlen 02.09.); NOW erreichte mit dem Erholungshoch $147,99 fast exakt die 50%-Marke der 60%-Korrektur seit Sommer 2025; MDT überschritt soeben die 61,8%-Marke der M&amp;A-Gerüchte-Korrektur (Boston Scientific). Analystenkonsens für alle drei live per Web-Fetch verifiziert (stockanalysis.com) &mdash; bei AVGO und NOW dabei auffällige Daten-Qualitätshinweise entdeckt und explizit vermerkt (AVGO: extrem breite Zielspanne $215,88&ndash;$715; NOW: Konsens-Ø liegt praktisch auf dem aktuellen Kurs trotz &bdquo;Strong Buy&ldquo;)." },
     { version:"v16", date:"05.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für NeuroPace (NPCE) ergänzt &mdash; zweiter Pilot-Titel nach IONQ. Eigene ZigZag-Analyse (500 Tagesschlusskurse) zeigt vier ähnlich geformte Korrektur-Rally-Zyklen seit dem IPO-nahen Tief $7,14 (11.2024); die eigene 38,2&ndash;61,8&thinsp;%-Fibonacci-Zone ($11,90&ndash;$14,84) wurde vom jüngsten Korrekturtief ($12,89) sauber getroffen. Analystenkonsens erstmals live per Web-Fetch aus zwei unabhängigen Quellen (stockanalysis.com, TradingView) verifiziert: 9 Analysten, &bdquo;Strong Buy&ldquo;, Kursziel-Ø $20,22. Ausserdem zwei Konsistenz-Fixes über alle Detailanalysen (BTC/ETH/IONQ/NPCE): CRV-Verhältnis wird jetzt als Chance:Risiko (z.&nbsp;B. &bdquo;3,8:1&ldquo;) statt Risiko:Chance angezeigt, passend zur Bezeichnung &bdquo;Chance-Risiko-Verhältnis&ldquo;; &bdquo;HKCM-Abgleich&ldquo; in &bdquo;Sentiment-Abgleich&ldquo; umbenannt, da diese Sektion nicht mehr ausschliesslich HKCM-Quellen abdeckt." },
@@ -1706,10 +1707,13 @@
         <div class="dd-section"><h4>Timing (Multi-Timeframe-Konfluenz)</h4><p>${dd.timing}</p></div>
         <div class="dd-cross"><b>Sentiment-Abgleich:</b> ${dd.crossCheck}</div>
       </div>`;
-    document.getElementById('ddOverlay').hidden = false;
+    const ddOverlay = document.getElementById('ddOverlay');
+    ddOverlay.hidden = false;
+    ddOverlay.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
     document.getElementById('ddCloseBtn').addEventListener('click', closeDeepDive);
   }
-  function closeDeepDive(){ document.getElementById('ddOverlay').hidden = true; }
+  function closeDeepDive(){ document.getElementById('ddOverlay').hidden = true; document.body.style.overflow = ''; }
   document.getElementById('ddOverlay').addEventListener('click', (e) => { if(e.target.id === 'ddOverlay') closeDeepDive(); });
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeDeepDive(); });
 

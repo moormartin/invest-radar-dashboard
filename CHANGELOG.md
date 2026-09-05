@@ -4,6 +4,13 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v19 — 05.09.2026
+
+Zwei UI-Bugs behoben:
+
+1. **Sweep-Animation auf breiten Bildschirmen kaum sichtbar.** Die rotierende Sweep-Animation im Hero-Bereich (`.sweep`) war absolut relativ zum vollen `.hero`-Container positioniert (`right:-10%`), nicht relativ zur zentrierten, max. 1180px breiten Inhaltsspalte (`.hero-inner`). Auf breiten Viewports rückte sie dadurch weit nach rechts aus dem sichtbaren Bereich. Fix: `.sweep` ist jetzt Kind von `.hero-inner` (statt Geschwister-Element), mit festem Versatz (`right:-118px`) und `z-index:-1`, damit sie weiterhin hinter dem Text bleibt.
+2. **Detailanalyse-Modal: Inhalt läuft beim Scrollen unter dem sticky Header durch.** Anders als bei den übrigen Modals der Seite (Impressum, Story/Vision) fehlte beim Öffnen der Detailanalyse (`ddOverlay`) das Sperren des Hintergrund-Scrolls (`document.body.style.overflow = 'hidden'`). Dadurch konnte die Hintergrundseite parallel zum Overlay scrollen, was den Eindruck erweckte, der Inhalt liefe unter dem eigentlich korrekt sticky positionierten Header durch. Fix: Body-Scroll wird beim Öffnen gesperrt und beim Schliessen wieder freigegeben; Overlay-Scrollposition wird beim Öffnen zusätzlich zurückgesetzt.
+
 ## v13 — 04.09.2026
 
 Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System, gleiche Tiefe wie BTC/ETH) für **IonQ (IONQ)** ergänzt — als erster Pilot-Titel außerhalb Krypto, auf ausdrücklichen Wunsch zunächst nur für diesen einen Titel statt für alle 44.
