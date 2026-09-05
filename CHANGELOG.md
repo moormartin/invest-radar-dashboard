@@ -4,6 +4,18 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v21 — 05.09.2026
+
+Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für vier weitere Titel ergänzt: **Fetch.ai (FET)**, **Chainlink (LINK)**, **CRISPR Therapeutics (CRSP)** und **Boston Scientific (BSX)**.
+
+Methodik: eigene ZigZag-Pivot-/Fibonacci-Analyse aus je ~500 Twelve-Data-Tagesschlusskursen pro Titel, RSI(14)/MACD(12,26,9) live abgerufen, Analystenkonsens für die zwei Einzeltitel-Aktien (CRSP, BSX) live per Web-Fetch aus stockanalysis.com verifiziert (für die zwei Krypto-Titel nicht anwendbar).
+
+Bemerkenswerte Funde:
+- **FET**: Frischer +7,0%-Tagesgewinn am 05.09.2026 mit gleichzeitigem bullischem MACD-Crossover — ein erstes, noch unbestätigtes Momentum-Signal nach einer über ein Jahr andauernden, extrem tiefen Korrektur (-84% vom 52-Wochen-Hoch $0,698).
+- **LINK**: Kräftige +71%-Rally seit dem Zyklustief $6,996 (06.06.2026) auf $11,845, nähert sich der 38,2%-Fibo-Marke ($14,12) der Korrektur seit dem Allzeithoch $25,64. RSI mit 65,7 bereits erhöht — ein Rücksetzer vor Fortsetzung wäre technisch gesund.
+- **CRSP**: Fünfmonatige Range-Konsolidierung zwischen $44 und $62, deren Obergrenze seit April 2026 bereits dreimal getestet wurde (April/Juli/August) und nahezu exakt mit der eigenen 50%-Fibonacci-Marke ($61,30) der Korrektur seit dem Allzeithoch $78,48 zusammenfällt.
+- **BSX**: Neu eingeordnet — der ursprüngliche -61%-Absturz vom Allzeithoch $109,50 auf das Zyklustief $42,20 datiert bereits auf den 15.07.2026, also VOR dem am 26.08.2026 bekanntgewordenen Cyberangriff. Per Websuche (05.09.2026) wurde zusätzlich ein bislang nicht erfasster, eigenständiger Sicherheitsrückruf identifiziert: Die Infinion-CX-Rückenmarkstimulator-Elektroden sind inzwischen mit über 1.000 gemeldeten schweren Verletzungen verknüpft (Stand 04.09.2026), zusätzlich ein FDA-Klasse-I-Rückruf des ENROUTE-Systems. Gegenläufig dazu: Laut Unternehmens-Update vom 03.09.2026 ist die Versandfähigkeit an den meisten Distributionszentren nach dem Cyberangriff bereits grösstenteils wiederhergestellt. Der Analystenkonsens (31 Analysten, "Buy", Ø-Kursziel $62,69) bleibt trotz der laufenden Doppelkrise bemerkenswert bullisch.
+
 ## v20 — 05.09.2026
 
 Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System, gleiche Tiefe wie BTC/ETH/IONQ/NPCE/AVGO/NOW/MDT) für vier weitere Titel ergänzt: **ROBO Global Robotics & Automation ETF**, **Tesla (TSLA)**, **Rockwell Automation (ROK)** und **Global X Robotics & AI ETF (BOTZ)**.
