@@ -1,0 +1,363 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Portfolio &middot; Schwellenradar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#EEF1F5; --surface:#FFFFFF; --surface-2:#E3E8EE; --border:#CBD3DC;
+    --ink:#131B24; --ink-soft:#55606C; --ink-faint:#8391A0;
+    --accent:#0E7C86; --accent-ink:#04353A; --accent-soft:#D7EEF0;
+    --good:#1F7A4D; --good-soft:#DCEFE3;
+    --warn:#96650F; --warn-soft:#F5EAD2;
+    --bad:#AD3527; --bad-soft:#F6DEDA;
+    --shadow: 0 1px 2px rgba(19,27,36,.06), 0 8px 24px -12px rgba(19,27,36,.18);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B121A; --surface:#121B25; --surface-2:#1A2530; --border:#2A3A47;
+      --ink:#E7EDF2; --ink-soft:#9AA8B4; --ink-faint:#66757F;
+      --accent:#39BCC6; --accent-ink:#DFF7F8; --accent-soft:#123338;
+      --good:#4FCB8E; --good-soft:#153524;
+      --warn:#E3B455; --warn-soft:#392B10;
+      --bad:#E67362; --bad-soft:#3A1B16;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B121A; --surface:#121B25; --surface-2:#1A2530; --border:#2A3A47;
+    --ink:#E7EDF2; --ink-soft:#9AA8B4; --ink-faint:#66757F;
+    --accent:#39BCC6; --accent-ink:#DFF7F8; --accent-soft:#123338;
+    --good:#4FCB8E; --good-soft:#153524;
+    --warn:#E3B455; --warn-soft:#392B10;
+    --bad:#E67362; --bad-soft:#3A1B16;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', system-ui, sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a{ color:var(--accent); }
+  h1,h2,h3{ text-wrap:balance; font-family:'Big Shoulders Display', 'IBM Plex Sans', sans-serif; letter-spacing:.01em; }
+  .num{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px 96px; }
+
+  .hero{ padding:40px 24px 28px; border-bottom:1px solid var(--border); background:var(--surface); }
+  .hero-inner{ max-width:1180px; margin:0 auto; }
+  .back-link{ font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:var(--ink-soft); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px; }
+  .back-link:hover{ color:var(--accent); }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:99px; background:var(--accent); }
+  h1{ font-size:2.4rem; margin:0 0 10px; font-weight:700; }
+  .lede{ max-width:760px; color:var(--ink-soft); margin:0; font-size:.95rem; }
+  .disclaimer{ border:1px solid var(--border); border-left:3px solid var(--warn); background:var(--warn-soft); border-radius:8px; padding:12px 16px; font-size:.82rem; line-height:1.55; margin-top:18px; max-width:900px; color:var(--ink); }
+
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:28px 0; }
+  .stat{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); padding:16px 18px; box-shadow:var(--shadow); }
+  .stat .n{ font-family:'Big Shoulders Display'; font-size:1.9rem; font-weight:700; line-height:1; }
+  .stat .l{ font-size:.76rem; color:var(--ink-soft); margin-top:6px; }
+  .stat.good .n{ color:var(--good); } .stat.bad .n{ color:var(--bad); } .stat.warn .n{ color:var(--warn); }
+
+  section{ margin:40px 0; }
+  section h2{ font-size:1.4rem; margin:0 0 14px; }
+  section .section-note{ font-size:.82rem; color:var(--ink-soft); margin:-8px 0 16px; max-width:820px; }
+
+  table{ width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  th,td{ padding:11px 14px; text-align:right; border-bottom:1px solid var(--border); font-size:.85rem; }
+  th:first-child,td:first-child{ text-align:left; }
+  th:nth-child(2),td:nth-child(2){ text-align:left; }
+  th{ background:var(--surface-2); font-family:'IBM Plex Mono',monospace; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:600; }
+  tr:last-child td{ border-bottom:none; }
+  .ticker-cell{ font-family:'IBM Plex Mono',monospace; font-weight:700; }
+  .pl-pos{ color:var(--good); } .pl-neg{ color:var(--bad); } .pl-flat{ color:var(--ink-soft); }
+  .zone-badge{ font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:99px; display:inline-block; }
+  .zone-badge.in{ background:var(--good-soft); color:var(--good); }
+  .zone-badge.out{ background:var(--warn-soft); color:var(--warn); }
+  .cat-tag{ font-family:'IBM Plex Mono',monospace; font-size:.68rem; padding:2px 8px; border-radius:6px; background:var(--surface-2); color:var(--ink-soft); }
+
+  .verdict-badge{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:99px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  .verdict-badge.hit{ background:var(--good-soft); color:var(--good); }
+  .verdict-badge.open{ background:var(--warn-soft); color:var(--warn); }
+  .verdict-badge.miss{ background:var(--bad-soft); color:var(--bad); }
+  .prognosis-card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); padding:16px 20px; margin-bottom:12px; }
+  .prognosis-card .ph{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+  .prognosis-card .ph b{ font-family:'IBM Plex Mono',monospace; font-size:1rem; }
+  .prognosis-card .pf{ display:flex; flex-wrap:wrap; gap:18px; font-size:.8rem; color:var(--ink-soft); margin-bottom:10px; }
+  .prognosis-card .pf b{ color:var(--ink); font-family:'IBM Plex Mono',monospace; }
+  .prognosis-card .pn{ font-size:.83rem; color:var(--ink-soft); line-height:1.5; }
+
+  .empty-note{ border:1px dashed var(--border); border-radius:var(--radius); padding:28px; text-align:center; color:var(--ink-faint); font-size:.85rem; }
+
+  .pie-wrap{ display:flex; gap:32px; flex-wrap:wrap; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; }
+  .pie-legend{ flex:1; min-width:220px; display:flex; flex-direction:column; gap:10px; }
+  .pie-legend-row{ display:flex; align-items:center; gap:10px; font-size:.85rem; }
+  .pie-swatch{ width:12px; height:12px; border-radius:3px; flex:none; }
+  .pie-legend-row .pl-ticker{ font-family:'IBM Plex Mono',monospace; font-weight:700; min-width:52px; }
+  .pie-legend-row .pl-val{ margin-left:auto; font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); }
+
+  footer{ max-width:1180px; margin:56px auto 0; padding:24px; border-top:1px solid var(--border); font-size:.78rem; color:var(--ink-faint); }
+</style>
+
+<div class="hero">
+  <div class="hero-inner">
+    <a class="back-link" href="/">&larr; Zurück zum Schwellenradar</a>
+    <div class="eyebrow"><span class="dot"></span> Marktradar &middot; Eigenes Portfolio</div>
+    <h1>Portfolio</h1>
+    <p class="lede">Performance des eigenen Portfolios seit Investment-Start am <span id="startDateLabel"></span> &mdash; Gewinn/Verlust nach Sparte und Titel, plus Trefferquote der im Schwellenradar berechneten Einstiegszonen anhand der eigenen, echten Käufe.</p>
+    <div class="disclaimer">
+      <strong>Kein Anlagerat.</strong> Diese Seite dokumentiert eigene, tatsächlich getätigte Käufe zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse sind Momentaufnahmen der letzten verfügbaren Twelve-Data-Schlusskurse und werden manuell gepflegt, nicht live nachgeführt. Käufe/Verkäufe werden von Hand im Code erfasst, sobald sie tatsächlich stattfinden.
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="stats" id="overviewStats"></div>
+
+  <section>
+    <h2>Positionen</h2>
+    <div id="positionsTableWrap"></div>
+  </section>
+
+  <section>
+    <h2>Gewinn/Verlust nach Sparte</h2>
+    <div id="sparteTableWrap"></div>
+  </section>
+
+  <section>
+    <h2>Portfolio-Verteilung</h2>
+    <p class="section-note">Aktueller Wert je Position, absolut und in Prozent des Gesamtportfolios.</p>
+    <div id="pieChartWrap"></div>
+  </section>
+
+  <section>
+    <h2>Trefferquote der Prognose</h2>
+    <p class="section-note">Nicht zu verwechseln mit &bdquo;Kauf in Zone?&ldquo; oben (das misst nur den eigenen Kaufzeitpunkt). Hier geht es um die Prognose selbst: Hat die berechnete Einstiegszone seit ihrer Entstehung (relativ zum jeweiligen Allzeithoch) tatsächlich als Boden gehalten, und gab es danach einen echten Kursanstieg? Basiert auf der vollständigen Kurshistorie der gehaltenen Titel, nicht nur auf dem eigenen Kaufdatum &mdash; und ausschliesslich auf den eigenen Trades unten, kein Backtest über alle 41 Titel.</p>
+    <div id="hitrateWrap"></div>
+  </section>
+</div>
+
+<footer>
+  Teil des <a href="/">Schwellenradar</a>-Dashboards &middot; Marktradar / Invest-Radar Dashboard
+</footer>
+
+<script>
+  // =====================================================================
+  // TRADES — eigene, tatsächlich getätigte Käufe/Verkäufe.
+  // Neue Trades hier manuell ergänzen (unshift oder push), sobald sie
+  // wirklich stattfinden. currentPrice muss von Hand mit dem jeweils
+  // aktuellsten Kurs aus index.html synchron gehalten werden (bewusste
+  // Dopplung für dieses kleine Portfolio — bei deutlich mehr Positionen
+  // wäre eine gemeinsame data.js für index.html + portfolio.html sinnvoller).
+  // entryLow/entryHigh = die zum Kaufzeitpunkt im Schwellenradar
+  // berechnete Einstiegszone für diesen Titel (für die Trefferquote unten).
+  // =====================================================================
+  const TRADES = [
+    {
+      ticker:"NPCE", name:"NeuroPace, Inc.", sparte:"BCI / Neurotech",
+      buyDate:"05.09.2026", buyDateNote:"Wochenende &mdash; ausgeführt zum letzten Schlusskurs vom 04.09.2026",
+      usdAmount:100, buyPrice:14.90,
+      currentPrice:14.90, currentPriceAsOf:"04.09.2026",
+      entryLow:11.90, entryHigh:14.84,
+      // Rückblick auf die PROGNOSE (nicht auf den eigenen Kauf): seit wann gilt diese Zone
+      // (berechnet relativ zum Allzeithoch $19,60 vom 08.05.2026 — Tests davor zählen nicht,
+      // da die Zone zu diesem Zeitpunkt rechnerisch noch gar nicht existierte), wurde sie seither
+      // getestet, hat der Boden gehalten, und gab es danach tatsächlich einen Anstieg?
+      zoneValidSince:"08.05.2026", zoneValidSinceNote:"Allzeithoch, ab dem die Zone berechnet wird",
+      zoneTestDate:"31.07.2026", zoneTestLow:12.89, brokeFloor:false,
+      postTestHigh:15.19, postTestHighDate:"02.09.2026",
+      verdict:"hit",
+      verdictNote:"Boden hielt, Kurs stieg danach um +17,8% auf ein neues Verlaufshoch ($15,19, 02.09.) &mdash; Prognose bislang bestätigt."
+    },
+    {
+      ticker:"AVGO", name:"Broadcom Inc.", sparte:"KI-Agenten / ASI",
+      buyDate:"05.09.2026", buyDateNote:"Wochenende &mdash; ausgeführt zum letzten Schlusskurs vom 04.09.2026",
+      usdAmount:100, buyPrice:357.90,
+      currentPrice:357.90, currentPriceAsOf:"04.09.2026",
+      entryLow:345, entryHigh:370,
+      zoneValidSince:"02.06.2026", zoneValidSinceNote:"Allzeithoch, ab dem die Zone berechnet wird",
+      zoneTestDate:"26.08.2026", zoneTestLow:355.59, brokeFloor:false,
+      postTestHigh:371.54, postTestHighDate:"27.08.2026",
+      verdict:"open",
+      verdictNote:"Boden hielt bislang zweimal (26.08. und erneut nach den Q3-Zahlen am 03.09.), moderater Anstieg von nur +4,5% nach dem ersten Test &mdash; aktuell erneuter Test derselben Zone, ein klarer Ausbruch nach oben ist noch nicht bestätigt."
+    }
+  ];
+
+  const START_DATE = "05.09.2026";
+
+  function fmtUSD(n){
+    return "$" + n.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtPct(n){
+    const s = n > 0 ? "+" : "";
+    return s + n.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2}) + "%";
+  }
+  function plClass(n){ return n > 0.001 ? "pl-pos" : n < -0.001 ? "pl-neg" : "pl-flat"; }
+
+  document.getElementById('startDateLabel').textContent = START_DATE;
+
+  const rows = TRADES.map(t => {
+    const shares = t.usdAmount / t.buyPrice;
+    const currentValue = shares * t.currentPrice;
+    const plUsd = currentValue - t.usdAmount;
+    const plPct = (plUsd / t.usdAmount) * 100;
+    const inZone = t.buyPrice >= t.entryLow && t.buyPrice <= t.entryHigh;
+    return { ...t, shares, currentValue, plUsd, plPct, inZone };
+  });
+
+  // ---- Overview ----
+  const totalInvested = rows.reduce((s,r) => s + r.usdAmount, 0);
+  const totalValue = rows.reduce((s,r) => s + r.currentValue, 0);
+  const totalPl = totalValue - totalInvested;
+  const totalPlPct = totalInvested ? (totalPl / totalInvested) * 100 : 0;
+  const hitCount = rows.filter(r => r.inZone).length;
+  const hitRate = rows.length ? (hitCount / rows.length) * 100 : 0;
+
+  document.getElementById('overviewStats').innerHTML = `
+    <div class="stat"><div class="n num">${fmtUSD(totalInvested)}</div><div class="l">Investiert gesamt</div></div>
+    <div class="stat"><div class="n num">${fmtUSD(totalValue)}</div><div class="l">Aktueller Wert</div></div>
+    <div class="stat ${totalPl>0.001?'good':totalPl<-0.001?'bad':''}"><div class="n num">${fmtUSD(totalPl)}</div><div class="l">Gewinn/Verlust</div></div>
+    <div class="stat ${totalPlPct>0.001?'good':totalPlPct<-0.001?'bad':''}"><div class="n num">${fmtPct(totalPlPct)}</div><div class="l">Performance</div></div>
+    <div class="stat"><div class="n num">${rows.length}</div><div class="l">Offene Positionen</div></div>
+    <div class="stat ${hitRate>=50?'good':'warn'}"><div class="n num">${hitCount}/${rows.length}</div><div class="l">Käufe in Zielzone</div></div>
+  `;
+
+  // ---- Positions table ----
+  if(rows.length === 0){
+    document.getElementById('positionsTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+  } else {
+    document.getElementById('positionsTableWrap').innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Sparte</th><th>Kaufdatum</th><th>Kaufkurs</th><th>Kurs aktuell</th>
+          <th>Anteile</th><th>Kaufwert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th><th>Kauf in Zone?</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td class="ticker-cell">${r.ticker}</td>
+              <td>${r.name}</td>
+              <td><span class="cat-tag">${r.sparte}</span></td>
+              <td class="num">${r.buyDate}</td>
+              <td class="num">${fmtUSD(r.buyPrice)}</td>
+              <td class="num">${fmtUSD(r.currentPrice)}</td>
+              <td class="num">${r.shares.toFixed(4)}</td>
+              <td class="num">${fmtUSD(r.usdAmount)}</td>
+              <td class="num">${fmtUSD(r.currentValue)}</td>
+              <td class="num ${plClass(r.plUsd)}">${fmtUSD(r.plUsd)}</td>
+              <td class="num ${plClass(r.plPct)}">${fmtPct(r.plPct)}</td>
+              <td>${r.inZone ? '<span class="zone-badge in">✓ in Zone</span>' : '<span class="zone-badge out">✗ ausserhalb</span>'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <p class="section-note" style="margin-top:10px;">Kurs aktuell jeweils Stand ${rows[0].currentPriceAsOf} (letzter Handelstag vor Wochenende) &mdash; ${rows[0].buyDateNote}</p>
+    `;
+  }
+
+  // ---- P&L by Sparte ----
+  const sparteMap = {};
+  rows.forEach(r => {
+    if(!sparteMap[r.sparte]) sparteMap[r.sparte] = { invested:0, value:0, count:0 };
+    sparteMap[r.sparte].invested += r.usdAmount;
+    sparteMap[r.sparte].value += r.currentValue;
+    sparteMap[r.sparte].count += 1;
+  });
+  const sparteRows = Object.entries(sparteMap).map(([name, d]) => {
+    const pl = d.value - d.invested;
+    const plPct = d.invested ? (pl / d.invested) * 100 : 0;
+    return { name, ...d, pl, plPct };
+  });
+  if(sparteRows.length === 0){
+    document.getElementById('sparteTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+  } else {
+    document.getElementById('sparteTableWrap').innerHTML = `
+      <table>
+        <thead><tr><th>Sparte</th><th>Titel</th><th>Investiert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th></tr></thead>
+        <tbody>
+          ${sparteRows.map(s => `
+            <tr>
+              <td>${s.name}</td>
+              <td class="num">${s.count}</td>
+              <td class="num">${fmtUSD(s.invested)}</td>
+              <td class="num">${fmtUSD(s.value)}</td>
+              <td class="num ${plClass(s.pl)}">${fmtUSD(s.pl)}</td>
+              <td class="num ${plClass(s.plPct)}">${fmtPct(s.plPct)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // ---- Prognosis hit-rate detail (retrospektiv: hielt der Boden, gab es einen Anstieg?) ----
+  const VERDICT_LABEL = { hit:"✓ Treffer", open:"◐ Offen", miss:"✗ Fehlschlag" };
+  if(rows.length === 0){
+    document.getElementById('hitrateWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+  } else {
+    const verdictCounts = { hit:0, open:0, miss:0 };
+    rows.forEach(r => verdictCounts[r.verdict]++);
+    document.getElementById('hitrateWrap').innerHTML = `
+      ${rows.map(r => {
+        const riseSincePct = ((r.postTestHigh - r.zoneTestLow) / r.zoneTestLow) * 100;
+        return `
+        <div class="prognosis-card">
+          <div class="ph">
+            <b>${r.ticker} &middot; ${r.name}</b>
+            <span class="verdict-badge ${r.verdict}">${VERDICT_LABEL[r.verdict]}</span>
+          </div>
+          <div class="pf">
+            <span>Zone gültig seit <b>${r.zoneValidSince}</b> <span style="color:var(--ink-faint)">(${r.zoneValidSinceNote})</span></span>
+            <span>Zonentest am <b>${r.zoneTestDate}</b> bei <b>${fmtUSD(r.zoneTestLow)}</b></span>
+            <span>Boden gehalten: <b>${r.brokeFloor ? 'Nein — Zone durchbrochen' : 'Ja'}</b></span>
+            <span>Höchststand danach: <b>${fmtUSD(r.postTestHigh)}</b> (${r.postTestHighDate}, ${fmtPct(riseSincePct)})</span>
+          </div>
+          <div class="pn">${r.verdictNote}</div>
+        </div>
+      `; }).join('')}
+      <p class="section-note" style="margin-top:14px;">Bilanz: <strong>${verdictCounts.hit} Treffer</strong>, <strong>${verdictCounts.open} offen</strong>, <strong>${verdictCounts.miss} Fehlschlag</strong> von ${rows.length} Prognosen. Mit nur ${rows.length} Trades statistisch noch wenig aussagekräftig &mdash; wächst mit jedem weiteren erfassten Kauf.</p>
+    `;
+  }
+
+  // ---- Pie chart: Portfolio-Verteilung nach Wert ----
+  const PIE_PALETTE = ['#0E7C86','#96650F','#AD3527','#4A6FA5','#7A5C9E','#2E8B57','#C2185B','#5C6BC0'];
+  function polarToCartesian(cx, cy, r, angleDeg){
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+  function describeArc(cx, cy, r, startAngle, endAngle){
+    if(endAngle - startAngle >= 359.999) endAngle = startAngle + 359.999; // full circle guard
+    const start = polarToCartesian(cx, cy, r, startAngle);
+    const end = polarToCartesian(cx, cy, r, endAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    return `M ${cx} ${cy} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
+  }
+  if(rows.length === 0){
+    document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+  } else {
+    const cx = 110, cy = 110, r = 100;
+    let angle = 0;
+    const slices = rows.map((r_, i) => {
+      const pct = totalValue ? (r_.currentValue / totalValue) * 100 : 0;
+      const sweep = totalValue ? (r_.currentValue / totalValue) * 360 : 0;
+      const path = describeArc(cx, cy, r, angle, angle + sweep);
+      angle += sweep;
+      return { ticker:r_.ticker, name:r_.name, value:r_.currentValue, pct, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+    });
+    document.getElementById('pieChartWrap').innerHTML = `
+      <div class="pie-wrap">
+        <svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Portfolio-Verteilung nach Wert">
+          ${slices.map(s => `<path d="${s.path}" fill="${s.color}" stroke="var(--surface)" stroke-width="2" />`).join('')}
+        </svg>
+        <div class="pie-legend">
+          ${slices.map(s => `
+            <div class="pie-legend-row">
+              <span class="pie-swatch" style="background:${s.color}"></span>
+              <span class="pl-ticker">${s.ticker}</span>
+              <span>${s.name}</span>
+              <span class="pl-val num">${fmtUSD(s.value)} &middot; ${s.pct.toFixed(1)}%</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+</script>
+</body></html>
