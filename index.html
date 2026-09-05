@@ -172,6 +172,24 @@
     padding:2px 7px; border-radius:5px; background:var(--surface-2); color:var(--ink-faint);
   }
   .changelog-entry .cl-kind.auto{ background:var(--accent-soft); color:var(--accent-ink); }
+  .changelog-entry .cl-tickers{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .changelog-entry .cl-ticker-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:700;
+    padding:2px 8px; border-radius:6px; background:var(--surface-2); color:var(--ink-soft);
+    border:1px solid var(--border);
+  }
+
+  .job-status-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
+    padding:7px 13px; border-radius:99px; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  }
+  .job-status-pill:hover{ border-color:var(--accent); color:var(--accent); }
+  .job-status-pill .dot{
+    width:7px; height:7px; border-radius:99px; background:var(--good); display:inline-block; flex:none;
+  }
+  .job-status-pill.stale .dot{ background:var(--warn); }
+  .job-status-pill .job-status-detail{ color:var(--ink-faint); font-weight:400; }
 
   /* ---------- YouTube-Watch (automatisch erkannte, noch offene Videos) ---------- */
   .yt-watch{
@@ -451,6 +469,7 @@
     <div class="stats" id="stats"></div>
     <div class="changelog-row">
       <button class="changelog-toggle" id="changelogToggle" aria-expanded="false">🕘 Was ist neu? <span class="changelog-badge" id="changelogBadge"></span></button>
+      <button class="job-status-pill" id="jobStatusPill" aria-expanded="false"></button>
     </div>
     <div class="changelog-panel" id="changelogPanel" hidden></div>
   </div>
@@ -1114,8 +1133,9 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
-    { version:"Sync-05.09.2026", date:"05.09.2026", kind:"auto", summary:"IONQ-Detailanalyse aktualisiert (Twelve Data): Letzter Handelstag bleibt Freitag, 04.09.2026 (Wochenende, keine neue Kerze) &mdash; Schlusskurs jetzt final bei $39,52 (statt Intraday-Schnappschuss $39,05 vom Vortag), RSI(14) 46,4 (neutral), MACD -0,886 weiterhin unter Signallinie -0,505 (Hist. -0,381). Kein neuer zonenrelevanter Pivot seit dem letzten Lauf (Zwischenhoch $46,84 am 17.08., Rücksetzer bis $37,64 am 02.09., weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert, Kurschart neu aus 500 Tagesschlusskursen generiert." },
-    { version:"Sync-04.09.2026", date:"04.09.2026", kind:"auto", summary:"IONQ-Detailanalyse aktualisiert (Twelve Data live): Kurs $39,05 (RSI(14) 45,3, MACD -0,923 weiterhin unter Signallinie -0,513), Kurschart neu aus 500 Tagesschlusskursen generiert. Zwischenzeitlicher Rücksetzer auf $37,64 (02.09.) blieb deutlich über der Ziel-/Long-Zone ($25,89&ndash;$33,38) und den Invalidierungsmarken ($25,77 bzw. $54,76) &mdash; kein neuer zonenrelevanter Pivot, Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert." },
+    { version:"v14", date:"05.09.2026", kind:"manual", summary:"Job-Status-Anzeige ergänzt: Eine Pill neben &bdquo;Was ist neu?&ldquo; zeigt Datum und betroffene Titel des letzten automatisierten Syncs; Changelog-Einträge mit kind:'auto' zeigen jetzt die aktualisierten Ticker als Chips. Ausserdem einen Versions-Namenskonflikt zwischen dem alten (Sync-04.09.2026, historisch) und dem neuen IONQ-Sync-Lauf behoben (umbenannt auf Sync-04.09.2026-IONQ)." },
+    { version:"Sync-05.09.2026", date:"05.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse aktualisiert (Twelve Data): Letzter Handelstag bleibt Freitag, 04.09.2026 (Wochenende, keine neue Kerze) &mdash; Schlusskurs jetzt final bei $39,52 (statt Intraday-Schnappschuss $39,05 vom Vortag), RSI(14) 46,4 (neutral), MACD -0,886 weiterhin unter Signallinie -0,505 (Hist. -0,381). Kein neuer zonenrelevanter Pivot seit dem letzten Lauf (Zwischenhoch $46,84 am 17.08., Rücksetzer bis $37,64 am 02.09., weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert, Kurschart neu aus 500 Tagesschlusskursen generiert." },
+    { version:"Sync-04.09.2026-IONQ", date:"04.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse aktualisiert (Twelve Data live): Kurs $39,05 (RSI(14) 45,3, MACD -0,923 weiterhin unter Signallinie -0,513), Kurschart neu aus 500 Tagesschlusskursen generiert. Zwischenzeitlicher Rücksetzer auf $37,64 (02.09.) blieb deutlich über der Ziel-/Long-Zone ($25,89&ndash;$33,38) und den Invalidierungsmarken ($25,77 bzw. $54,76) &mdash; kein neuer zonenrelevanter Pivot, Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert." },
     { version:"v13", date:"04.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System, wie bei BTC/ETH) für IonQ (IONQ) ergänzt &mdash; als erster Pilot-Titel ausserhalb Krypto. Eigene ZigZag-Pivot-Analyse aus 500 Twelve-Data-Tagesschlusskursen (09.09.2024&ndash;04.09.2026): Die unabhängig berechnete 78,6&ndash;88,6&thinsp;%-Fibonacci-Zone der Welle (I) ($25,84&ndash;$32,47) deckt sich auf unter 3% mit der bereits zitierten ElliottWave-Forecast-Zielzone ($25,77&ndash;$33,38), die seit Februar 2026 bereits dreimal getestet wurde &mdash; inkl. einer echten bullischen RSI-Divergenz am März-Tief. Primär-/Alternativszenario, CRV, Wachstumsszenarien und Chart mit Zielzonen ergänzt; Live-Zahlen (Kurs/RSI/MACD) aktualisiert." },
     { version:"v12", date:"04.09.2026", kind:"manual", summary:"Detailanalyse-Chart (BTC/ETH) um Achsenbeschriftung erweitert: grobe horizontale Zeitskala (Monats-/Jahresmarken) und grobe vertikale Wertskala (gerundete Kurs-Ticks) hinzugefügt; der aktuelle exakte Kursstand wird jetzt direkt als Zahl am Graphen-Endpunkt angezeigt." },
     { version:"v11", date:"04.09.2026", kind:"manual", summary:"Datenqualitäts-Fixes: BTC zeigte fälschlich &bdquo;Trotz Preis in der Zone auf Beobachten eingestuft&ldquo;, obwohl der Kurs ($79.616) weit über der Zielzone ($28.530&ndash;$40.030) liegt &mdash; Ursache behoben (Downgrade-Hinweis wird jetzt nur noch angezeigt, wenn der Preis tatsächlich in der Einstiegszone liegt; betraf auch NVO als Grenzfall). Squeeze-Momentum-Indikator wurde bisher auf allen 44 Kacheln als &bdquo;n/v&ldquo;-Platzhalter angezeigt, obwohl nur bei TSLA echte Daten vorliegen &mdash; wird jetzt nur noch gezeigt, wenn tatsächlich verfügbar. KAS: MACD-Wert war unbelegt (&bdquo;kein exakter Wert verifiziert&ldquo;) und wurde als &bdquo;Neutral&ldquo; dargestellt &mdash; jetzt ausgeblendet; RSI-Label korrigiert von RSI(14) auf RSI(7), da nur ein 7-Tage-Wert vorliegt." },
@@ -1631,13 +1651,29 @@
         <span class="cl-kind ${c.kind === 'auto' ? 'auto' : ''}">${c.kind === 'auto' ? 'automatisch' : 'geprüft'}</span>
       </div>
       <div class="cl-summary">${c.summary}</div>
+      ${c.tickers && c.tickers.length ? `<div class="cl-tickers">${c.tickers.map(t => `<span class="cl-ticker-chip">${t}</span>`).join('')}</div>` : ''}
     </div>
   `).join("");
-  changelogToggle.addEventListener('click', () => {
+  function toggleChangelog(){
     const open = !changelogPanel.hidden;
     changelogPanel.hidden = open;
     changelogToggle.setAttribute('aria-expanded', String(!open));
-  });
+    jobStatusPill.setAttribute('aria-expanded', String(!open));
+  }
+  changelogToggle.addEventListener('click', toggleChangelog);
+
+  // ---- Job-Status (letzter automatisierter Sync-Lauf) ----
+  const jobStatusPill = document.getElementById('jobStatusPill');
+  const autoRuns = CHANGELOG.filter(c => c.kind === 'auto');
+  if(autoRuns.length){
+    const last = autoRuns[0];
+    const tickerCount = last.tickers ? last.tickers.length : 0;
+    const tickerLabel = tickerCount === 1 ? `${last.tickers[0]}` : (tickerCount > 1 ? `${tickerCount} Titel` : '');
+    jobStatusPill.innerHTML = `<span class="dot"></span>Sync: ${last.date}${tickerLabel ? ` <span class="job-status-detail">&middot; ${tickerLabel}</span>` : ''}`;
+  } else {
+    jobStatusPill.innerHTML = `<span class="dot"></span>Noch kein automatischer Sync gelaufen`;
+  }
+  jobStatusPill.addEventListener('click', toggleChangelog);
 
   // ---- YouTube-Watch (automatisch gefundene, offene Videos) ----
   const ytWatchWrap = document.getElementById('ytWatchWrap');
