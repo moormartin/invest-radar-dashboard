@@ -4,6 +4,14 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v28 — 07.09.2026
+
+**Kaspa (KAS) Detailanalyse um eine reale Video-Quelle ergänzt.** Nutzer teilte einen Link zu STA Solutions (Alexander Schulz), "Altcoins: der größte Bullrun aller Zeiten!" (22.07.2026). Da YouTube für dieses Video keine UI-Transkriptanzeige lieferte, wurde die automatisch generierte Untertitelspur direkt über die YouTube-`timedtext`-API abgerufen und zu Fliesstext zusammengesetzt (auto-generierte Untertitel transkribieren "Kaspa"/"KAS" durchgehend als "Kas"/"KS", daher zunächst per Volltext-Suche im rekonstruierten Transkript lokalisiert). Der dedizierte Kaspa-Teil läuft von ca. 8:53 bis zum Videoende bei 17:19.
+
+**Bemerkenswerter Fund:** Der Kanal verortet die übergeordnete Korrektur-Zielzone (78,6–88,7%-Fibonacci der Welle 1 seit dem Allzeithoch $0,20) bei "im Mittel etwa 3 Cent" — praktisch deckungsgleich mit der hier unabhängig aus CoinGecko-Tagesschlusskursen berechneten 23,6–38,2%-Zone ($0,0288–$0,0310). Zwei methodisch komplett unabhängige Ansätze (andere Datenquelle, andere Wellenzählung) landen auf demselben Kursniveau — eine seltene und aussagekräftige Bestätigung.
+
+Der Kanal nennt ausserdem ein "konservatives" langfristiges Bullenmarkt-Ziel von $0,34 sowie deutlich höhere, aber ausdrücklich spekulative Kursbereiche — hergeleitet über einen reinen Marktkapitalisierungs-Vergleich mit Ethereum im Jahr 2016 (damals ca. $900 Mio., KAS aktuell $778 Mio.). Dieses Ziel wurde als separate, klar als Kanalmeinung gekennzeichnete Zeile in der Wachstumstabelle ergänzt (nicht in die eigenen Primär-/Alternativszenario-Wahrscheinlichkeiten eingerechnet), und ersetzt den bisherigen, methodisch überholten STA-Solutions-Fund von vor 9 Monaten als aktuellste Kanalquelle für KAS.
+
 ## v27 — 07.09.2026
 
 **Währungsformatierung um eine Nachkommastelle erweitert für Kurse unter $1.** Nutzer-Feedback direkt nach v26: Die Ausstiegs-/Short-Zone bei Kaspa (KAS) "macht keinen Sinn" — Ursache war, dass alle drei zentralen Preis-Formatierungsfunktionen (`fmtPrice` für den Kartenpreis, `fmtBound` für die Zonen-Grenzwerte, `ddFmt` für alle Zahlen in der Detailanalyse) Werte unter $10 pauschal auf 2–3 Nachkommastellen rundeten. Bei KAS liegen sämtliche relevanten Fibonacci-Marken aber im Bereich $0,0288–$0,0897 — auf 2 Nachkommastellen gerundet fielen mehrere davon auf denselben Wert ($0,03), wodurch z. B. die 23,6%- und 38,2%-Marke der Einstiegszone optisch identisch aussahen.
