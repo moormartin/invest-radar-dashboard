@@ -4,6 +4,12 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v27 — 07.09.2026
+
+**Währungsformatierung um eine Nachkommastelle erweitert für Kurse unter $1.** Nutzer-Feedback direkt nach v26: Die Ausstiegs-/Short-Zone bei Kaspa (KAS) "macht keinen Sinn" — Ursache war, dass alle drei zentralen Preis-Formatierungsfunktionen (`fmtPrice` für den Kartenpreis, `fmtBound` für die Zonen-Grenzwerte, `ddFmt` für alle Zahlen in der Detailanalyse) Werte unter $10 pauschal auf 2–3 Nachkommastellen rundeten. Bei KAS liegen sämtliche relevanten Fibonacci-Marken aber im Bereich $0,0288–$0,0897 — auf 2 Nachkommastellen gerundet fielen mehrere davon auf denselben Wert ($0,03), wodurch z. B. die 23,6%- und 38,2%-Marke der Einstiegszone optisch identisch aussahen.
+
+Fix: Alle drei Funktionen erhalten jetzt eine eigene Stufe für Werte unter $1 (vier statt zwei bzw. drei Nachkommastellen); Werte ab $1 sind unverändert. Als Nebeneffekt zeigen jetzt auch Fetch.ai (FET), Cardano (ADA), Hedera (HBAR) und Sui (SUI) — alle unter $1 notiert — eine Nachkommastelle mehr und damit ihre tatsächlich recherchierten Werte statt einer gerundeten Näherung.
+
 ## v26 — 07.09.2026
 
 **Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für Kaspa (KAS) ergänzt** — mit einer methodischen Besonderheit gegenüber allen anderen 39 Titeln.
