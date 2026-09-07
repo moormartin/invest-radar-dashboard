@@ -4,6 +4,18 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v25 — 07.09.2026
+
+**Status-/Zonen-Inkonsistenz behoben.** Nutzer-Feedback: Mehrere Karten zeigten den Status "Im Einstiegsfenster", obwohl der Kurs die recherchierte Einstiegszone bereits nach oben verlassen hatte (Beispiel: Nvidia). Ursache: Das `status`-Feld jeder Karte wird beim Erstellen/Aktualisieren einer Detailanalyse manuell gesetzt und war bislang nicht automatisch gegen die tatsächliche Kursposition (`inZone`-Berechnung, bereits zur Laufzeit vorhanden, aber nur für die Formulierung des Downgrade-Hinweistexts genutzt) geprüft.
+
+Eine systematische Prüfung aller 40 Titel (Kurs vs. Einstiegszone vs. Status per Skript) fand genau vier betroffene Fälle, alle in dieselbe Richtung (Status "gut", Kurs bereits über der Zone):
+- **Medtronic (MDT)**: Kurs $94,17 vs. Zone $89,55–$93,27
+- **NeuroPace (NPCE)**: Kurs $14,90 vs. Zone $11,90–$14,84
+- **ROBO Global Robotics & Automation ETF (ROBO)**: Kurs $80,57 vs. Zone $72,70–$79,51
+- **Nvidia (NVDA)**: Kurs $230,36 vs. Zone $218,76–$226,58
+
+Alle vier auf Status "Beobachten" herabgestuft (Karte + zugehörige Detailanalyse), jeweils mit Begründung über den bestehenden Downgrade-Mechanismus. Da die bisherige Formulierung "Trotz zusätzlicher Faktoren" für diesen Fall (Kurs bereits durch die Zone gelaufen, nicht ein unabhängiger Risikofaktor) inhaltlich nicht passte, wurde ein dritter Formulierungs-Zweig ergänzt ("Da Kurs bereits über der Zone"), der nur greift, wenn der aktuelle Kurs tatsächlich über der oberen Zonengrenze liegt — verifiziert, dass die sieben bestehenden Downgrade-Fälle (CRWV, QBTS, RGTI, NVO, SOL, SUI, DOT) davon unberührt bleiben und weiterhin korrekt "Trotz Preis in der Zone" anzeigen.
+
 ## v24 — 05.09.2026
 
 **ABB Ltd (ABBN) aus dem Radar entfernt.** Als an der Schweizer SIX-Börse gelisteter Titel benötigt eine echte Kurshistorie für die ZigZag-/Fibonacci-Methodik dieses Dashboards den kostenpflichtigen Twelve-Data Pro-/Venture-Plan — im kostenlosen Tier, auf dem dieses Projekt bewusst aufgebaut ist, nicht abgedeckt. In der Praxis bedeutete das: ABBN zeigte durchgehend nur eine veraltete Momentaufnahme (zuletzt Stand 14.08.2026) statt echter Live-Daten wie alle anderen 40 Titel — eine methodische Inkonsistenz, die mit der Entfernung aufgelöst wird. Das Radar zählt damit neu **40 statt 41 Titel**.
