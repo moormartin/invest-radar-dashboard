@@ -994,16 +994,16 @@
       etoro:"yes", yuh:"no"
     },
     {
-      ticker:"KAS", exch:"Krypto", name:"Kaspa", cats:["crypto"],
+      ticker:"KAS", exch:"Krypto", name:"Kaspa", cats:["crypto"], detail:true,
       case:"Proof-of-Work-Blockchain mit GHOSTDAG/BlockDAG-Architektur für sehr hohen Durchsatz bei PoW-Sicherheit &mdash; positioniert sich als schnellste PoW-Chain.",
-      price:0.0276, cur:"$", asOf:"31.08.2026", low:null, high:null, entryLow:null, entryHigh:null,
-      trend:"Bärenmarkt, deutlich unter Allzeithoch ($0,2074, 07/2024)", status:"bad",
-      wave:"RSI(7-Tage) bei 28,45 zeigt eine überverkaufte Lage, die technisch für einen Bounce sprechen könnte &mdash; das eigentliche Problem liegt aber bei der Broker-Handelbarkeit (siehe Hinweis), nicht bei der Chartlage. NEUER Fund: STA Solutions (dritter Zielkanal, 92.100 Abonnenten, schulz-technical-analysis.com) mit &bdquo;Altcoin: KAS Kaspa bildet seinen BODEN!&ldquo; (vor 9 Monaten, dediziert) &mdash; bullische Bodenbildungs-These, erster bestätigter Treffer dieses Kanals im gesamten Radar.",
-      invalid:"Ohne bestätigte Broker-Handelbarkeit ist eine Einstiegsdiskussion verfrüht.",
-      source:"STA Solutions: &bdquo;Altcoin: KAS Kaspa bildet seinen BODEN!&ldquo; (vor 9 Monaten) &mdash; Beschreibung gelesen, Kanal verifiziert (92.100 Abonnenten). Ersetzt bisherige, nicht zuordenbare Video-Funde.", sourceUrl:"https://www.youtube.com/watch?v=IXzT2mDXiAo",
-      flag:"Erfüllt das eToro/Yuh-Kriterium nach aktuellem Rechercheergebnis nicht.",
-      etoro:"no", yuh:"no",
-      brokerWarning:"Auf eToro nachweislich nicht handelbar; auf Yuh nicht in der gesichteten Krypto-Liste enthalten &mdash; vor jeder Umsetzung selbst prüfen oder Alternative erwägen."
+      price:0.0350, cur:"$", asOf:"07.09.2026 (CoinGecko live &mdash; KAS/USD ist auf Twelve Data nicht verfügbar)", low:0.02526, high:0.08968, entryLow:0.0288, entryHigh:0.0310,
+      trend:"+8,4% (24h, CoinGecko), kräftige Erholung vom Zyklustief testet die 61,8%-Marke der jüngsten Korrektur direkt", status:"warn",
+      wave:"Eigene ZigZag-/Fibonacci-Analyse (CoinGecko-Tagesschlusskurse, 08.09.2025&ndash;07.09.2026 &mdash; 366 statt der sonst 500 Tage, da die kostenlose CoinGecko-API historische Daten auf 365 Tage begrenzt): 52-Wochen-Hoch $0,08968 (14.09.2025), seither breiter Abwärtstrend im Gleichschritt mit dem allgemeinen Krypto-Bärenmarkt 2026 (Bitcoin &minus;48&thinsp;% vom Oktober-2025-Allzeithoch, Gesamtmarktkapitalisierung &minus;52&thinsp;% vom Peak). Jüngste Korrektur vom Zwischenhoch $0,04040 (12.05.2026) zum Zyklustief $0,02526 (14.08.2026, &minus;37,5&thinsp;%), danach kräftige Erholung auf aktuell $0,0350 (+38,4&thinsp;% seit dem Tief) &mdash; der Kurs hat die 23,6&ndash;38,2%-Zone ($0,0288&ndash;$0,0310) dieser Korrektur bereits durchlaufen und testet nun die 61,8%-Marke ($0,0346) direkt. RSI(14) und MACD(12,26,9) selbst aus den CoinGecko-Tagesschlusskursen berechnet (Twelve Data bietet für dieses Symbol keinen Indikator-Endpunkt): RSI 68,5 (letzter abgeschlossener Handelstag), MACD seit 04.09.2026 bullisch gekreuzt.",
+      invalid:"Unter $0,02526 (Zyklustief vom 14.08.2026) wäre die Bodenbildungs-These verworfen.",
+      source:"Keine spezifische Elliott-Wave-Quelle gefunden (STA-Solutions-Video von vor 9 Monaten methodisch überholt durch die neue, eigene ZigZag-Analyse). Analystenkonsens für Krypto nicht anwendbar.", sourceUrl:"https://www.coingecko.com/en/coins/kaspa",
+      flag:"Datenquelle abweichend von der sonstigen Methodik: KAS/USD ist auf Twelve Data nicht auflösbar (bestätigt per search_symbol und get_quote, auch nach Behebung eines vorübergehenden Connector-Ausfalls) &mdash; Kurshistorie stattdessen von CoinGecko (365-Tage-Limit im Gratis-Tier), RSI/MACD eigenständig berechnet. Ausserdem Korrektur ggü. bisheriger Einschätzung: KAS ist auf eToro nachweislich handelbar (eigene eToro-Kaspa-Seite verifiziert, 07.09.2026) &mdash; die frühere &bdquo;nicht handelbar&ldquo;-Einstufung war falsch. Auf Yuh weiterhin nicht in der gesichteten Krypto-Liste enthalten (Stand 07.11.2025).",
+      downgradeReason:"Kurs ($0,0350) notiert bereits über der 23,6&ndash;38,2%-Zone ($0,0288&ndash;$0,0310) und testet die 61,8%-Marke ($0,0346) direkt, nach einem sehr schnellen Ein-Tages-Sprung (+8,4%) &mdash; erhöhtes Nachlauf-Risiko, RSI(14) mit 68,5 bereits erhöht.",
+      etoro:"yes", yuh:"no"
     },
     {
       ticker:"DOT", exch:"Krypto", name:"Polkadot", cats:["crypto"],
@@ -1060,7 +1060,7 @@
     AVAX: { rsi:60.5, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,1870 unter Signallinie 0,1952 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
     ADA: { rsi:63.0, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0062 über Signallinie 0,0061 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
     SUI:  { rsi:55.9, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bear", macdText:"MACD 0,0113 unter Signallinie 0,0116 (Twelve Data live, 04.09.2026)", squeeze:"nv" },
-    KAS:  { rsi:28.5, rsiPeriod:7, rsiNote:"überverkauft (7-Tage)", macd:null, macdText:null, squeeze:"nv" },
+    KAS:  { rsi:68.5, rsiNote:"eigene Berechnung aus CoinGecko-Tagesschlusskursen, 07.09.2026 (Twelve Data bietet für KAS/USD keinen Indikator-Endpunkt; neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,000821 über Signallinie 0,000445 (Hist. +0,000376, seit 04.09.2026 bullisch gekreuzt, eigene Berechnung aus CoinGecko-Daten)", squeeze:"nv" },
     DOT: { rsi:55.8, rsiNote:"Twelve Data live, 04.09.2026 (neutral: >70 = überkauft, <30 = überverkauft, sonst neutral)", macd:"bull", macdText:"MACD 0,0142 über Signallinie 0,0130 (Twelve Data live, 04.09.2026)", squeeze:"nv" }
   };
 
@@ -1081,7 +1081,7 @@
     TSLA:'video-read', ROK:'none', ISRG:'video', TER:'none', SYM:'none', BOTZ:'none',
     BTC:'video-read', ETH:'video-read', FET:'none', LINK:'video-read', PYPL:'video-read',
     QBTS:'video-read', RGTI:'video-read', IONQ:'text', CRSP:'video-read', NVO:'none', TEAM:'video-read',
-    SOL:'video-read', HBAR:'text', AVAX:'text', ADA:'video-read', SUI:'video', KAS:'video-read', DOT:'video-read'
+    SOL:'video-read', HBAR:'text', AVAX:'text', ADA:'video-read', SUI:'video', KAS:'none', DOT:'video-read'
   };
 
   // Versionshistorie/Release-Notes, sichtbar im Dashboard über den "Was ist neu?"-Button.
@@ -1089,6 +1089,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v26", date:"07.09.2026", kind:"manual", summary:"Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für Kaspa (KAS) ergänzt &mdash; methodische Besonderheit: KAS/USD ist auf Twelve Data nicht auflösbar (bestätigt per search_symbol und get_quote), daher als erster Titel im Radar auf CoinGecko als Kurshistorie-Quelle umgestellt (366 statt 500 Tage, da im kostenlosen Tier auf 365 Tage begrenzt) &mdash; RSI(14)/MACD(12,26,9) selbst aus den CoinGecko-Tagesschlusskursen berechnet, da auch der Twelve-Data-Indikator-Endpunkt dieses Symbol nicht abdeckt. Eigene ZigZag-Analyse zeigt eine kräftige, sehr schnelle Erholung vom Zyklustief $0,02526 (14.08.2026, Teil des allgemeinen Krypto-Bärenmarkts 2026) auf aktuell $0,0350 &mdash; der Kurs hat die 23,6&ndash;38,2%-Einstiegszone bereits durchlaufen und testet die 61,8%-Marke direkt, daher Status &bdquo;Beobachten&ldquo; statt &bdquo;Im Einstiegsfenster&ldquo;. Zusätzlich eine veraltete/falsche frühere Einschätzung korrigiert: KAS ist entgegen dem bisherigen Kartentext auf eToro nachweislich handelbar (eigene eToro-Seite verifiziert), auf Yuh weiterhin nicht gelistet." },
     { version:"v25", date:"07.09.2026", kind:"manual", summary:"Status-/Zonen-Inkonsistenz behoben: Bei Medtronic (MDT), NeuroPace (NPCE), ROBO Global Robotics &amp; Automation ETF (ROBO) und Nvidia (NVDA) zeigte die Karte weiterhin &bdquo;Im Einstiegsfenster&ldquo;, obwohl der Kurs die recherchierte Einstiegszone bereits nach oben verlassen hatte &mdash; der Status war bislang nicht automatisch gegen die tatsächliche Kursposition geprüft worden. Alle vier auf &bdquo;Beobachten&ldquo; herabgestuft, inkl. Begründung direkt auf der Karte (analog zum bestehenden Downgrade-Mechanismus); dafür einen neuen Hinweistext &bdquo;Da Kurs bereits über der Zone&ldquo; ergänzt, der greift, wenn der Kurs die Zone nach oben verlassen hat (statt der bisherigen, dafür ungenauen Formulierung &bdquo;Trotz zusätzlicher Faktoren&ldquo;). Systematische Prüfung aller 40 Titel bestätigt: keine weiteren Fälle." },
     { version:"Sync-07.09.2026", date:"07.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse gegengeprüft (Twelve Data live): Letzter Handelstag bleibt weiterhin Freitag, 04.09.2026 (heute 07.09. US-Börsenfeiertag Labor Day, keine neue Kerze) &mdash; Schlusskurs $39,52, RSI(14) 46,4 (neutral) und MACD -0,886 unter Signallinie -0,505 (Hist. -0,381) unverändert zum Sync-Lauf vom 06.09.2026. Kein neuer zonenrelevanter Pivot (weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario, Konfluenz-Bewertung und Kurschart daher unverändert." },
     { version:"Sync-06.09.2026", date:"06.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse gegengeprüft (Twelve Data live): Letzter Handelstag bleibt weiterhin Freitag, 04.09.2026 (Wochenende, keine neue Kerze) &mdash; Schlusskurs $39,52, RSI(14) 46,4 (neutral) und MACD -0,886 unter Signallinie -0,505 (Hist. -0,381) unverändert zum Sync-Lauf vom 05.09.2026. Kein neuer zonenrelevanter Pivot (weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario, Konfluenz-Bewertung und Kurschart daher unverändert." },
@@ -1317,6 +1318,8 @@
   var DD_CHART_TEAM = [162.69,163.74,163.1,161.9,161.42,167.53,187.06,188.5,188.76,191.74,218.96,237.8,249.99,245.45,262.23,268.36,273.14,278.65,251.23,254.24,242.39,244.49,250.03,260.85,274.71,311.4,314.28,316,298.49,288.76,273.62,215.89,218.44,226.16,229.65,216.41,186.61,198.37,202.75,225.08,228.31,207.89,223.75,220.79,208.37,203.93,210.92,213.05,200.32,192.74,202.32,213.53,200.05,190.45,198.44,201.84,182.96,171,163.99,166.21,168.67,177.78,172.43,176.71,172.25,165.68,165.31,150.49,147.74,149.84,168.71,164.26,169.42,156.13,155.5,148.75,146.45,151.58,159.33,163.26,161.98,162.39,162.93,158.36,146.44,118.55,131.75,120.38,105.04,92.92,82.15,68.81,75.13,82.51,75.45,74.91,74.41,65.12,68.29,58.96,66,71.22,69.22,88.88,92.37,80.62,86.62,84.92,115.95,99.47,89.2,84.39,81.55,77.79,88.39,96.16,93.29,80.15,104.28,110.31,151.87,162.22,158.34,163,174.23,174.91,171.81,171.33,166.49,168.47,185.62,190.41,194.17,187.03,186.44,194.68,189.58];
   // Intuitive Surgical (ISRG), Twelve-Data-Tagesschluss, 09.09.2024-04.09.2026 (Sampling wie oben).
   var DD_CHART_ISRG = [479.39,489.86,490.01,484.39,484.76,471.23,484.78,473.73,512.58,516.31,507.42,536.45,537.8,541.82,542.1,541.71,538.86,539.58,523.91,538.83,524.03,544.02,580.11,610.45,574.14,578.55,582.98,591.39,606.57,580.93,557.96,482.61,484.44,491.81,509.03,496.36,463.62,493.6,482.74,508.13,515.8,530.46,561.43,563.6,542.67,555.75,557.95,529.6,519.04,515.09,533.71,544.47,526.05,512.64,511,493.95,483.12,469.81,482.35,479.2,468.44,473.3,466.86,455.85,433.66,447.75,439.22,452.35,443.76,435.61,462.74,551.25,534.28,547.78,572.45,546.77,568.48,567.37,575.34,547.36,556.86,577.34,572.63,592.85,572.75,535,523.99,507.55,478.49,495.15,493.35,492.1,503.51,496.7,492.87,482.76,478.04,452.66,452.07,454.94,468.36,451.29,470.99,457.78,453.49,432.27,441.58,436.64,412.26,422.06,412.9,402.18,401.83,397.68,427.3,407.12,345.42,332.02,353.1,368.27,393.38,394.51,390.33,391.18,397.72,374.48,378.81,373.57,371.84,370.42,367.07,372.6,376.86,369.25,371.88,369.83,366.7];
+  // Kaspa (KAS), CoinGecko-Tagesschluss, 08.09.2025-07.09.2026 (366 statt 500 Tage, Gratis-API-Limit; Sampling wie oben).
+  var DD_CHART_KAS = [0.08003,0.08095,0.08615,0.08968,0.08333,0.08862,0.08405,0.0816,0.07831,0.07576,0.07636,0.07694,0.07984,0.08053,0.07483,0.07507,0.07389,0.05714,0.06477,0.0569,0.05185,0.05276,0.05172,0.05139,0.05844,0.05737,0.0585,0.05293,0.05214,0.04414,0.05074,0.0518,0.05257,0.0495,0.04457,0.04356,0.04328,0.04,0.0381,0.04524,0.05806,0.05788,0.05742,0.05454,0.05509,0.05106,0.05215,0.04867,0.04631,0.04433,0.04474,0.04054,0.04491,0.04665,0.04456,0.04482,0.04454,0.04392,0.04464,0.04557,0.05085,0.04867,0.06122,0.06074,0.05925,0.05597,0.04427,0.05373,0.05183,0.05369,0.0506,0.05498,0.04983,0.04038,0.04146,0.04163,0.04009,0.04821,0.03108,0.05097,0.05528,0.05774,0.05536,0.05075,0.05513,0.0552,0.04739,0.04967,0.05257,0.0458,0.05258,0.05733,0.05554,0.05888,0.0629,0.04527,0.04646,0.0382,0.05569,0.05014,0.0489,0.03463,0.03175,0.03209,0.03072,0.03152,0.03292,0.03214,0.03289,0.03304,0.03318,0.03616,0.03419,0.03426,0.03428,0.03363,0.03339,0.03254,0.03263,0.03362,0.03444,0.03537,0.03726,0.0404,0.03718,0.03513,0.03399,0.03368,0.03525,0.0338,0.03366,0.03201,0.03097,0.03073,0.02851,0.02954,0.02998,0.03208,0.03036,0.03097,0.03224,0.03248,0.03042,0.02978,0.02938,0.02795,0.02814,0.02767,0.02926,0.03099,0.03185,0.03023,0.02921,0.02946,0.02842,0.02856,0.02819,0.02777,0.02836,0.02825,0.0277,0.02931,0.02794,0.02769,0.02679,0.02609,0.02607,0.02643,0.026,0.02596,0.02526,0.02583,0.02568,0.02697,0.02966,0.02926,0.02913,0.02766,0.02801,0.02954,0.02804,0.02767,0.02706,0.02787,0.02747,0.02792,0.02979,0.02941,0.03056,0.03227];
 
   const DEEPDIVE = {
     BTC: {
@@ -2178,6 +2181,46 @@
       ath:603.88, cycleLow:328.57,
       longZone:[357.90,366.95], shortZone:[393.54,405.34],
       chart: DD_CHART_ISRG, chartStart:"09.09.2024", chartEnd:"04.09.2026"
+    },
+    KAS: {
+      name:"Kaspa", ticker:"KAS", unit:"$",
+      statusHeadline:"Kräftige Erholung vom Zyklustief testet die 61,8%-Marke direkt",
+      statusTone:"warn",
+      asOf:"07.09.2026 &middot; CoinGecko (Tagesschluss) &middot; eigene Berechnung &mdash; KAS/USD ist auf Twelve Data nicht verfügbar",
+      currentPrice:0.0350, change24h:8.4,
+      tradingBox:"Der Kurs hat die primäre 23,6&ndash;38,2%-Einstiegszone ($0,0288&ndash;$0,0310) der Korrektur vom Zwischenhoch $0,0404 (12.05.) zum Zyklustief $0,02526 (14.08.) bereits durchlaufen und testet nun die 61,8%-Marke ($0,0346) direkt &mdash; ausgelöst durch einen sehr schnellen Ein-Tages-Sprung von +8,4%. Kein klassisches Rücksetzer-Einstiegsfenster mehr: entweder auf eine Bestätigung über $0,0372 (78,6%-Marke) oder auf einen Rücksetzer zurück in die 38,2&ndash;50%-Zone ($0,0310&ndash;$0,0328) warten, statt direkt nach dem Sprung nachzukaufen.",
+      whatHappened:"KAS sprang am 07.09.2026 um +8,4% auf $0,0350 (CoinGecko), nachdem der Kurs seit dem Zyklustief $0,02526 (14.08.2026) bereits um +38,4&thinsp;% gestiegen war. Die eigene ZigZag-Analyse (CoinGecko-Tagesschlusskurse, 08.09.2025&ndash;07.09.2026, 20%-Schwelle) zeigt ein 52-Wochen-Hoch von $0,08968 (14.09.2025) und seither einen breiten, im Gleichschritt mit dem allgemeinen Krypto-Bärenmarkt 2026 verlaufenden Abwärtstrend (Bitcoin &minus;48&thinsp;% vom Oktober-2025-Allzeithoch, Gesamtmarktkapitalisierung &minus;52&thinsp;% vom Peak, verstärkt durch Liquidationskaskaden im August). RSI(14) kletterte auf 68,5 (letzter abgeschlossener Handelstag), der MACD ist seit dem 04.09.2026 bullisch gekreuzt &mdash; beide selbst aus den CoinGecko-Daten berechnet, da Twelve Data für dieses Symbol weder Kurshistorie noch Indikatoren liefert.",
+      primary:{
+        label:"Primärszenario &mdash; direkter Test der 61,8%-Marke, Fortsetzung Richtung Zwischenhoch",
+        probability:55,
+        text:"Die Erholung vom Zyklustief ist ungewöhnlich kräftig und schnell (+38,4&thinsp;% in unter einem Monat, davon +8,4&thinsp;% an einem einzigen Tag) und hat die 23,6&ndash;38,2%-Zone bereits klar hinter sich gelassen. Bei anhaltendem Momentum wäre ein Ausbruch über die 78,6%-Marke ($0,0372) und ein Retest des Zwischenhochs $0,0404 (12.05.2026) das nächste logische Ziel.",
+        invalidation:"Tagesschluss unter $0,0310 (38,2%-Marke) würde die direkte Fortsetzungs-These schwächen; hart unter $0,02526 (Zyklustief) wäre die gesamte Bodenbildung verworfen."
+      },
+      alternative:{
+        label:"Alternativszenario &mdash; Ein-Tages-Sprung ohne Bestätigung, Rücksetzer vor Fortsetzung",
+        probability:45,
+        text:"Ein einzelner, sehr schneller +8,4%-Tag bei bereits erhöhtem RSI (68,5) ist typisch für überhitztes Kurzfrist-Momentum in dünn gehandelten Altcoins und kein verlässliches Fortsetzungssignal für sich allein. Ein Rücksetzer in die 38,2&ndash;50%-Zone ($0,0310&ndash;$0,0328) zum Abbau der Überhitzung wäre technisch gesund, bevor eine nachhaltige Fortsetzung glaubwürdig wird &mdash; zumal der übergeordnete Trend seit September 2025 klar bärisch bleibt (3 von 34 technischen Indikatoren bullisch, Stand 02.09.2026, laut einer unabhängigen Marktdatenquelle).",
+        invalidation:"Ein nachhaltiger Tagesschluss über $0,0372 (78,6%-Marke) bzw. über dem Zwischenhoch $0,0404 würde diese vorsichtigere Lesart verwerfen."
+      },
+      outlook:"Fundamental bleibt Kaspa (GHOSTDAG/BlockDAG, ~10 Blöcke/Sekunde seit dem Crescendo-Fork von Mai 2025, mit einer für 2026 laufenden EVM-/Layer-2-Erweiterung) eine der technisch am weitesten entwickelten Proof-of-Work-Chains &mdash; das hat den &minus;72%-Abschwung seit dem 52-Wochen-Hoch im breiten Krypto-Bärenmarkt 2026 aber nicht verhindert. Eine nachhaltige Erholung bis zur 78,6%-Marke ($0,0372) oder gar zurück zum 52-Wochen-Hoch ($0,0897) wäre rein rechnerisch erheblich, hängt aber massgeblich von einer allgemeinen Bitcoin-/Altcoin-Erholung ab, nicht nur von KAS-spezifischen Faktoren.",
+      confluence:[
+        {label:"Elliott-Struktur", value:"klar, kurzer Zyklus", note:"Sauber abgrenzbare Korrektur Mai&ndash;Aug. 2026 gefolgt von scharfer Erholung, per ZigZag (20%-Schwelle) gut identifizierbar"},
+        {label:"Fibo-Konfluenz", value:"hoch", note:"Aktueller Kurs liegt praktisch exakt auf der 61,8%-Marke der jüngsten Korrektur"},
+        {label:"RSI/MACD", value:"bullisch, aber erhöht", note:"MACD seit 04.09. bullisch gekreuzt, RSI(14) mit 68,5 bereits im oberen Bereich &mdash; wenig Puffer nach oben"}
+      ],
+      crv:{ risk:"$0,0350 (aktuell) &minus; $0,0310 (38,2%-Marke/Stop) = $0,0040 (&asymp;11,4%)", reward:"$0,0404 (Zwischenhoch 12.05.) &minus; $0,0350 = $0,0054 (&asymp;15,4%)", ratio:"&asymp; 1,4 : 1 (bis zum nächsten Widerstand $0,0372 sogar nur &asymp;0,6:1 &mdash; kein überzeugendes CRV auf aktuellem, bereits gelaufenem Niveau)" },
+      growth:[
+        {label:"Aktuell ($0,0350) &rarr; 78,6%-Marke ($0,0372)", pct:"+6,3%"},
+        {label:"Aktuell ($0,0350) &rarr; Zwischenhoch 12.05. ($0,0404)", pct:"+15,4%"},
+        {label:"Aktuell ($0,0350) &rarr; 52-Wochen-Hoch ($0,0897)", pct:"+156,2%"}
+      ],
+      supports:[ {label:"38,2%-Marke der jüngsten Korrektur", value:"$0,0310"}, {label:"Zyklustief (52W, 14.08.2026)", value:"$0,02526"} ],
+      resistances:[ {label:"78,6%-Marke der jüngsten Korrektur", value:"$0,0372"}, {label:"Zwischenhoch (12.05.2026)", value:"$0,0404"}, {label:"52-Wochen-Hoch (14.09.2025)", value:"$0,0897"} ],
+      timing:"Trend/Struktur: Tages-Kerzen. Nach dem sehr schnellen Ein-Tages-Sprung (+8,4%) auf 4h-Kerzen auf eine Konsolidierung oder einen Rücksetzer in die 38,2&ndash;50%-Zone warten, statt direkt nach dem Sprung nachzukaufen.",
+      crossCheck:"Keine dedizierte HKCM-/Phantom-/STA-Solutions-Quelle mit aktuellem Bezug gefunden; der bisherige STA-Solutions-Fund (&bdquo;Altcoin: KAS Kaspa bildet seinen BODEN!&ldquo;, vor 9 Monaten) ist durch die neue, eigene ZigZag-Analyse methodisch überholt. Als Cross-Check dient ausschliesslich die eigene, aus CoinGecko-Daten abgeleitete Fibonacci-/Momentum-Analyse &mdash; Twelve Data deckt KAS/USD nicht ab (bestätigt per search_symbol und get_quote).",
+      ath:0.08968, cycleLow:0.02526,
+      longZone:[0.0288,0.0310], shortZone:[0.0346,0.0372],
+      chart: DD_CHART_KAS, chartStart:"08.09.2025", chartEnd:"07.09.2026"
     }
   };
 

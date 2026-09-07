@@ -4,6 +4,20 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v26 — 07.09.2026
+
+**Volle Detailanalyse (Elliott-Wave/Fibonacci/Konfluenz-System) für Kaspa (KAS) ergänzt** — mit einer methodischen Besonderheit gegenüber allen anderen 39 Titeln.
+
+**Datenquellen-Problem:** KAS/USD lässt sich auf Twelve Data nicht auflösen — bestätigt per `search_symbol` (liefert nur eine gleichnamige kanadische Aktie und einen Schwedischen Tracker-ETF, kein Krypto-Paar) und per direktem `get_quote`-Aufruf (Fehler: ungültiges Symbol). Dies bestätigt eine bereits früher in der Projekthistorie vermerkte Einschränkung. Nach Rücksprache mit dem Nutzer wurde als Alternative die öffentliche CoinGecko-API gewählt statt den Titel ganz zu entfernen (wie zuvor bei ABBN):
+
+- Kurshistorie: CoinGecko `market_chart`-Endpunkt, 366 statt der sonst 500 Tage (das kostenlose CoinGecko-Tier begrenzt historische Anfragen auf 365 Tage — ein expliziter API-Fehler bestätigte dieses Limit).
+- RSI(14) und MACD(12,26,9): eigenständig aus den CoinGecko-Tagesschlusskursen berechnet, da auch der Twelve-Data-Indikator-Endpunkt dieses Symbol nicht abdeckt.
+- Alle Werte klar als CoinGecko-basiert und eigenberechnet gekennzeichnet (Karte, Detailanalyse, `source`/`flag`-Felder), um die Abweichung von der sonstigen Twelve-Data-Methodik transparent zu machen.
+
+**Chartbild:** 52-Wochen-Hoch $0,08968 (14.09.2025), seither ein breiter, mit dem allgemeinen Krypto-Bärenmarkt 2026 synchroner Abwärtstrend (Bitcoin −48 % vom Oktober-2025-Hoch, Gesamtmarktkapitalisierung −52 % vom Peak). Jüngste Korrektur vom Zwischenhoch $0,0404 (12.05.2026) zum Zyklustief $0,02526 (14.08.2026), danach eine sehr schnelle Erholung auf aktuell $0,0350 (+38,4 % seit dem Tief, davon +8,4 % an einem einzigen Tag). Der Kurs hat die 23,6–38,2%-Einstiegszone damit bereits durchlaufen und testet die 61,8%-Marke direkt — Status entsprechend auf "Beobachten" statt "Im Einstiegsfenster" gesetzt (konsistent mit dem in v25 eingeführten Mechanismus), RSI(14) mit 68,5 bereits erhöht.
+
+**Nebenbei korrigiert:** Die bisherige Karte behauptete, KAS sei auf eToro nicht handelbar. Eine direkte Prüfung der eToro-eigenen Kaspa-Seite zeigt das Gegenteil — Kaspa ist auf eToro handelbar. Auf Yuh ist der Titel weiterhin nicht in der öffentlich einsehbaren Kryptoliste enthalten.
+
 ## v25 — 07.09.2026
 
 **Status-/Zonen-Inkonsistenz behoben.** Nutzer-Feedback: Mehrere Karten zeigten den Status "Im Einstiegsfenster", obwohl der Kurs die recherchierte Einstiegszone bereits nach oben verlassen hatte (Beispiel: Nvidia). Ursache: Das `status`-Feld jeder Karte wird beim Erstellen/Aktualisieren einer Detailanalyse manuell gesetzt und war bislang nicht automatisch gegen die tatsächliche Kursposition (`inZone`-Berechnung, bereits zur Laufzeit vorhanden, aber nur für die Formulierung des Downgrade-Hinweistexts genutzt) geprüft.
