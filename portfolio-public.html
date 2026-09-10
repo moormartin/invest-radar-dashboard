@@ -147,7 +147,7 @@
 
     <section>
       <h2>Portfolio-Verteilung</h2>
-      <p class="section-note">Relativer Anteil je Position am Gesamtportfolio &mdash; mehrere Käufe desselben Titels werden zu einer Position zusammengefasst.</p>
+      <p class="section-note">Aktueller Wert je Position in Prozent des Gesamtportfolios (wie im privaten Dashboard, nur ohne Beträge) &mdash; mehrere Käufe desselben Titels werden zu einer Position zusammengefasst.</p>
       <div id="pieChartWrap"></div>
     </section>
 
@@ -302,19 +302,26 @@
     if(positions.length === 0){
       document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
     } else {
+      // Gruppiert nach AKTUELLEM Wert (wie im privaten Dashboard), nicht nach investiertem
+      // Betrag: Kaufgewicht (weight) mal Kursentwicklung (1 + plPct/100) ergibt den relativen
+      // aktuellen Wert je Position, ohne dass dafür je ein absoluter $-Betrag nötig wäre -
+      // totalInvested kürzt sich beim Normalisieren auf 100% heraus.
       const byTicker = {};
       positions.forEach(p => {
-        if(!byTicker[p.ticker]) byTicker[p.ticker] = { ticker:p.ticker, name:p.name, weight:0 };
-        byTicker[p.ticker].weight += p.weight;
+        const currentValueShare = p.weight * (1 + p.plPct / 100);
+        if(!byTicker[p.ticker]) byTicker[p.ticker] = { ticker:p.ticker, name:p.name, valueShare:0 };
+        byTicker[p.ticker].valueShare += currentValueShare;
       });
       const grouped = Object.values(byTicker);
+      const totalValueShare = grouped.reduce((s, g) => s + g.valueShare, 0);
       const cx = 110, cy = 110, r = 100;
       let angle = 0;
       const slices = grouped.map((g, i) => {
-        const sweep = g.weight / 100 * 360;
+        const weight = totalValueShare ? (g.valueShare / totalValueShare) * 100 : 0;
+        const sweep = weight / 100 * 360;
         const path = describeArc(cx, cy, r, angle, angle + sweep);
         angle += sweep;
-        return { ticker:g.ticker, name:g.name, weight:g.weight, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+        return { ticker:g.ticker, name:g.name, weight, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
       });
       document.getElementById('pieChartWrap').innerHTML = `
         <div class="pie-wrap">

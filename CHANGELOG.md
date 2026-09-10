@@ -16,6 +16,14 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v37 — 10.09.2026
+
+**Fix: Portfolio-Verteilung war zwischen den beiden Dashboards inkonsistent.** Nutzer-Feedback direkt nach dem v36-Launch der öffentlichen Seite: Das Kuchendiagramm zeigte dort andere Prozentwerte als auf `portfolio.html`.
+
+Ursache: Das private Dashboard gruppiert die Kuchen-Slices nach **aktuellem Wert** je Position (Kaufbetrag × Kursentwicklung seit Kauf), die öffentliche Seite gruppierte stattdessen nach dem reinen **investierten Anteil** (`weight`, unverändert seit Kauf) — bei unterschiedlicher Performance der Positionen ergeben beide Methoden unterschiedliche Prozentsätze (im aktuellen Datenstand z. B. 50,6/49,4% vs. 50/50%).
+
+**Fix:** `portfolio-public.html` berechnet den Kuchendiagramm-Anteil jetzt als `weight × (1 + plPct/100)` je Position, gruppiert nach Ticker und auf 100% normalisiert — mathematisch identisch zum privaten Dashboard, ohne dass dafür ein absoluter $-Betrag nötig wäre (der investierte Gesamtbetrag kürzt sich beim Normalisieren heraus). Die „Anteil"-Spalte in der Positionen-Tabelle und der Vermögens-Rechner bleiben bewusst beim investierten Gewicht (`weight`) — das ist ein anderes, ebenfalls gewolltes Konzept (echte Kaufgewichtung statt aktueller Wert). Gegen den echten Datenstand nachgerechnet: beide Dashboards liefern jetzt exakt dieselben Prozentsätze (50,563%/49,437%).
+
 ## v35 — 10.09.2026
 
 **Positionen direkt im Dashboard bearbeiten und löschen.** Beim Testen des v33-Auto-Commits entstanden versehentlich 3 statt 1 NeuroPace-Positionen — der Nutzer fragte nach einer Möglichkeit, das direkt übers Dashboard zu bereinigen, statt mich für jede Korrektur einzuschalten.
