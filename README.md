@@ -12,6 +12,22 @@ Hintergrund: Ausgangspunkt war ein Interview mit dem Zukunftsforscher Sven Gábo
 - `CHANGELOG.md` — vollständige Versionshistorie (v2–v10) mit den methodischen Entscheidungen hinter jeder Iteration.
 - `tools/analyze.py` — Python-Skript zur Berechnung von RSI(14), MACD(12,26,9) und ZigZag-Pivots aus rohen Tages-OHLC-Kursdaten (verwendet für die BTC/ETH-Detailanalyse in v10; nimmt CSV-Dateien im Format `datetime;open;high;low;close` entgegen).
 - `tools/refresh-deepdive.js` — deterministischer Node-Helfer für den täglichen automatisierten Sync (v29): `node tools/refresh-deepdive.js list` gibt die Liste der Detailanalyse-Titel mit Twelve-Data-Symbol aus; `node tools/refresh-deepdive.js apply --index index.html --data <fetched.json>` schreibt Kurs/RSI/MACD mechanisch in Karte, Detailanalyse und Indikator-Datensatz, ohne je qualitative Felder (status, downgradeReason, wave, Szenarien, Kurschart) anzufassen — Auffälligkeiten (Zone verlassen, neues 52-Wochen-Hoch/-Tief) landen stattdessen in `DEEPDIVE_REVIEW` zur manuellen Prüfung. KAS ist ausgenommen (CoinGecko-basiert, siehe dessen `flag`-Feld). Seit v30: `node tools/refresh-deepdive.js apply-portfolio --portfolio portfolio.html --data <fetched.json>` synchronisiert mit demselben fetched.json (keine zusätzlichen API-Aufrufe) `portfolio.html`s `TRADES[].currentPrice`/`currentPriceAsOf` — Trefferquote/Verdict-Bewertungen bleiben manuell. Seit v31 pflegt derselbe Befehl zusätzlich `TICKER_PRICES` für alle 21 im Portfolio-Formular wählbaren Titel (Grundlage für dessen Kaufkurs-Autofill).
+- `api/add-trade.js` — Vercel-Serverless-Funktion (v33): nimmt die Formulardaten aus dem Portfolio-Dashboard per POST entgegen und committet einen neuen Eintrag direkt ins `TRADES`-Array von `portfolio.html`, via GitHub-Contents-API. Erfordert ein einmaliges Setup, siehe unten.
+
+## Einmaliges Setup: Portfolio-Investitionen automatisch committen (v33)
+
+Damit „Neue Investition erfassen“ im Portfolio-Dashboard Positionen automatisch dauerhaft speichert (statt nur lokal im Browser mit manuellem Code-Kopieren), braucht `api/add-trade.js` einen GitHub-Token als Vercel-Umgebungsvariable:
+
+1. Auf GitHub: **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.**
+2. **Repository access:** nur `moormartin/invest-radar-dashboard` auswählen (nicht "All repositories").
+3. **Permissions:** unter "Repository permissions" → **Contents: Read and write** setzen. Alle anderen Berechtigungen auf "No access" lassen.
+4. Token generieren und kopieren (wird nur einmal angezeigt).
+5. Im Vercel-Projekt: **Settings → Environment Variables** → neue Variable `GITHUB_TOKEN` mit dem kopierten Wert anlegen (Scope: Production, ggf. auch Preview).
+6. Redeploy anstossen (oder auf den nächsten Push warten), damit die Umgebungsvariable aktiv wird.
+
+Ohne diesen Token liefert die Funktion einen 500er zurück und das Dashboard fällt automatisch auf die lokale Speicherung (localStorage + "Code kopieren") zurück — die Seite funktioniert also auch ohne dieses Setup, nur eben nicht mit automatischem Commit.
+
+**Sicherheitshinweis:** Der Endpunkt hat ausser einer Ticker-Allowlist und Feldvalidierung keine eigene Authentifizierung — bewusste Entscheidung für dieses persönliche, nicht-monetäre Tracking-Dashboard mit engem Token-Scope (nur diese eine Datei, nur dieses eine Repo) und vollständig sichtbaren/revertierbaren Commits. Falls die URL breiter bekannt wird, zusätzlichen Schutz (Shared-Secret-Header, echte Auth) ergänzen.
 
 ## Kern-Feature: BTC/ETH-Detailanalyse (v10)
 

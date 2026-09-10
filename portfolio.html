@@ -134,7 +134,7 @@
     <h1>Portfolio</h1>
     <p class="lede">Performance des eigenen Portfolios seit Investment-Start am <span id="startDateLabel"></span> &mdash; Gewinn/Verlust nach Sparte und Titel, plus Trefferquote der im Schwellenradar berechneten Einstiegszonen anhand der eigenen, echten Käufe.</p>
     <div class="disclaimer">
-      <strong>Kein Anlagerat.</strong> Diese Seite dokumentiert eigene, tatsächlich getätigte Käufe zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse werden seit v30 (10.09.2026) automatisch täglich mit denselben Twelve-Data-Live-Kursen synchronisiert, die auch der Schwellenradar verwendet (siehe currentPriceAsOf je Position). Trefferquote/Verdict-Bewertungen bleiben manuell recherchiert. Über &bdquo;Neue Investition erfassen&ldquo; (seit v31) lassen sich Käufe direkt im Browser eintragen &mdash; diese werden nur lokal in diesem Browser gespeichert, bis der generierte Code manuell ins Dashboard übernommen wird.
+      <strong>Kein Anlagerat.</strong> Diese Seite dokumentiert eigene, tatsächlich getätigte Käufe zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse werden seit v30 (10.09.2026) automatisch täglich mit denselben Twelve-Data-Live-Kursen synchronisiert, die auch der Schwellenradar verwendet (siehe currentPriceAsOf je Position). Trefferquote/Verdict-Bewertungen bleiben manuell recherchiert. Über &bdquo;Neue Investition erfassen&ldquo; lassen sich Käufe direkt im Dashboard eintragen: Sie werden seit v33 automatisch per Server-Funktion committet und dauerhaft gespeichert (kein Kopieren nötig); nur falls das fehlschlägt, landet die Position stattdessen lokal in diesem Browser mit einer Möglichkeit, den Code manuell nachzutragen.
     </div>
   </div>
 </div>
@@ -144,7 +144,7 @@
 
   <section>
     <h2>Neue Investition erfassen</h2>
-    <p class="section-note">Erscheint sofort unten in allen Tabellen (nur in diesem Browser gespeichert). Für die dauerhafte Aufnahme ins Dashboard &mdash; inkl. täglichem automatischem Kurs-Sync &mdash; den generierten Code unten kopieren und einfügen lassen.</p>
+    <p class="section-note">Wird automatisch dauerhaft gespeichert (Server-Funktion committet direkt ins Dashboard, sichtbar nach dem Redeploy in ca. 1 Minute). Nur falls das fehlschlägt, landet die Position stattdessen lokal in diesem Browser &mdash; dann per &bdquo;Code kopieren&ldquo; manuell nachtragen.</p>
     <div class="add-trade-card">
       <div class="add-trade-row">
         <label>Wertschrift
@@ -164,6 +164,7 @@
       </div>
       <div class="add-trade-hint" id="autoPriceHint"></div>
       <button class="btn" id="addTradeBtn" type="button">+ Investition hinzufügen</button>
+      <div class="add-trade-hint" id="submitStatus"></div>
     </div>
     <div id="manualTradesList"></div>
   </section>
@@ -403,7 +404,17 @@
   dateInput.addEventListener('change', updatePriceHint);
   updatePriceHint();
 
-  document.getElementById('addTradeBtn').addEventListener('click', () => {
+  // In-memory only (not persisted): trades successfully committed to GitHub this
+  // session, shown immediately without waiting for the Vercel redeploy. They
+  // naturally disappear on reload once the real, committed TRADES entry takes
+  // over — no duplication risk.
+  const pendingCommittedTrades = [];
+
+  const ADD_TRADE_API = '/api/add-trade';
+  const addTradeBtn = document.getElementById('addTradeBtn');
+  const submitStatus = document.getElementById('submitStatus');
+
+  addTradeBtn.addEventListener('click', async () => {
     const ticker = tickerSelect.value;
     const sec = SECURITIES.find(s => s.ticker === ticker);
     const amount = parseFloat(document.getElementById('newAmount').value);
@@ -426,14 +437,37 @@
       currentPrice: nowPrice, currentPriceAsOf: nowAsOf,
       entryLow: sec.entryLow, entryHigh: sec.entryHigh,
       verdict: "pending",
-      verdictNote: "Frisch erfasst — Retrospektive (Zonentest, Bodenbildung, Kursverlauf) noch nicht recherchiert.",
-      manual: true
+      verdictNote: "Frisch erfasst — Retrospektive (Zonentest, Bodenbildung, Kursverlauf) noch nicht recherchiert."
     };
-    const list = loadManualTrades();
-    list.push(trade);
-    saveManualTrades(list);
-    document.getElementById('newAmount').value = '';
-    renderAll();
+
+    addTradeBtn.disabled = true;
+    submitStatus.textContent = 'Wird gespeichert…';
+    try {
+      const res = await fetch(ADD_TRADE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(trade)
+      });
+      if(!res.ok){
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || ('HTTP ' + res.status));
+      }
+      pendingCommittedTrades.push({ ...trade, committed: true });
+      submitStatus.textContent = '✓ Gespeichert und committet — erscheint nach dem automatischen Redeploy (ca. 1 Minute) dauerhaft im Dashboard.';
+      document.getElementById('newAmount').value = '';
+      renderAll();
+    } catch (e) {
+      // Automatisches Speichern fehlgeschlagen (z. B. GITHUB_TOKEN auf Vercel noch nicht
+      // eingerichtet) - Fallback auf die bisherige, rein lokale Speicherung.
+      const list = loadManualTrades();
+      list.push({ ...trade, manual: true });
+      saveManualTrades(list);
+      submitStatus.textContent = 'Automatisches Speichern fehlgeschlagen (' + e.message + ') — stattdessen nur lokal gespeichert. "Code kopieren" nutzen, um es manuell dauerhaft zu machen.';
+      document.getElementById('newAmount').value = '';
+      renderAll();
+    } finally {
+      addTradeBtn.disabled = false;
+    }
   });
 
   // ---- Gesamt-Rendering (TRADES + manuell erfasste, lokale Investitionen) ----
@@ -453,7 +487,7 @@
 
   function renderAll(){
     renderManualTradesList();
-    const allTrades = TRADES.concat(loadManualTrades().map(freshenManualTrade));
+    const allTrades = TRADES.concat(loadManualTrades().map(freshenManualTrade)).concat(pendingCommittedTrades);
 
     const rows = allTrades.map(t => {
       const shares = t.usdAmount / t.buyPrice;
@@ -494,7 +528,7 @@
           <tbody>
             ${rows.map(r => `
               <tr>
-                <td class="ticker-cell">${r.ticker}${r.manual ? '<span class="manual-badge">nur lokal</span>' : ''}</td>
+                <td class="ticker-cell">${r.ticker}${r.manual ? '<span class="manual-badge">nur lokal</span>' : (r.committed ? '<span class="manual-badge">✓ committet</span>' : '')}</td>
                 <td>${r.name}</td>
                 <td><span class="cat-tag">${r.sparte}</span></td>
                 <td class="num">${r.buyDate}</td>

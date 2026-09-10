@@ -4,6 +4,20 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v33 — 10.09.2026
+
+**Investitionen werden jetzt automatisch dauerhaft committet — keine manuelle Code-Übernahme mehr nötig.** Nutzer-Nachfrage nach dem "nur lokal"-Feedback zu v31: Gibt es keine echte Client-Server-Lösung, statt jedes Mal Code kopieren zu müssen?
+
+Ja — zwei Architektur-Optionen standen zur Wahl: ein GitHub-Token direkt im Browser (kein neuer Server-Code, aber Token pro Gerät neu einzurichten) oder eine Vercel-Serverless-Funktion als richtiger Backend-Proxy (Token bleibt serverseitig, funktioniert von jedem Gerät ohne erneute Einrichtung). Der Nutzer entschied sich für die Serverless-Funktion.
+
+**Umgesetzt:** Neue Datei `api/add-trade.js` — eine Vercel-Serverless-Funktion, die die Formulardaten aus "Neue Investition erfassen" per POST entgegennimmt und direkt über die GitHub-Contents-API einen neuen Eintrag ins `TRADES`-Array von `portfolio.html` committet. Der GitHub-Token liegt als Vercel-Umgebungsvariable (`GITHUB_TOKEN`) rein serverseitig und erreicht den Browser nie. Die Funktion validiert Ticker (Allowlist), Pflichtfelder und Datumsformat, und prüft vor jedem Commit, dass die resultierende Datei weiterhin gültiges JavaScript wäre — kein Commit ohne diese Prüfung.
+
+Das Portfolio-Formular versucht jetzt zuerst den automatischen Commit; schlägt der fehl (z. B. weil `GITHUB_TOKEN` auf Vercel noch nicht hinterlegt ist — Setup-Anleitung in README.md), greift automatisch der bisherige lokale Speicher- und Code-Kopieren-Mechanismus aus v31 als Fallback, mit einer erklärenden Statusmeldung. Erfolgreich committete Einträge erscheinen sofort in der laufenden Sitzung (rein im Arbeitsspeicher, nicht in localStorage — vermeidet Duplikate nach dem echten Redeploy) mit einem "✓ committet"-Hinweis statt "nur lokal".
+
+**Bewusster Sicherheits-Trade-off:** Der neue Endpunkt hat keine eigene Authentifizierung, nur eine Ticker-Allowlist und Feldvalidierung. Vertretbar für dieses persönliche, nicht-monetäre Tracking-Dashboard mit eng auf eine Datei/ein Repo begrenztem Token und vollständig sichtbaren, revertierbaren Commits — in README.md offen dokumentiert, inklusive Hinweis, wie bei Bedarf nachgerüstet werden kann.
+
+Getestet: Ein gemocktes Testskript prüft die Kernlogik der Serverless-Funktion (fehlender Token, ungültiger Ticker, falsches Datumsformat, erfolgreicher Commit inkl. Syntaxvalidierung der resultierenden Datei) ohne echte GitHub-Aufrufe. Im Browser end-to-end mit simulierter Erfolgs- und Fehlerantwort getestet — beide Pfade (automatischer Commit / lokaler Fallback) funktionieren wie vorgesehen, keine Konsolenfehler.
+
 ## v32 — 10.09.2026
 
 **Portfolio-Verteilung gruppiert jetzt nach Ticker.** Nutzer-Feedback direkt nach dem ersten Test von v31: Eine zweite Investition in NeuroPace (NPCE, $100) erschien im Kuchendiagramm als eigene, separate Scheibe neben der bereits bestehenden NPCE-Position, statt zu einer gemeinsamen $200-Scheibe zusammengefasst zu werden.
