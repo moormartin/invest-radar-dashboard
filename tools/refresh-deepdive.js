@@ -75,6 +75,11 @@ function fail(msg) {
   process.exit(1);
 }
 
+function todayDeStr() {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
+}
+
 function fmtDeNum(n, maxDecimals) {
   // Mirrors the site's own de-CH-ish number style closely enough for generated fields
   // (macdText / rsi are plain numbers in the source, not run through the page's own
@@ -138,8 +143,7 @@ function cmdApply(args) {
   const DATA = eval(dataBlock.replace("const DATA = ", ""));
 
   const summary = { updated: [], flagged: [], skipped: [], errors: [] };
-  const today = new Date();
-  const todayDe = `${String(today.getDate()).padStart(2, "0")}.${String(today.getMonth() + 1).padStart(2, "0")}.${today.getFullYear()}`;
+  const todayDe = todayDeStr();
 
   for (const known of TICKERS) {
     const ticker = known.ticker;
@@ -315,6 +319,43 @@ function cmdApplyPortfolio(args) {
     text = text.replace(asOfMatch[0], `currentPriceAsOf:"${fx.asOfDate || ""}"`);
     html = html.slice(0, slice.start) + text + html.slice(slice.end);
     summary.updated.push({ ticker, oldPrice, newPrice: fx.price });
+  }
+
+  // --- TICKER_PRICES: today's price for every selectable security in the "Neue Investition
+  // erfassen" form (not just tickers with an existing TRADES entry) - drives that form's
+  // buy-price autofill when the chosen date is today. Rebuilt in SECURITIES order each run. ---
+  const secStart = html.indexOf("const SECURITIES = [");
+  const secEnd = html.indexOf("\n  ];", secStart);
+  const priceStart = html.indexOf("const TICKER_PRICES = {");
+  const priceEnd = html.indexOf("\n  };", priceStart);
+  if (secStart !== -1 && secEnd !== -1 && priceStart !== -1 && priceEnd !== -1) {
+    const secBlock = html.slice(secStart, secEnd + 5);
+    // eslint-disable-next-line no-eval
+    const SECURITIES = eval(secBlock.replace("const SECURITIES = ", ""));
+    const priceBlock = html.slice(priceStart, priceEnd + 5);
+    let existingPrices = {};
+    try {
+      // eslint-disable-next-line no-eval
+      existingPrices = eval("(" + priceBlock.replace("const TICKER_PRICES = ", "").replace(/;\s*$/, "") + ")");
+    } catch (e) {
+      summary.errors.push("TICKER_PRICES konnte nicht geparst werden - Tabelle unverändert gelassen.");
+      existingPrices = null;
+    }
+    if (existingPrices !== null) {
+      const merged = {};
+      for (const sec of SECURITIES) {
+        const fx = fetched[sec.ticker];
+        merged[sec.ticker] = fx && fx.price != null ? { price: fx.price, asOfDate: fx.asOfDate || todayDeStr() } : existingPrices[sec.ticker];
+      }
+      const serialized =
+        "const TICKER_PRICES = {\n" +
+        Object.entries(merged)
+          .filter(([, v]) => v)
+          .map(([t, v]) => `    ${t}: { price:${v.price}, asOfDate:${JSON.stringify(v.asOfDate)} }`)
+          .join(",\n") +
+        "\n  };";
+      html = html.slice(0, priceStart) + serialized + html.slice(priceEnd + 5);
+    }
   }
 
   if (!dryRun) {

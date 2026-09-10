@@ -4,6 +4,22 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v31 — 10.09.2026
+
+**Neue Investitionen direkt im Portfolio-Dashboard erfassen.** Bisher musste jeder neue Trade von Hand im Code des `TRADES`-Arrays in `portfolio.html` ergänzt werden. Der Nutzer wollte das direkt im Dashboard tun können — Wertschrift wählen, Investition in USD, Kaufdatum.
+
+**Zwei Design-Entscheidungen vorab geklärt**, da eine statische Seite ohne Backend hier echte Grenzen hat:
+
+1. **Kaufkurs:** Ein Live- oder historischer Twelve-Data-Abruf direkt aus dem Browser ist nicht sicher möglich (ein API-Key im Client-Code wäre öffentlich sichtbar) und für ein beliebiges vergangenes Datum ohnehin nicht praktikabel. Lösung: Bei Kaufdatum = heute wird der Kurs automatisch aus einer neuen `TICKER_PRICES`-Tabelle übernommen (21 Titel, vom täglichen Sync mitgepflegt); bei jedem anderen Datum erscheint ein Eingabefeld, in das der tatsächlich bezahlte Kurs von Hand eingetragen wird.
+2. **Speicherort:** Neue Positionen erscheinen sofort in allen Tabellen, Charts und Statistiken — aber nur lokal in diesem Browser (`localStorage`), klar mit einem &bdquo;nur lokal&ldquo;-Badge markiert. Für die dauerhafte, tagesaktuell synchronisierte Aufnahme ins Dashboard gibt es einen &bdquo;Code kopieren&ldquo;-Button pro Position, der den fertigen `TRADES`-Codeblock generiert (inkl. Platzhalter-Kommentar für die noch ausstehende Retrospektive-Recherche) — copy-paste ins Repo, committen, fertig. Ohne diesen Schritt bleibt eine Position rein lokal und wird vom täglichen automatisierten Sync nicht erfasst.
+
+**Umgesetzt:**
+- Neuer Abschnitt &bdquo;Neue Investition erfassen&ldquo; mit Dropdown (21 Titel mit Detailanalyse und berechneter Einstiegszone — BSX ausgenommen, da ohne Zone; KAS ausgenommen, da CoinGecko-basiert), USD-Betragsfeld, Datumsfeld (Default: heute) und bedingt eingeblendetem Kaufkurs-Feld.
+- Frisch erfasste Positionen bekommen `verdict:"pending"` und erscheinen in der Trefferquote-Sektion mit einer eigenen &bdquo;⏳ Ausstehend&ldquo;-Karte statt der vollen Retrospektive (die weiterhin echte, manuelle Recherche braucht).
+- `tools/refresh-deepdive.js apply-portfolio` pflegt `TICKER_PRICES` jetzt für alle 21 Titel mit (vorher nur für Titel mit bestehender Position) — ohne zusätzliche API-Aufrufe, aus derselben `fetched.json`.
+- Beim Bau eine echte JS-Falle gefunden und behoben: `eval("{...}")` parst ein Objekt-Literal am Anfang eines Strings als Block-Statement, nicht als Ausdruck (bekannte &bdquo;leading brace&ldquo;-Mehrdeutigkeit) — betraf nur `TICKER_PRICES` (ein Objekt), nicht die anderen, Array-basierten Tabellen im Projekt. Behoben durch Klammerung vor `eval`.
+- Vor dem Einsatz im Browser getestet: Formular-Verhalten (Autofill heute / manuelles Feld bei anderem Datum), Hinzufügen, Neuladen (localStorage-Persistenz bestätigt), Code-Export (Syntax verifiziert), Entfernen, mobile Darstellung — alles ohne Konsolenfehler.
+
 ## v30 — 10.09.2026
 
 **Täglichen Sync um das eigene Portfolio erweitert.** Nachdem der v29-Testlauf erfolgreich alle 22 Detailanalyse-Titel aktualisiert hatte, fragte der Nutzer, ob auch `portfolio.html` täglich mit aktuellen Kursen versorgt werden kann.

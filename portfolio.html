@@ -94,6 +94,37 @@
   .pie-legend-row .pl-val{ margin-left:auto; font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); }
 
   footer{ max-width:1180px; margin:56px auto 0; padding:24px; border-top:1px solid var(--border); font-size:.78rem; color:var(--ink-faint); }
+
+  .add-trade-card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); padding:20px; }
+  .add-trade-row{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
+  .add-trade-row:last-of-type{ margin-bottom:0; }
+  .add-trade-row label{ display:flex; flex-direction:column; gap:5px; font-size:.78rem; color:var(--ink-soft); flex:1; min-width:160px; }
+  .add-trade-row select, .add-trade-row input{
+    font:inherit; font-size:.88rem; padding:8px 10px; border:1px solid var(--border); border-radius:8px;
+    background:var(--paper); color:var(--ink);
+  }
+  .add-trade-hint{ font-size:.78rem; color:var(--ink-soft); margin:2px 0 14px; min-height:1.2em; }
+  .btn{ font:inherit; font-size:.85rem; font-weight:600; padding:9px 18px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; }
+  .btn:hover{ opacity:.9; }
+  .btn.btn-ghost{ background:transparent; color:var(--accent); }
+  .btn.btn-ghost:hover{ background:var(--accent-soft); }
+  .btn.btn-small{ font-size:.72rem; padding:5px 10px; }
+  .manual-trade-item{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:.82rem;
+    border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-top:10px; background:var(--surface);
+  }
+  .manual-trade-item .mt-info{ flex:1; min-width:220px; }
+  .manual-trade-item .mt-actions{ display:flex; gap:8px; }
+  .manual-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:.62rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; padding:1px 6px; border-radius:99px; background:var(--accent-soft); color:var(--accent-ink);
+    margin-left:6px; vertical-align:middle;
+  }
+  .code-export{
+    width:100%; font-family:'IBM Plex Mono',monospace; font-size:.72rem; line-height:1.5; margin-top:10px;
+    padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink);
+    white-space:pre; overflow-x:auto; resize:vertical;
+  }
 </style>
 
 <div class="hero">
@@ -103,13 +134,39 @@
     <h1>Portfolio</h1>
     <p class="lede">Performance des eigenen Portfolios seit Investment-Start am <span id="startDateLabel"></span> &mdash; Gewinn/Verlust nach Sparte und Titel, plus Trefferquote der im Schwellenradar berechneten Einstiegszonen anhand der eigenen, echten Käufe.</p>
     <div class="disclaimer">
-      <strong>Kein Anlagerat.</strong> Diese Seite dokumentiert eigene, tatsächlich getätigte Käufe zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse werden seit v30 (10.09.2026) automatisch täglich mit denselben Twelve-Data-Live-Kursen synchronisiert, die auch der Schwellenradar verwendet (siehe currentPriceAsOf je Position). Trefferquote/Verdict-Bewertungen bleiben manuell recherchiert. Käufe/Verkäufe werden von Hand im Code erfasst, sobald sie tatsächlich stattfinden.
+      <strong>Kein Anlagerat.</strong> Diese Seite dokumentiert eigene, tatsächlich getätigte Käufe zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse werden seit v30 (10.09.2026) automatisch täglich mit denselben Twelve-Data-Live-Kursen synchronisiert, die auch der Schwellenradar verwendet (siehe currentPriceAsOf je Position). Trefferquote/Verdict-Bewertungen bleiben manuell recherchiert. Über &bdquo;Neue Investition erfassen&ldquo; (seit v31) lassen sich Käufe direkt im Browser eintragen &mdash; diese werden nur lokal in diesem Browser gespeichert, bis der generierte Code manuell ins Dashboard übernommen wird.
     </div>
   </div>
 </div>
 
 <div class="wrap">
   <div class="stats" id="overviewStats"></div>
+
+  <section>
+    <h2>Neue Investition erfassen</h2>
+    <p class="section-note">Erscheint sofort unten in allen Tabellen (nur in diesem Browser gespeichert). Für die dauerhafte Aufnahme ins Dashboard &mdash; inkl. täglichem automatischem Kurs-Sync &mdash; den generierten Code unten kopieren und einfügen lassen.</p>
+    <div class="add-trade-card">
+      <div class="add-trade-row">
+        <label>Wertschrift
+          <select id="newTicker"></select>
+        </label>
+        <label>Investition (USD)
+          <input type="number" id="newAmount" min="1" step="0.01" placeholder="z. B. 100">
+        </label>
+        <label>Kaufdatum
+          <input type="date" id="newDate">
+        </label>
+      </div>
+      <div class="add-trade-row" id="manualPriceRow" hidden>
+        <label>Kaufkurs am gewählten Datum (USD)
+          <input type="number" id="newPrice" min="0" step="0.0001" placeholder="tatsächlich bezahlter Kurs">
+        </label>
+      </div>
+      <div class="add-trade-hint" id="autoPriceHint"></div>
+      <button class="btn" id="addTradeBtn" type="button">+ Investition hinzufügen</button>
+    </div>
+    <div id="manualTradesList"></div>
+  </section>
 
   <section>
     <h2>Positionen</h2>
@@ -182,6 +239,65 @@
     }
   ];
 
+  // =====================================================================
+  // SECURITIES — Titel, die über "Neue Investition erfassen" wählbar sind:
+  // die 21 Schwellenradar-Titel mit Twelve-Data-Detailanalyse UND einer
+  // berechneten Einstiegszone (BSX hat keine Zone und ist daher aussen vor,
+  // KAS ist CoinGecko-basiert und hier ebenfalls aussen vor). entryLow/High
+  // hier von Hand aus index.html übernommen, Stand 10.09.2026 — bei einer
+  // neuen Detailanalyse-Zone in index.html hier nachziehen.
+  // TICKER_PRICES — Kurs heute je Titel, wird vom täglichen Sync automatisch
+  // aktualisiert (tools/refresh-deepdive.js, Befehl apply-portfolio) und ist
+  // Grundlage für den Kaufkurs-Autofill, wenn Kaufdatum = heute.
+  // =====================================================================
+  const SECURITIES = [
+    { ticker:"MDT", name:"Medtronic plc", sparte:"BCI / Neurotech", entryLow:89.55, entryHigh:93.27 },
+    { ticker:"NPCE", name:"NeuroPace, Inc.", sparte:"BCI / Neurotech", entryLow:11.90, entryHigh:14.84 },
+    { ticker:"ROBO", name:"ROBO Global Robotics & Automation ETF", sparte:"BCI / Neurotech", entryLow:72.70, entryHigh:79.51 },
+    { ticker:"NVDA", name:"NVIDIA Corp.", sparte:"KI-Agenten / ASI", entryLow:218.76, entryHigh:226.58 },
+    { ticker:"MSFT", name:"Microsoft Corp.", sparte:"KI-Agenten / ASI", entryLow:475.59, entryHigh:509.95 },
+    { ticker:"PLTR", name:"Palantir Technologies", sparte:"KI-Agenten / ASI", entryLow:156.95, entryHigh:168.88 },
+    { ticker:"CRM", name:"Salesforce, Inc.", sparte:"KI-Agenten / ASI", entryLow:222.20, entryHigh:242.83 },
+    { ticker:"NOW", name:"ServiceNow, Inc.", sparte:"KI-Agenten / ASI", entryLow:131.11, entryHigh:145.97 },
+    { ticker:"AVGO", name:"Broadcom Inc.", sparte:"KI-Agenten / ASI", entryLow:345, entryHigh:370 },
+    { ticker:"TEAM", name:"Atlassian Corp", sparte:"KI-Agenten / ASI", entryLow:144.17, entryHigh:168.16 },
+    { ticker:"TSLA", name:"Tesla, Inc.", sparte:"Humanoide Robotik", entryLow:297.38, entryHigh:343.25 },
+    { ticker:"ROK", name:"Rockwell Automation", sparte:"Humanoide Robotik", entryLow:405.37, entryHigh:440.50 },
+    { ticker:"ISRG", name:"Intuitive Surgical", sparte:"Humanoide Robotik", entryLow:357.90, entryHigh:366.95 },
+    { ticker:"BOTZ", name:"Global X Robotics & AI ETF", sparte:"Humanoide Robotik", entryLow:33.68, entryHigh:36.75 },
+    { ticker:"IONQ", name:"IonQ, Inc.", sparte:"Quantencomputing", entryLow:25.89, entryHigh:33.38 },
+    { ticker:"CRSP", name:"CRISPR Therapeutics AG", sparte:"Biotech / Pharma", entryLow:46.54, entryHigh:57.25 },
+    { ticker:"NVO", name:"Novo Nordisk A/S (ADR)", sparte:"Biotech / Pharma", entryLow:46.21, entryHigh:49.64 },
+    { ticker:"BTC", name:"Bitcoin", sparte:"Krypto / CBDC", entryLow:28530, entryHigh:40030 },
+    { ticker:"ETH", name:"Ethereum", sparte:"Krypto / CBDC", entryLow:959, entryHigh:1506 },
+    { ticker:"FET", name:"Fetch.ai (FET)", sparte:"Krypto / CBDC", entryLow:0.113, entryHigh:0.336 },
+    { ticker:"LINK", name:"Chainlink", sparte:"Krypto / CBDC", entryLow:6.996, entryHigh:14.12 }
+  ];
+
+  const TICKER_PRICES = {
+    MDT: { price:91.89, asOfDate:"09.09.2026" },
+    NPCE: { price:14.5, asOfDate:"09.09.2026" },
+    ROBO: { price:79.05, asOfDate:"09.09.2026" },
+    NVDA: { price:223.67, asOfDate:"09.09.2026" },
+    MSFT: { price:491.65, asOfDate:"09.09.2026" },
+    PLTR: { price:169.53, asOfDate:"09.09.2026" },
+    CRM: { price:244.16, asOfDate:"09.09.2026" },
+    NOW: { price:131.11, asOfDate:"09.09.2026" },
+    AVGO: { price:364.38, asOfDate:"09.09.2026" },
+    TEAM: { price:177.74, asOfDate:"09.09.2026" },
+    TSLA: { price:367.81, asOfDate:"09.09.2026" },
+    ROK: { price:426.08, asOfDate:"09.09.2026" },
+    ISRG: { price:353.24, asOfDate:"09.09.2026" },
+    BOTZ: { price:35.18, asOfDate:"09.09.2026" },
+    IONQ: { price:38.14, asOfDate:"09.09.2026" },
+    CRSP: { price:53.45, asOfDate:"09.09.2026" },
+    NVO: { price:44.56, asOfDate:"09.09.2026" },
+    BTC: { price:78044.27, asOfDate:"10.09.2026" },
+    ETH: { price:2468.06, asOfDate:"10.09.2026" },
+    FET: { price:0.1676, asOfDate:"10.09.2026" },
+    LINK: { price:11.782, asOfDate:"10.09.2026" }
+  };
+
   const START_DATE = "05.09.2026";
 
   function fmtUSD(n){
@@ -195,130 +311,133 @@
 
   document.getElementById('startDateLabel').textContent = START_DATE;
 
-  const rows = TRADES.map(t => {
-    const shares = t.usdAmount / t.buyPrice;
-    const currentValue = shares * t.currentPrice;
-    const plUsd = currentValue - t.usdAmount;
-    const plPct = (plUsd / t.usdAmount) * 100;
-    const inZone = t.buyPrice >= t.entryLow && t.buyPrice <= t.entryHigh;
-    return { ...t, shares, currentValue, plUsd, plPct, inZone };
-  });
+  // =====================================================================
+  // Manuell erfasste Investitionen (nur dieser Browser, localStorage).
+  // Werden bei jedem Render mit TRADES zusammengeführt; ihr currentPrice
+  // wird dabei live aus TICKER_PRICES aufgefrischt (nicht aus dem beim
+  // Erfassen gespeicherten Stand), damit sie ohne Codeänderung tagesaktuell
+  // bleiben, sobald der tägliche Sync TICKER_PRICES aktualisiert.
+  // =====================================================================
+  const LS_KEY = 'schwellenradar_manual_trades_v1';
+  function loadManualTrades(){
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){ return []; }
+  }
+  function saveManualTrades(list){
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch(e){ /* localStorage nicht verfügbar - Eintrag bleibt nur für diese Sitzung sichtbar */ }
+  }
+  function todayIso(){ return new Date().toISOString().slice(0,10); }
+  function isoToDe(iso){ const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`; }
 
-  // ---- Overview ----
-  const totalInvested = rows.reduce((s,r) => s + r.usdAmount, 0);
-  const totalValue = rows.reduce((s,r) => s + r.currentValue, 0);
-  const totalPl = totalValue - totalInvested;
-  const totalPlPct = totalInvested ? (totalPl / totalInvested) * 100 : 0;
-  const hitCount = rows.filter(r => r.inZone).length;
-  const hitRate = rows.length ? (hitCount / rows.length) * 100 : 0;
-
-  document.getElementById('overviewStats').innerHTML = `
-    <div class="stat"><div class="n num">${fmtUSD(totalInvested)}</div><div class="l">Investiert gesamt</div></div>
-    <div class="stat"><div class="n num">${fmtUSD(totalValue)}</div><div class="l">Aktueller Wert</div></div>
-    <div class="stat ${totalPl>0.001?'good':totalPl<-0.001?'bad':''}"><div class="n num">${fmtUSD(totalPl)}</div><div class="l">Gewinn/Verlust</div></div>
-    <div class="stat ${totalPlPct>0.001?'good':totalPlPct<-0.001?'bad':''}"><div class="n num">${fmtPct(totalPlPct)}</div><div class="l">Performance</div></div>
-    <div class="stat"><div class="n num">${rows.length}</div><div class="l">Offene Positionen</div></div>
-    <div class="stat ${hitRate>=50?'good':'warn'}"><div class="n num">${hitCount}/${rows.length}</div><div class="l">Käufe in Zielzone</div></div>
-  `;
-
-  // ---- Positions table ----
-  if(rows.length === 0){
-    document.getElementById('positionsTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
-  } else {
-    document.getElementById('positionsTableWrap').innerHTML = `
-      <table>
-        <thead><tr>
-          <th>Ticker</th><th>Name</th><th>Sparte</th><th>Kaufdatum</th><th>Kaufkurs</th><th>Kurs aktuell</th>
-          <th>Anteile</th><th>Kaufwert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th><th>Kauf in Zone?</th>
-        </tr></thead>
-        <tbody>
-          ${rows.map(r => `
-            <tr>
-              <td class="ticker-cell">${r.ticker}</td>
-              <td>${r.name}</td>
-              <td><span class="cat-tag">${r.sparte}</span></td>
-              <td class="num">${r.buyDate}</td>
-              <td class="num">${fmtUSD(r.buyPrice)}</td>
-              <td class="num">${fmtUSD(r.currentPrice)}</td>
-              <td class="num">${r.shares.toFixed(4)}</td>
-              <td class="num">${fmtUSD(r.usdAmount)}</td>
-              <td class="num">${fmtUSD(r.currentValue)}</td>
-              <td class="num ${plClass(r.plUsd)}">${fmtUSD(r.plUsd)}</td>
-              <td class="num ${plClass(r.plPct)}">${fmtPct(r.plPct)}</td>
-              <td>${r.inZone ? '<span class="zone-badge in">✓ in Zone</span>' : '<span class="zone-badge out">✗ ausserhalb</span>'}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <p class="section-note" style="margin-top:10px;">Kurs aktuell jeweils Stand ${rows[0].currentPriceAsOf} (letzter Handelstag vor Wochenende) &mdash; ${rows[0].buyDateNote}</p>
-    `;
+  function freshenManualTrade(t){
+    const live = TICKER_PRICES[t.ticker];
+    if(!live) return t;
+    return { ...t, currentPrice: live.price, currentPriceAsOf: live.asOfDate };
   }
 
-  // ---- P&L by Sparte ----
-  const sparteMap = {};
-  rows.forEach(r => {
-    if(!sparteMap[r.sparte]) sparteMap[r.sparte] = { invested:0, value:0, count:0 };
-    sparteMap[r.sparte].invested += r.usdAmount;
-    sparteMap[r.sparte].value += r.currentValue;
-    sparteMap[r.sparte].count += 1;
-  });
-  const sparteRows = Object.entries(sparteMap).map(([name, d]) => {
-    const pl = d.value - d.invested;
-    const plPct = d.invested ? (pl / d.invested) * 100 : 0;
-    return { name, ...d, pl, plPct };
-  });
-  if(sparteRows.length === 0){
-    document.getElementById('sparteTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
-  } else {
-    document.getElementById('sparteTableWrap').innerHTML = `
-      <table>
-        <thead><tr><th>Sparte</th><th>Titel</th><th>Investiert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th></tr></thead>
-        <tbody>
-          ${sparteRows.map(s => `
-            <tr>
-              <td>${s.name}</td>
-              <td class="num">${s.count}</td>
-              <td class="num">${fmtUSD(s.invested)}</td>
-              <td class="num">${fmtUSD(s.value)}</td>
-              <td class="num ${plClass(s.pl)}">${fmtUSD(s.pl)}</td>
-              <td class="num ${plClass(s.plPct)}">${fmtPct(s.plPct)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
+  function generateTradeCode(t){
+    return `    {\n      ticker:"${t.ticker}", name:"${t.name}", sparte:"${t.sparte}",\n      buyDate:"${t.buyDate}", buyDateNote:"${t.buyDateNote}",\n      usdAmount:${t.usdAmount}, buyPrice:${t.buyPrice},\n      currentPrice:${t.currentPrice}, currentPriceAsOf:"${t.currentPriceAsOf}",\n      entryLow:${t.entryLow}, entryHigh:${t.entryHigh},\n      // TODO: Retrospektive von Hand nachtragen (zoneValidSince, zoneValidSinceNote, zoneTestDate,\n      // zoneTestLow, brokeFloor, postTestHigh, postTestHighDate) und verdict/verdictNote entsprechend setzen.\n      verdict:"pending",\n      verdictNote:"${t.verdictNote}"\n    },`;
   }
 
-  // ---- Prognosis hit-rate detail (retrospektiv: hielt der Boden, gab es einen Anstieg?) ----
-  const VERDICT_LABEL = { hit:"✓ Treffer", open:"◐ Offen", miss:"✗ Fehlschlag" };
-  if(rows.length === 0){
-    document.getElementById('hitrateWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
-  } else {
-    const verdictCounts = { hit:0, open:0, miss:0 };
-    rows.forEach(r => verdictCounts[r.verdict]++);
-    document.getElementById('hitrateWrap').innerHTML = `
-      ${rows.map(r => {
-        const riseSincePct = ((r.postTestHigh - r.zoneTestLow) / r.zoneTestLow) * 100;
-        return `
-        <div class="prognosis-card">
-          <div class="ph">
-            <b>${r.ticker} &middot; ${r.name}</b>
-            <span class="verdict-badge ${r.verdict}">${VERDICT_LABEL[r.verdict]}</span>
-          </div>
-          <div class="pf">
-            <span>Zone gültig seit <b>${r.zoneValidSince}</b> <span style="color:var(--ink-faint)">(${r.zoneValidSinceNote})</span></span>
-            <span>Zonentest am <b>${r.zoneTestDate}</b> bei <b>${fmtUSD(r.zoneTestLow)}</b></span>
-            <span>Boden gehalten: <b>${r.brokeFloor ? 'Nein — Zone durchbrochen' : 'Ja'}</b></span>
-            <span>Höchststand danach: <b>${fmtUSD(r.postTestHigh)}</b> (${r.postTestHighDate}, ${fmtPct(riseSincePct)})</span>
-          </div>
-          <div class="pn">${r.verdictNote}</div>
+  function renderManualTradesList(){
+    const wrap = document.getElementById('manualTradesList');
+    const list = loadManualTrades();
+    if(list.length === 0){ wrap.innerHTML = ''; return; }
+    wrap.innerHTML = list.map((t, i) => `
+      <div class="manual-trade-item">
+        <div class="mt-info"><b>${t.ticker}</b> &middot; ${fmtUSD(t.usdAmount)} am ${t.buyDate} zu ${fmtUSD(t.buyPrice)}<span class="manual-badge">nur lokal</span></div>
+        <div class="mt-actions">
+          <button class="btn btn-ghost btn-small" data-action="code" data-idx="${i}" type="button">Code kopieren</button>
+          <button class="btn btn-ghost btn-small" data-action="remove" data-idx="${i}" type="button">Entfernen</button>
         </div>
-      `; }).join('')}
-      <p class="section-note" style="margin-top:14px;">Bilanz: <strong>${verdictCounts.hit} Treffer</strong>, <strong>${verdictCounts.open} offen</strong>, <strong>${verdictCounts.miss} Fehlschlag</strong> von ${rows.length} Prognosen. Mit nur ${rows.length} Trades statistisch noch wenig aussagekräftig &mdash; wächst mit jedem weiteren erfassten Kauf.</p>
-    `;
+        <textarea class="code-export" id="codeExport${i}" rows="10" hidden readonly></textarea>
+      </div>
+    `).join('');
+    wrap.querySelectorAll('button[data-action="remove"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.idx);
+        const cur = loadManualTrades();
+        cur.splice(idx, 1);
+        saveManualTrades(cur);
+        renderAll();
+      });
+    });
+    wrap.querySelectorAll('button[data-action="code"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.idx);
+        const t = loadManualTrades()[idx];
+        const area = document.getElementById('codeExport' + idx);
+        area.value = generateTradeCode(freshenManualTrade(t));
+        area.hidden = false;
+        area.focus();
+        area.select();
+        if(navigator.clipboard) navigator.clipboard.writeText(area.value).catch(() => {});
+      });
+    });
   }
 
-  // ---- Pie chart: Portfolio-Verteilung nach Wert ----
+  // ---- "Neue Investition erfassen" Formular ----
+  const tickerSelect = document.getElementById('newTicker');
+  tickerSelect.innerHTML = SECURITIES.map(s => `<option value="${s.ticker}">${s.ticker} — ${s.name}</option>`).join('');
+  const dateInput = document.getElementById('newDate');
+  dateInput.value = todayIso();
+  dateInput.max = todayIso();
+  const manualPriceRow = document.getElementById('manualPriceRow');
+  const autoPriceHint = document.getElementById('autoPriceHint');
+
+  function updatePriceHint(){
+    const ticker = tickerSelect.value;
+    const isToday = dateInput.value === todayIso();
+    const tp = TICKER_PRICES[ticker];
+    if(isToday && tp){
+      manualPriceRow.hidden = true;
+      autoPriceHint.textContent = `Kaufkurs wird automatisch übernommen: ${fmtUSD(tp.price)} (Stand ${tp.asOfDate}).`;
+    } else if(isToday){
+      manualPriceRow.hidden = false;
+      autoPriceHint.textContent = 'Kein aktueller Kurs für diesen Titel hinterlegt — bitte Kaufkurs manuell eintragen.';
+    } else {
+      manualPriceRow.hidden = false;
+      autoPriceHint.textContent = 'Anderes Datum gewählt — bitte den tatsächlichen Kaufkurs an diesem Tag eintragen.';
+    }
+  }
+  tickerSelect.addEventListener('change', updatePriceHint);
+  dateInput.addEventListener('change', updatePriceHint);
+  updatePriceHint();
+
+  document.getElementById('addTradeBtn').addEventListener('click', () => {
+    const ticker = tickerSelect.value;
+    const sec = SECURITIES.find(s => s.ticker === ticker);
+    const amount = parseFloat(document.getElementById('newAmount').value);
+    const dateIso = dateInput.value;
+    const isToday = dateIso === todayIso();
+    const tp = TICKER_PRICES[ticker];
+    const price = (isToday && tp) ? tp.price : parseFloat(document.getElementById('newPrice').value);
+
+    if(!dateIso){ alert('Bitte ein Kaufdatum wählen.'); return; }
+    if(!amount || amount <= 0){ alert('Bitte eine gültige Investition in USD eingeben.'); return; }
+    if(!price || price <= 0){ alert('Bitte einen gültigen Kaufkurs eingeben.'); return; }
+
+    const buyDate = isoToDe(dateIso);
+    const nowPrice = tp ? tp.price : price;
+    const nowAsOf = tp ? tp.asOfDate : buyDate;
+    const trade = {
+      ticker: sec.ticker, name: sec.name, sparte: sec.sparte,
+      buyDate, buyDateNote: "Manuell über das Portfolio-Dashboard erfasst.",
+      usdAmount: amount, buyPrice: price,
+      currentPrice: nowPrice, currentPriceAsOf: nowAsOf,
+      entryLow: sec.entryLow, entryHigh: sec.entryHigh,
+      verdict: "pending",
+      verdictNote: "Frisch erfasst — Retrospektive (Zonentest, Bodenbildung, Kursverlauf) noch nicht recherchiert.",
+      manual: true
+    };
+    const list = loadManualTrades();
+    list.push(trade);
+    saveManualTrades(list);
+    document.getElementById('newAmount').value = '';
+    renderAll();
+  });
+
+  // ---- Gesamt-Rendering (TRADES + manuell erfasste, lokale Investitionen) ----
+  const VERDICT_LABEL = { hit:"✓ Treffer", open:"◐ Offen", miss:"✗ Fehlschlag", pending:"⏳ Ausstehend" };
   const PIE_PALETTE = ['#0E7C86','#96650F','#AD3527','#4A6FA5','#7A5C9E','#2E8B57','#C2185B','#5C6BC0'];
   function polarToCartesian(cx, cy, r, angleDeg){
     const rad = (angleDeg - 90) * Math.PI / 180;
@@ -331,35 +450,177 @@
     const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
     return `M ${cx} ${cy} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
   }
-  if(rows.length === 0){
-    document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
-  } else {
-    const cx = 110, cy = 110, r = 100;
-    let angle = 0;
-    const slices = rows.map((r_, i) => {
-      const pct = totalValue ? (r_.currentValue / totalValue) * 100 : 0;
-      const sweep = totalValue ? (r_.currentValue / totalValue) * 360 : 0;
-      const path = describeArc(cx, cy, r, angle, angle + sweep);
-      angle += sweep;
-      return { ticker:r_.ticker, name:r_.name, value:r_.currentValue, pct, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+
+  function renderAll(){
+    renderManualTradesList();
+    const allTrades = TRADES.concat(loadManualTrades().map(freshenManualTrade));
+
+    const rows = allTrades.map(t => {
+      const shares = t.usdAmount / t.buyPrice;
+      const currentValue = shares * t.currentPrice;
+      const plUsd = currentValue - t.usdAmount;
+      const plPct = (plUsd / t.usdAmount) * 100;
+      const inZone = t.entryLow != null && t.entryHigh != null && t.buyPrice >= t.entryLow && t.buyPrice <= t.entryHigh;
+      return { ...t, shares, currentValue, plUsd, plPct, inZone };
     });
-    document.getElementById('pieChartWrap').innerHTML = `
-      <div class="pie-wrap">
-        <svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Portfolio-Verteilung nach Wert">
-          ${slices.map(s => `<path d="${s.path}" fill="${s.color}" stroke="var(--surface)" stroke-width="2" />`).join('')}
-        </svg>
-        <div class="pie-legend">
-          ${slices.map(s => `
-            <div class="pie-legend-row">
-              <span class="pie-swatch" style="background:${s.color}"></span>
-              <span class="pl-ticker">${s.ticker}</span>
-              <span>${s.name}</span>
-              <span class="pl-val num">${fmtUSD(s.value)} &middot; ${s.pct.toFixed(1)}%</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
+
+    // ---- Overview ----
+    const totalInvested = rows.reduce((s,r) => s + r.usdAmount, 0);
+    const totalValue = rows.reduce((s,r) => s + r.currentValue, 0);
+    const totalPl = totalValue - totalInvested;
+    const totalPlPct = totalInvested ? (totalPl / totalInvested) * 100 : 0;
+    const hitCount = rows.filter(r => r.inZone).length;
+    const hitRate = rows.length ? (hitCount / rows.length) * 100 : 0;
+
+    document.getElementById('overviewStats').innerHTML = `
+      <div class="stat"><div class="n num">${fmtUSD(totalInvested)}</div><div class="l">Investiert gesamt</div></div>
+      <div class="stat"><div class="n num">${fmtUSD(totalValue)}</div><div class="l">Aktueller Wert</div></div>
+      <div class="stat ${totalPl>0.001?'good':totalPl<-0.001?'bad':''}"><div class="n num">${fmtUSD(totalPl)}</div><div class="l">Gewinn/Verlust</div></div>
+      <div class="stat ${totalPlPct>0.001?'good':totalPlPct<-0.001?'bad':''}"><div class="n num">${fmtPct(totalPlPct)}</div><div class="l">Performance</div></div>
+      <div class="stat"><div class="n num">${rows.length}</div><div class="l">Offene Positionen</div></div>
+      <div class="stat ${hitRate>=50?'good':'warn'}"><div class="n num">${hitCount}/${rows.length}</div><div class="l">Käufe in Zielzone</div></div>
     `;
+
+    // ---- Positions table ----
+    if(rows.length === 0){
+      document.getElementById('positionsTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      document.getElementById('positionsTableWrap').innerHTML = `
+        <table>
+          <thead><tr>
+            <th>Ticker</th><th>Name</th><th>Sparte</th><th>Kaufdatum</th><th>Kaufkurs</th><th>Kurs aktuell</th>
+            <th>Anteile</th><th>Kaufwert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th><th>Kauf in Zone?</th>
+          </tr></thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td class="ticker-cell">${r.ticker}${r.manual ? '<span class="manual-badge">nur lokal</span>' : ''}</td>
+                <td>${r.name}</td>
+                <td><span class="cat-tag">${r.sparte}</span></td>
+                <td class="num">${r.buyDate}</td>
+                <td class="num">${fmtUSD(r.buyPrice)}</td>
+                <td class="num">${fmtUSD(r.currentPrice)}</td>
+                <td class="num">${r.shares.toFixed(4)}</td>
+                <td class="num">${fmtUSD(r.usdAmount)}</td>
+                <td class="num">${fmtUSD(r.currentValue)}</td>
+                <td class="num ${plClass(r.plUsd)}">${fmtUSD(r.plUsd)}</td>
+                <td class="num ${plClass(r.plPct)}">${fmtPct(r.plPct)}</td>
+                <td>${r.entryLow == null ? '<span class="zone-badge out">n/v</span>' : (r.inZone ? '<span class="zone-badge in">✓ in Zone</span>' : '<span class="zone-badge out">✗ ausserhalb</span>')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <p class="section-note" style="margin-top:10px;">Kurs aktuell je Position gemäss currentPriceAsOf &mdash; siehe Tabelle. Manuell erfasste Positionen sind mit &bdquo;nur lokal&ldquo; markiert, bis der generierte Code ins Dashboard übernommen wird.</p>
+      `;
+    }
+
+    // ---- P&L by Sparte ----
+    const sparteMap = {};
+    rows.forEach(r => {
+      if(!sparteMap[r.sparte]) sparteMap[r.sparte] = { invested:0, value:0, count:0 };
+      sparteMap[r.sparte].invested += r.usdAmount;
+      sparteMap[r.sparte].value += r.currentValue;
+      sparteMap[r.sparte].count += 1;
+    });
+    const sparteRows = Object.entries(sparteMap).map(([name, d]) => {
+      const pl = d.value - d.invested;
+      const plPct = d.invested ? (pl / d.invested) * 100 : 0;
+      return { name, ...d, pl, plPct };
+    });
+    if(sparteRows.length === 0){
+      document.getElementById('sparteTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      document.getElementById('sparteTableWrap').innerHTML = `
+        <table>
+          <thead><tr><th>Sparte</th><th>Titel</th><th>Investiert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th></tr></thead>
+          <tbody>
+            ${sparteRows.map(s => `
+              <tr>
+                <td>${s.name}</td>
+                <td class="num">${s.count}</td>
+                <td class="num">${fmtUSD(s.invested)}</td>
+                <td class="num">${fmtUSD(s.value)}</td>
+                <td class="num ${plClass(s.pl)}">${fmtUSD(s.pl)}</td>
+                <td class="num ${plClass(s.plPct)}">${fmtPct(s.plPct)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // ---- Prognosis hit-rate detail (retrospektiv: hielt der Boden, gab es einen Anstieg?) ----
+    if(rows.length === 0){
+      document.getElementById('hitrateWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      const verdictCounts = { hit:0, open:0, miss:0, pending:0 };
+      rows.forEach(r => verdictCounts[r.verdict]++);
+      document.getElementById('hitrateWrap').innerHTML = `
+        ${rows.map(r => {
+          if(r.verdict === 'pending'){
+            return `
+            <div class="prognosis-card">
+              <div class="ph">
+                <b>${r.ticker} &middot; ${r.name}</b>
+                <span class="verdict-badge open">${VERDICT_LABEL.pending}</span>
+              </div>
+              <div class="pn">${r.verdictNote}</div>
+            </div>
+          `;
+          }
+          const riseSincePct = ((r.postTestHigh - r.zoneTestLow) / r.zoneTestLow) * 100;
+          return `
+          <div class="prognosis-card">
+            <div class="ph">
+              <b>${r.ticker} &middot; ${r.name}</b>
+              <span class="verdict-badge ${r.verdict}">${VERDICT_LABEL[r.verdict]}</span>
+            </div>
+            <div class="pf">
+              <span>Zone gültig seit <b>${r.zoneValidSince}</b> <span style="color:var(--ink-faint)">(${r.zoneValidSinceNote})</span></span>
+              <span>Zonentest am <b>${r.zoneTestDate}</b> bei <b>${fmtUSD(r.zoneTestLow)}</b></span>
+              <span>Boden gehalten: <b>${r.brokeFloor ? 'Nein — Zone durchbrochen' : 'Ja'}</b></span>
+              <span>Höchststand danach: <b>${fmtUSD(r.postTestHigh)}</b> (${r.postTestHighDate}, ${fmtPct(riseSincePct)})</span>
+            </div>
+            <div class="pn">${r.verdictNote}</div>
+          </div>
+        `; }).join('')}
+        <p class="section-note" style="margin-top:14px;">Bilanz: <strong>${verdictCounts.hit} Treffer</strong>, <strong>${verdictCounts.open} offen</strong>, <strong>${verdictCounts.miss} Fehlschlag</strong>, <strong>${verdictCounts.pending} ausstehend</strong> von ${rows.length} Prognosen. Mit nur wenigen Trades statistisch noch wenig aussagekräftig &mdash; wächst mit jedem weiteren erfassten Kauf.</p>
+      `;
+    }
+
+    // ---- Pie chart: Portfolio-Verteilung nach Wert ----
+    if(rows.length === 0){
+      document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      const cx = 110, cy = 110, r = 100;
+      let angle = 0;
+      const slices = rows.map((r_, i) => {
+        const pct = totalValue ? (r_.currentValue / totalValue) * 100 : 0;
+        const sweep = totalValue ? (r_.currentValue / totalValue) * 360 : 0;
+        const path = describeArc(cx, cy, r, angle, angle + sweep);
+        angle += sweep;
+        return { ticker:r_.ticker, name:r_.name, value:r_.currentValue, pct, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+      });
+      document.getElementById('pieChartWrap').innerHTML = `
+        <div class="pie-wrap">
+          <svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Portfolio-Verteilung nach Wert">
+            ${slices.map(s => `<path d="${s.path}" fill="${s.color}" stroke="var(--surface)" stroke-width="2" />`).join('')}
+          </svg>
+          <div class="pie-legend">
+            ${slices.map(s => `
+              <div class="pie-legend-row">
+                <span class="pie-swatch" style="background:${s.color}"></span>
+                <span class="pl-ticker">${s.ticker}</span>
+                <span>${s.name}</span>
+                <span class="pl-val num">${fmtUSD(s.value)} &middot; ${s.pct.toFixed(1)}%</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
   }
+
+  renderAll();
 </script>
 </body></html>
