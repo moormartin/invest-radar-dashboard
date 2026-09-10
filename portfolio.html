@@ -212,6 +212,17 @@
   const TRADES = [
     {
       ticker:"NPCE", name:"NeuroPace, Inc.", sparte:"BCI / Neurotech",
+      buyDate:"10.09.2026", buyDateNote:"Manuell über das Portfolio-Dashboard erfasst.",
+      usdAmount:100, buyPrice:14.5,
+      currentPrice:14.5, currentPriceAsOf:"09.09.2026",
+      entryLow:11.9, entryHigh:14.84,
+      // TODO: Retrospektive von Hand nachtragen (zoneValidSince, zoneValidSinceNote, zoneTestDate,
+      // zoneTestLow, brokeFloor, postTestHigh, postTestHighDate) und verdict/verdictNote entsprechend setzen.
+      verdict:"pending",
+      verdictNote:"Frisch erfasst — Retrospektive (Zonentest, Bodenbildung, Kursverlauf) noch nicht recherchiert."
+    },
+    {
+      ticker:"NPCE", name:"NeuroPace, Inc.", sparte:"BCI / Neurotech",
       buyDate:"05.09.2026", buyDateNote:"Wochenende &mdash; ausgeführt zum letzten Schlusskurs vom 04.09.2026",
       usdAmount:100, buyPrice:14.90,
       currentPrice:14.5, currentPriceAsOf:"09.09.2026",
