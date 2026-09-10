@@ -4,6 +4,16 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v30 — 10.09.2026
+
+**Täglichen Sync um das eigene Portfolio erweitert.** Nachdem der v29-Testlauf erfolgreich alle 22 Detailanalyse-Titel aktualisiert hatte, fragte der Nutzer, ob auch `portfolio.html` täglich mit aktuellen Kursen versorgt werden kann.
+
+`tools/refresh-deepdive.js` bekam einen neuen Befehl: `apply-portfolio --portfolio portfolio.html --data <fetched.json>`. Er liest exakt dieselbe `fetched.json`-Datei, die der Sync ohnehin für die Detailanalyse-Titel zusammenstellt — keine zusätzlichen Twelve-Data-Aufrufe nötig, weil die beiden echten Portfolio-Positionen (NeuroPace/NPCE, Broadcom/AVGO) zufällig beide bereits Teil der 22 automatisierten Titel sind. Aktualisiert werden ausschliesslich `currentPrice` und `currentPriceAsOf` je Position; alles Retrospektive (`verdict`, `verdictNote`, `zoneTestDate`, `postTestHigh` etc.) bleibt bewusst manuell — das sind qualitative Einschätzungen, keine mechanischen Zahlen, und fallen unter dasselbe Prinzip wie bei der Haupt-Detailanalyse.
+
+Vor dem Einsatz gegen eine Kopie von `portfolio.html` getestet: korrekte Feld-Updates, sauberes Überspringen, wenn eine Position keinen passenden Detailanalyse-Titel hat, gültiges JavaScript nach dem Lauf. Den Disclaimer-Text auf der Portfolio-Seite entsprechend angepasst — er behauptete bisher fälschlich, Kurse würden "manuell gepflegt, nicht live nachgeführt".
+
+**Nebenbefund zum v29-Testlauf:** Der `git push` des Tags (`sync-10.09.2026`) scheiterte mit persistentem HTTP 403. Geprüft: Das hat noch nie funktioniert, auch nicht bei den alten IONQ-only-Läufen — auf dem Remote existiert kein einziges `sync-*`-Tag. Funktional folgenlos (der eigentliche Branch-Push/Deployment lief durch), aber ein GitHub-Token-Berechtigungsproblem, das ausserhalb der Möglichkeiten dieses Automatisierungs-Setups liegt.
+
 ## v29 — 10.09.2026
 
 **Automatisierten Sync von "nur IONQ" auf alle 22 Twelve-Data-Detailanalyse-Titel erweitert.** Seit v13 lief der tägliche automatisierte Sync (RemoteTrigger, 04:00 Uhr) ausdrücklich nur für IONQ — mit der expliziten Anweisung, keinen anderen Titel im geteilten Datensatz anzufassen. Der Nutzer fragte, ob sich das auf alle Titel mit Detailanalyse ausweiten lässt.

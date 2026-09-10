@@ -34,6 +34,12 @@
  * KAS (Kaspa) is deliberately excluded from TICKERS: it is sourced from CoinGecko, not
  * Twelve Data (see the card's own `flag` field), so it needs its own manual/CoinGecko-based
  * refresh and is out of scope for this Twelve-Data-only automation.
+ *
+ *   node tools/refresh-deepdive.js apply-portfolio --portfolio <path/to/portfolio.html> --data <path/to/fetched.json> [--dry-run]
+ *     -> reuses the SAME fetched.json from the `apply` step above (no extra API calls) to sync
+ *        portfolio.html's TRADES[].currentPrice/currentPriceAsOf. Only touches those two fields -
+ *        verdict/verdictNote/zoneTestDate/postTestHigh/etc. stay manually researched. A trade
+ *        whose ticker has no Detailanalyse (not in TICKERS/fetched.json) is simply left alone.
  */
 
 const fs = require('fs');
@@ -246,6 +252,65 @@ function cmdApply(args) {
   console.log(JSON.stringify({ dryRun, ...summary }, null, 2));
 }
 
+/**
+ * Syncs portfolio.html's TRADES[].currentPrice/currentPriceAsOf from the same fetched.json
+ * used for the Detailanalyse sync (no extra API calls - own positions are always a subset of
+ * the Detailanalyse tickers). Never touches verdict/verdictNote/zoneTestDate/postTestHigh etc.
+ * - those are retrospective judgment calls, not mechanical fields, and stay manual.
+ *
+ * Usage: node tools/refresh-deepdive.js apply-portfolio --portfolio <path/to/portfolio.html> --data <path/to/fetched.json> [--dry-run]
+ */
+function cmdApplyPortfolio(args) {
+  const portfolioPath = args["--portfolio"];
+  const dataPath = args["--data"];
+  const dryRun = "--dry-run" in args;
+  if (!portfolioPath || !dataPath) fail("apply-portfolio requires --portfolio <path> and --data <path>");
+
+  let html = fs.readFileSync(portfolioPath, "utf8");
+  const fetched = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+
+  const tradesStart = html.indexOf("const TRADES = [");
+  const tradesEnd = html.indexOf("\n  ];", tradesStart);
+  if (tradesStart === -1 || tradesEnd === -1) fail("could not locate TRADES array in portfolio.html");
+  const tradesBlock = html.slice(tradesStart, tradesEnd + 5);
+  // eslint-disable-next-line no-eval
+  const TRADES = eval(tradesBlock.replace("const TRADES = ", ""));
+
+  const summary = { updated: [], skipped: [], errors: [] };
+
+  for (const trade of TRADES) {
+    const ticker = trade.ticker;
+    const fx = fetched[ticker];
+    if (!fx || fx.price == null) {
+      summary.skipped.push(`${ticker}: keine Daten im fetched-JSON.`);
+      continue;
+    }
+    const slice = sliceForTicker(html, ticker, "const TRADES", "\n    {");
+    if (!slice) {
+      summary.errors.push(`${ticker}: Position in portfolio.html nicht gefunden.`);
+      continue;
+    }
+    let text = html.slice(slice.start, slice.end);
+    const priceMatch = text.match(/currentPrice:[\d.]+/);
+    const asOfMatch = text.match(/currentPriceAsOf:"[^"]*"/);
+    if (!priceMatch || !asOfMatch) {
+      summary.errors.push(`${ticker}: currentPrice/currentPriceAsOf-Feld nicht im erwarteten Format gefunden.`);
+      continue;
+    }
+    const oldPrice = trade.currentPrice;
+    text = text.replace(priceMatch[0], `currentPrice:${fx.price}`);
+    text = text.replace(asOfMatch[0], `currentPriceAsOf:"${fx.asOfDate || ""}"`);
+    html = html.slice(0, slice.start) + text + html.slice(slice.end);
+    summary.updated.push({ ticker, oldPrice, newPrice: fx.price });
+  }
+
+  if (!dryRun) {
+    fs.writeFileSync(portfolioPath, html, "utf8");
+  }
+
+  console.log(JSON.stringify({ dryRun, ...summary }, null, 2));
+}
+
 function parseArgs(argv) {
   const out = {};
   for (let i = 0; i < argv.length; i++) {
@@ -267,7 +332,9 @@ if (cmd === "list") {
   cmdList();
 } else if (cmd === "apply") {
   cmdApply(parseArgs(rest));
+} else if (cmd === "apply-portfolio") {
+  cmdApplyPortfolio(parseArgs(rest));
 } else {
-  console.error("Usage: node tools/refresh-deepdive.js <list|apply> [options]");
+  console.error("Usage: node tools/refresh-deepdive.js <list|apply|apply-portfolio> [options]");
   process.exit(1);
 }
