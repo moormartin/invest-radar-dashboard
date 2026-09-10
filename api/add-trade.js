@@ -109,6 +109,14 @@ module.exports = async (req, res) => {
       throw new Error("Ergebnis wäre ungültiges JavaScript - Commit abgebrochen: " + e.message);
     }
 
+    if (body.dryRun === true) {
+      // Verifies GITHUB_TOKEN + repo read access + insertion/syntax logic without
+      // writing anything - used to confirm the one-time setup worked, without
+      // polluting real portfolio data with a throwaway test entry.
+      res.status(200).json({ ok: true, dryRun: true, wouldCommitTo: `${GITHUB_OWNER}/${GITHUB_REPO}@${BRANCH}` });
+      return;
+    }
+
     const putRes = await fetch(apiBase, {
       method: "PUT",
       headers: { ...headers, "Content-Type": "application/json" },
