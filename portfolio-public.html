@@ -1,0 +1,379 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Portfolio Performance &middot; Schwellenradar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#EEF1F5; --surface:#FFFFFF; --surface-2:#E3E8EE; --border:#CBD3DC;
+    --ink:#131B24; --ink-soft:#55606C; --ink-faint:#8391A0;
+    --accent:#0E7C86; --accent-ink:#04353A; --accent-soft:#D7EEF0;
+    --good:#1F7A4D; --good-soft:#DCEFE3;
+    --warn:#96650F; --warn-soft:#F5EAD2;
+    --bad:#AD3527; --bad-soft:#F6DEDA;
+    --shadow: 0 1px 2px rgba(19,27,36,.06), 0 8px 24px -12px rgba(19,27,36,.18);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B121A; --surface:#121B25; --surface-2:#1A2530; --border:#2A3A47;
+      --ink:#E7EDF2; --ink-soft:#9AA8B4; --ink-faint:#66757F;
+      --accent:#39BCC6; --accent-ink:#DFF7F8; --accent-soft:#123338;
+      --good:#4FCB8E; --good-soft:#153524;
+      --warn:#E3B455; --warn-soft:#392B10;
+      --bad:#E67362; --bad-soft:#3A1B16;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B121A; --surface:#121B25; --surface-2:#1A2530; --border:#2A3A47;
+    --ink:#E7EDF2; --ink-soft:#9AA8B4; --ink-faint:#66757F;
+    --accent:#39BCC6; --accent-ink:#DFF7F8; --accent-soft:#123338;
+    --good:#4FCB8E; --good-soft:#153524;
+    --warn:#E3B455; --warn-soft:#392B10;
+    --bad:#E67362; --bad-soft:#3A1B16;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', system-ui, sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a{ color:var(--accent); }
+  h1,h2,h3{ text-wrap:balance; font-family:'Big Shoulders Display', 'IBM Plex Sans', sans-serif; letter-spacing:.01em; }
+  .num{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px 96px; }
+
+  .hero{ padding:40px 24px 28px; border-bottom:1px solid var(--border); background:var(--surface); }
+  .hero-inner{ max-width:1180px; margin:0 auto; }
+  .back-link{ font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:var(--ink-soft); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px; }
+  .back-link:hover{ color:var(--accent); }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:99px; background:var(--accent); }
+  h1{ font-size:2.4rem; margin:0 0 10px; font-weight:700; }
+  .lede{ max-width:760px; color:var(--ink-soft); margin:0; font-size:.95rem; }
+  .disclaimer{ border:1px solid var(--border); border-left:3px solid var(--warn); background:var(--warn-soft); border-radius:8px; padding:12px 16px; font-size:.82rem; line-height:1.55; margin-top:18px; max-width:900px; color:var(--ink); }
+
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:28px 0; }
+  .stat{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); padding:16px 18px; box-shadow:var(--shadow); }
+  .stat .n{ font-family:'Big Shoulders Display'; font-size:1.9rem; font-weight:700; line-height:1; }
+  .stat .l{ font-size:.76rem; color:var(--ink-soft); margin-top:6px; }
+  .stat.good .n{ color:var(--good); } .stat.bad .n{ color:var(--bad); } .stat.warn .n{ color:var(--warn); }
+
+  section{ margin:40px 0; }
+  section h2{ font-size:1.4rem; margin:0 0 14px; }
+  section .section-note{ font-size:.82rem; color:var(--ink-soft); margin:-8px 0 16px; max-width:820px; }
+
+  table{ width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  th,td{ padding:11px 14px; text-align:right; border-bottom:1px solid var(--border); font-size:.85rem; }
+  th:first-child,td:first-child{ text-align:left; }
+  th:nth-child(2),td:nth-child(2){ text-align:left; }
+  th{ background:var(--surface-2); font-family:'IBM Plex Mono',monospace; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:600; }
+  tr:last-child td{ border-bottom:none; }
+  .ticker-cell{ font-family:'IBM Plex Mono',monospace; font-weight:700; }
+  .pl-pos{ color:var(--good); } .pl-neg{ color:var(--bad); } .pl-flat{ color:var(--ink-soft); }
+  .zone-badge{ font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:99px; display:inline-block; }
+  .zone-badge.in{ background:var(--good-soft); color:var(--good); }
+  .zone-badge.out{ background:var(--warn-soft); color:var(--warn); }
+  .cat-tag{ font-family:'IBM Plex Mono',monospace; font-size:.68rem; padding:2px 8px; border-radius:6px; background:var(--surface-2); color:var(--ink-soft); }
+
+  .verdict-badge{ font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:99px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  .verdict-badge.hit{ background:var(--good-soft); color:var(--good); }
+  .verdict-badge.open{ background:var(--warn-soft); color:var(--warn); }
+  .verdict-badge.miss{ background:var(--bad-soft); color:var(--bad); }
+  .prognosis-card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); padding:16px 20px; margin-bottom:12px; }
+  .prognosis-card .ph{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+  .prognosis-card .ph b{ font-family:'IBM Plex Mono',monospace; font-size:1rem; }
+  .prognosis-card .pf{ display:flex; flex-wrap:wrap; gap:18px; font-size:.8rem; color:var(--ink-soft); margin-bottom:10px; }
+  .prognosis-card .pf b{ color:var(--ink); font-family:'IBM Plex Mono',monospace; }
+  .prognosis-card .pn{ font-size:.83rem; color:var(--ink-soft); line-height:1.5; }
+
+  .empty-note{ border:1px dashed var(--border); border-radius:var(--radius); padding:28px; text-align:center; color:var(--ink-faint); font-size:.85rem; }
+
+  .pie-wrap{ display:flex; gap:32px; flex-wrap:wrap; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; }
+  .pie-legend{ flex:1; min-width:220px; display:flex; flex-direction:column; gap:10px; }
+  .pie-legend-row{ display:flex; align-items:center; gap:10px; font-size:.85rem; }
+  .pie-swatch{ width:12px; height:12px; border-radius:3px; flex:none; }
+  .pie-legend-row .pl-ticker{ font-family:'IBM Plex Mono',monospace; font-weight:700; min-width:52px; }
+  .pie-legend-row .pl-val{ margin-left:auto; font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); }
+
+  footer{ max-width:1180px; margin:56px auto 0; padding:24px; border-top:1px solid var(--border); font-size:.78rem; color:var(--ink-faint); }
+
+  .sim-card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); padding:20px; }
+  .sim-row{ display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end; margin-bottom:16px; }
+  .sim-row label{ display:flex; flex-direction:column; gap:5px; font-size:.78rem; color:var(--ink-soft); }
+  .sim-row input{
+    font:inherit; font-size:1rem; padding:8px 10px; border:1px solid var(--border); border-radius:8px;
+    background:var(--paper); color:var(--ink); width:200px;
+  }
+  .loading-note{ color:var(--ink-faint); font-size:.85rem; padding:8px 0; }
+</style>
+
+<div class="hero">
+  <div class="hero-inner">
+    <a class="back-link" href="/">&larr; Zurück zum Schwellenradar</a>
+    <div class="eyebrow"><span class="dot"></span> Marktradar &middot; Portfolio-Performance</div>
+    <h1>Portfolio Performance</h1>
+    <p class="lede">Öffentliche Übersicht über die Performance des eigenen Portfolios &mdash; nach Titel und Sparte, plus Trefferquote der im Schwellenradar berechneten Einstiegszonen. Die effektiv investierten Beträge werden hier bewusst nicht gezeigt, nur die relative Gewichtung und Performance.</p>
+    <div class="disclaimer">
+      <strong>Kein Anlagerat.</strong> Diese Seite zeigt die Performance eines eigenen, tatsächlich gehaltenen Portfolios zu Transparenz- und Lernzwecken &mdash; keine Empfehlung, keine Anlageberatung. Kurse werden automatisch täglich synchronisiert (siehe currentPriceAsOf je Position). Die effektiv investierten USD-Beträge sind aus Datenschutzgründen nicht Teil dieser Seite; weiter unten lässt sich stattdessen ein frei wählbares, virtuelles Vermögen eingeben, um zu sehen, welchen Gewinn/Verlust diese Verteilung damit erzielt hätte.
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="loadingNote" class="loading-note">Lade Portfolio-Daten…</div>
+  <div id="content" hidden>
+    <div class="stats" id="overviewStats"></div>
+
+    <section>
+      <h2>Virtuell investiertes Vermögen</h2>
+      <p class="section-note">Verteilt sich proportional zur echten Gewichtung der Positionen unten &mdash; bildet damit dieselbe Strategie/Performance ab, nur mit einem selbst gewählten Betrag statt der echten (nicht gezeigten) Summe.</p>
+      <div class="sim-card">
+        <div class="sim-row">
+          <label>Virtuelles Vermögen (USD)
+            <input type="number" id="simAmount" min="0" step="100" value="10000">
+          </label>
+        </div>
+        <div class="stats" id="simStats" style="margin:0;"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Positionen</h2>
+      <div id="positionsTableWrap"></div>
+    </section>
+
+    <section>
+      <h2>Performance nach Sparte</h2>
+      <div id="sparteTableWrap"></div>
+    </section>
+
+    <section>
+      <h2>Portfolio-Verteilung</h2>
+      <p class="section-note">Relativer Anteil je Position am Gesamtportfolio &mdash; mehrere Käufe desselben Titels werden zu einer Position zusammengefasst.</p>
+      <div id="pieChartWrap"></div>
+    </section>
+
+    <section>
+      <h2>Trefferquote der Prognose</h2>
+      <p class="section-note">Nicht zu verwechseln mit &bdquo;Kauf in Zone?&ldquo; oben (das misst nur den eigenen Kaufzeitpunkt). Hier geht es um die Prognose selbst: Hat die berechnete Einstiegszone seit ihrer Entstehung (relativ zum jeweiligen Allzeithoch) tatsächlich als Boden gehalten, und gab es danach einen echten Kursanstieg?</p>
+      <div id="hitrateWrap"></div>
+    </section>
+  </div>
+  <div id="errorNote" class="empty-note" hidden></div>
+</div>
+
+<footer>
+  Teil des <a href="/">Schwellenradar</a>-Dashboards &middot; Marktradar / Invest-Radar Dashboard
+</footer>
+
+<script>
+  const PUBLIC_API = '/api/public-portfolio';
+  const VERDICT_LABEL = { hit:"✓ Treffer", open:"◐ Offen", miss:"✗ Fehlschlag", pending:"⏳ Ausstehend" };
+  const PIE_PALETTE = ['#0E7C86','#96650F','#AD3527','#4A6FA5','#7A5C9E','#2E8B57','#C2185B','#5C6BC0'];
+
+  function fmtUSD(n){
+    return "$" + n.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtPct(n){
+    const s = n > 0 ? "+" : "";
+    return s + n.toLocaleString('de-CH', {minimumFractionDigits:2, maximumFractionDigits:2}) + "%";
+  }
+  function plClass(n){ return n > 0.001 ? "pl-pos" : n < -0.001 ? "pl-neg" : "pl-flat"; }
+
+  function polarToCartesian(cx, cy, r, angleDeg){
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+  function describeArc(cx, cy, r, startAngle, endAngle){
+    if(endAngle - startAngle >= 359.999) endAngle = startAngle + 359.999;
+    const start = polarToCartesian(cx, cy, r, startAngle);
+    const end = polarToCartesian(cx, cy, r, endAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    return `M ${cx} ${cy} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
+  }
+
+  let PORTFOLIO = null;
+
+  function renderStatic(data){
+    const positions = data.positions;
+
+    document.getElementById('overviewStats').innerHTML = `
+      <div class="stat ${data.portfolioReturnPct>0.001?'good':data.portfolioReturnPct<-0.001?'bad':''}"><div class="n num">${fmtPct(data.portfolioReturnPct)}</div><div class="l">Portfolio-Performance</div></div>
+      <div class="stat"><div class="n num">${positions.length}</div><div class="l">Offene Positionen</div></div>
+      <div class="stat ${data.hitRate.count && data.hitRate.hitCount/data.hitRate.count>=0.5?'good':'warn'}"><div class="n num">${data.hitRate.hitCount}/${data.hitRate.count}</div><div class="l">Käufe in Zielzone</div></div>
+      <div class="stat"><div class="n num">${data.asOf || '–'}</div><div class="l">Kurse Stand</div></div>
+    `;
+
+    if(positions.length === 0){
+      document.getElementById('positionsTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      document.getElementById('positionsTableWrap').innerHTML = `
+        <table>
+          <thead><tr>
+            <th>Ticker</th><th>Name</th><th>Sparte</th><th>Kaufdatum</th><th>Kaufkurs</th><th>Kurs aktuell</th>
+            <th>G/V %</th><th>Kauf in Zone?</th><th>Anteil</th>
+          </tr></thead>
+          <tbody>
+            ${positions.map(p => `
+              <tr>
+                <td class="ticker-cell">${p.ticker}</td>
+                <td>${p.name}</td>
+                <td><span class="cat-tag">${p.sparte}</span></td>
+                <td class="num">${p.buyDate}</td>
+                <td class="num">${fmtUSD(p.buyPrice)}</td>
+                <td class="num">${fmtUSD(p.currentPrice)}</td>
+                <td class="num ${plClass(p.plPct)}">${fmtPct(p.plPct)}</td>
+                <td>${p.entryLow == null ? '<span class="zone-badge out">n/v</span>' : (p.inZone ? '<span class="zone-badge in">✓ in Zone</span>' : '<span class="zone-badge out">✗ ausserhalb</span>')}</td>
+                <td class="num">${p.weight.toFixed(1)}%</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    const sparteMap = {};
+    positions.forEach(p => {
+      if(!sparteMap[p.sparte]) sparteMap[p.sparte] = { weight:0, weightedReturn:0, count:0 };
+      sparteMap[p.sparte].weight += p.weight;
+      sparteMap[p.sparte].weightedReturn += (p.weight/100) * p.plPct;
+      sparteMap[p.sparte].count += 1;
+    });
+    const sparteRows = Object.entries(sparteMap).map(([name, d]) => {
+      const returnPct = d.weight ? (d.weightedReturn / (d.weight/100)) : 0;
+      return { name, ...d, returnPct };
+    });
+    if(sparteRows.length === 0){
+      document.getElementById('sparteTableWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      document.getElementById('sparteTableWrap').innerHTML = `
+        <table>
+          <thead><tr><th>Sparte</th><th>Titel</th><th>Anteil am Portfolio</th><th>Performance</th></tr></thead>
+          <tbody>
+            ${sparteRows.map(s => `
+              <tr>
+                <td>${s.name}</td>
+                <td class="num">${s.count}</td>
+                <td class="num">${s.weight.toFixed(1)}%</td>
+                <td class="num ${plClass(s.returnPct)}">${fmtPct(s.returnPct)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    if(positions.length === 0){
+      document.getElementById('hitrateWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      const verdictCounts = { hit:0, open:0, miss:0, pending:0 };
+      positions.forEach(p => verdictCounts[p.verdict]++);
+      document.getElementById('hitrateWrap').innerHTML = `
+        ${positions.map(p => {
+          if(p.verdict === 'pending'){
+            return `
+            <div class="prognosis-card">
+              <div class="ph">
+                <b>${p.ticker} &middot; ${p.name}</b>
+                <span class="verdict-badge open">${VERDICT_LABEL.pending}</span>
+              </div>
+              <div class="pn">${p.verdictNote}</div>
+            </div>
+          `;
+          }
+          const riseSincePct = ((p.postTestHigh - p.zoneTestLow) / p.zoneTestLow) * 100;
+          return `
+          <div class="prognosis-card">
+            <div class="ph">
+              <b>${p.ticker} &middot; ${p.name}</b>
+              <span class="verdict-badge ${p.verdict}">${VERDICT_LABEL[p.verdict]}</span>
+            </div>
+            <div class="pf">
+              <span>Zone gültig seit <b>${p.zoneValidSince}</b> <span style="color:var(--ink-faint)">(${p.zoneValidSinceNote})</span></span>
+              <span>Zonentest am <b>${p.zoneTestDate}</b> bei <b>${fmtUSD(p.zoneTestLow)}</b></span>
+              <span>Boden gehalten: <b>${p.brokeFloor ? 'Nein — Zone durchbrochen' : 'Ja'}</b></span>
+              <span>Höchststand danach: <b>${fmtUSD(p.postTestHigh)}</b> (${p.postTestHighDate}, ${fmtPct(riseSincePct)})</span>
+            </div>
+            <div class="pn">${p.verdictNote}</div>
+          </div>
+        `; }).join('')}
+        <p class="section-note" style="margin-top:14px;">Bilanz: <strong>${verdictCounts.hit} Treffer</strong>, <strong>${verdictCounts.open} offen</strong>, <strong>${verdictCounts.miss} Fehlschlag</strong>, <strong>${verdictCounts.pending} ausstehend</strong> von ${positions.length} Prognosen.</p>
+      `;
+    }
+
+    if(positions.length === 0){
+      document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
+    } else {
+      const byTicker = {};
+      positions.forEach(p => {
+        if(!byTicker[p.ticker]) byTicker[p.ticker] = { ticker:p.ticker, name:p.name, weight:0 };
+        byTicker[p.ticker].weight += p.weight;
+      });
+      const grouped = Object.values(byTicker);
+      const cx = 110, cy = 110, r = 100;
+      let angle = 0;
+      const slices = grouped.map((g, i) => {
+        const sweep = g.weight / 100 * 360;
+        const path = describeArc(cx, cy, r, angle, angle + sweep);
+        angle += sweep;
+        return { ticker:g.ticker, name:g.name, weight:g.weight, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+      });
+      document.getElementById('pieChartWrap').innerHTML = `
+        <div class="pie-wrap">
+          <svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Portfolio-Verteilung nach Anteil">
+            ${slices.map(s => `<path d="${s.path}" fill="${s.color}" stroke="var(--surface)" stroke-width="2" />`).join('')}
+          </svg>
+          <div class="pie-legend">
+            ${slices.map(s => `
+              <div class="pie-legend-row">
+                <span class="pie-swatch" style="background:${s.color}"></span>
+                <span class="pl-ticker">${s.ticker}</span>
+                <span>${s.name}</span>
+                <span class="pl-val num">${s.weight.toFixed(1)}%</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function renderSim(){
+    if(!PORTFOLIO) return;
+    const virtualTotal = Number(document.getElementById('simAmount').value) || 0;
+    const positions = PORTFOLIO.positions;
+    let virtualValue = 0;
+    positions.forEach(p => {
+      const virtualAmount = virtualTotal * (p.weight / 100);
+      virtualValue += virtualAmount * (p.currentPrice / p.buyPrice);
+    });
+    const virtualPl = virtualValue - virtualTotal;
+    const virtualPlPct = virtualTotal ? (virtualPl / virtualTotal) * 100 : 0;
+    document.getElementById('simStats').innerHTML = `
+      <div class="stat"><div class="n num">${fmtUSD(virtualTotal)}</div><div class="l">Virtuell investiert</div></div>
+      <div class="stat"><div class="n num">${fmtUSD(virtualValue)}</div><div class="l">Virtueller Wert heute</div></div>
+      <div class="stat ${virtualPl>0.001?'good':virtualPl<-0.001?'bad':''}"><div class="n num">${fmtUSD(virtualPl)}</div><div class="l">Virtueller Gewinn/Verlust</div></div>
+      <div class="stat ${virtualPlPct>0.001?'good':virtualPlPct<-0.001?'bad':''}"><div class="n num">${fmtPct(virtualPlPct)}</div><div class="l">Performance</div></div>
+    `;
+  }
+
+  document.getElementById('simAmount').addEventListener('input', renderSim);
+
+  fetch(PUBLIC_API)
+    .then(res => {
+      if(!res.ok) return res.json().then(e => { throw new Error(e.error || ('HTTP ' + res.status)); });
+      return res.json();
+    })
+    .then(data => {
+      PORTFOLIO = data;
+      document.getElementById('loadingNote').hidden = true;
+      document.getElementById('content').hidden = false;
+      renderStatic(data);
+      renderSim();
+    })
+    .catch(e => {
+      document.getElementById('loadingNote').hidden = true;
+      const err = document.getElementById('errorNote');
+      err.hidden = false;
+      err.textContent = 'Portfolio-Daten konnten nicht geladen werden: ' + e.message;
+    });
+</script>
+</body></html>

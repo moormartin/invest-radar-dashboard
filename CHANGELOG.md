@@ -4,6 +4,18 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v36 — 10.09.2026
+
+**Öffentliche, teilbare Performance-Seite ohne investierte Beträge.** Nutzer-Wunsch: einen zweiten Link generieren, den er teilen kann — das eigene Portfolio soll darauf sichtbar sein (Positionen, Performance, Trefferquote), aber ohne den effektiv investierten Betrag. Besucher sollen stattdessen ein frei wählbares, virtuelles Vermögen eingeben können und sehen, welchen Gewinn/Verlust diese Verteilung damit erzielt hätte.
+
+Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen die echten USD-Beträge nur in der Anzeige ausgeblendet oder komplett aus dem an den Browser ausgelieferten Code entfernt werden? → **komplett entfernt**, damit auch „Seitenquelltext anzeigen" nichts preisgibt. (2) Wie wird das virtuelle Vermögen auf die Positionen verteilt? → **proportional zur echten Gewichtung** (bildet die tatsächliche Strategie/Performance ab). (3) Separate Seite oder ein Modus auf `portfolio.html`? → **separate neue Seite**, damit kein Risiko besteht, dass Bearbeiten/Löschen versehentlich mitausgeliefert wird.
+
+**Umgesetzt:**
+- Neue Serverless-Funktion `api/public-portfolio.js` (GET, kein Auth nötig): liest `TRADES` serverseitig über die GitHub-Contents-API, berechnet je Position den relativen Portfolio-Anteil (`weight` = `usdAmount` / Summe aller `usdAmount`, in Prozent) und die Kurs-Performance (`plPct`), und liefert nur diese abgeleiteten Werte plus Kurse/Retrospektive-Felder als JSON aus — `usdAmount` selbst (und alles davon Abgeleitete in Dollar, z. B. Kaufwert/aktueller Wert) verlässt den Server nie.
+- Neue Seite `portfolio-public.html`: rein lesende Ansicht ohne "Neue Investition erfassen"/Bearbeiten/Löschen. Zeigt Portfolio-Performance (gewichteter %-Durchschnitt), Positionen-Tabelle (ohne Betrags-/Kaufwert-Spalten, dafür mit Anteil in %), Performance nach Sparte, Portfolio-Verteilung als Kuchendiagramm (nach Anteil statt nach $-Wert) und die bestehende Trefferquote-Sektion unverändert (Kurspreise sind nicht sensibel). Neuer Abschnitt "Virtuell investiertes Vermögen": ein Eingabefeld (Default $10'000) verteilt den eingegebenen Betrag serverseitig gelieferter Gewichtung entsprechend auf die Positionen und berechnet live den hypothetischen aktuellen Wert sowie Gewinn/Verlust in $ und %.
+
+Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
+
 ## v35 — 10.09.2026
 
 **Positionen direkt im Dashboard bearbeiten und löschen.** Beim Testen des v33-Auto-Commits entstanden versehentlich 3 statt 1 NeuroPace-Positionen — der Nutzer fragte nach einer Möglichkeit, das direkt übers Dashboard zu bereinigen, statt mich für jede Korrektur einzuschalten.
