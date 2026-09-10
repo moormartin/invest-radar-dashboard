@@ -204,6 +204,19 @@
   .yt-watch-item a{ font-weight:600; }
   .yt-watch-item .yt-meta{ font-size:.72rem; color:var(--ink-soft); }
 
+  /* ---------- Detailanalyse-Review-Queue (automatischer Sync, Zonenbruch erkannt) ---------- */
+  .dd-review{
+    max-width:1180px; margin:0 auto 28px; padding:16px 24px 0;
+  }
+  .dd-review-inner{
+    border:1px solid var(--border); border-left:3px solid var(--warn); background:var(--warn-soft);
+    border-radius:8px; padding:14px 16px;
+  }
+  .dd-review-inner h4{ margin:0 0 8px; font-size:.85rem; font-family:'IBM Plex Sans'; color:var(--warn); }
+  .dd-review-item{ font-size:.82rem; color:var(--ink); margin:6px 0; display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+  .dd-review-item b{ font-weight:700; }
+  .dd-review-item .dd-review-meta{ font-size:.72rem; color:var(--ink-soft); }
+
   /* ---------- Filter bar ---------- */
   .controls{
     position:sticky; top:0; z-index:5;
@@ -481,6 +494,13 @@
   <div class="yt-watch-inner">
     <h4>🔔 Automatisch erkannte Videos, noch nicht (vollständig) ausgewertet</h4>
     <div id="ytWatchList"></div>
+  </div>
+</div>
+
+<div class="dd-review" id="ddReviewWrap" hidden>
+  <div class="dd-review-inner">
+    <h4>⚠ Automatischer Sync hat eine Zonen-/Status-Auffälligkeit erkannt &mdash; Detailanalyse manuell prüfen</h4>
+    <div id="ddReviewList"></div>
   </div>
 </div>
 
@@ -1089,6 +1109,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v29", date:"10.09.2026", kind:"manual", summary:"Automatisierten täglichen Sync von IONQ auf alle 22 Titel mit Twelve-Data-Detailanalyse erweitert (KAS bleibt aussen vor, da CoinGecko-basiert). Statt dass die tägliche Routine bei jedem Titel selbst rechnet und Textstellen umschreibt, gibt es jetzt tools/refresh-deepdive.js: ein deterministisches Skript, das Kurs/RSI/MACD mechanisch in Karte, Detailanalyse und Indikator-Datensatz einträgt und dabei nie status, downgradeReason, wave, Primär-/Alternativszenario oder die Kurschart-Stichprobe anfasst. Erkennt das Skript, dass ein Kurs die dokumentierte Zone verlassen hat oder ein neues 52-Wochen-Hoch/-Tief erreicht, landet der Titel stattdessen in einer neuen Warteliste (DEEPDIVE_REVIEW, als Dashboard-Banner sichtbar, gleiches Muster wie die bestehende YouTube-Watch-Leiste) statt automatisch umgeschrieben zu werden. Die tägliche Routine wird dadurch zu einem schlanken Orchestrator: Kurse abrufen, Skript aufrufen, einen Changelog-Eintrag schreiben, committen, pushen." },
     { version:"Sync-10.09.2026", date:"10.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse aktualisiert (Twelve Data live): Neuer Handelstag seit dem letzten Sync &mdash; Schlusskurs $38,14 am 09.09.2026 (-5,8&thinsp;% zum Vortag), nachdem der Kurs am 08.09. noch auf $40,47 gesprungen war. RSI(14) fällt auf 43,8 (weiterhin neutral), MACD -0,892 bleibt unter Signallinie -0,628, Histogramm vertieft sich wieder leicht von -0,228 auf -0,264 (Twelve Data live, 09.09.2026). Kein neuer zonenrelevanter Pivot (weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert, Kurschart neu aus 500 Tagesschlusskursen (11.09.2024&ndash;09.09.2026) generiert." },
     { version:"Sync-09.09.2026", date:"09.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse aktualisiert (Twelve Data live): Erster neuer Handelstag seit dem letzten Sync &mdash; Schlusskurs $40,47 am 08.09.2026 (+2,4&thinsp;% zum Vortag, erster NYSE-Handelstag nach dem Labor-Day-Feiertag), nach Zwischentief $37,64 (02.09.). RSI(14) steigt auf 48,7 (neutral), MACD -0,790 bleibt unter Signallinie -0,562, Histogramm verringert sich aber von -0,381 auf -0,228 (Twelve Data live, 08.09.2026). Kein neuer zonenrelevanter Pivot (weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario und Konfluenz-Bewertung daher unverändert, Kurschart neu aus 500 Tagesschlusskursen (10.09.2024&ndash;08.09.2026) generiert." },
     { version:"Sync-08.09.2026", date:"08.09.2026", kind:"auto", tickers:["IONQ"], summary:"IONQ-Detailanalyse gegengeprüft (Twelve Data live): Letzter Handelstag bleibt weiterhin Freitag, 04.09.2026 (heute 08.09. ist der erste NYSE-Handelstag nach dem Labor-Day-Feiertag, der Lauf erfolgte jedoch vor NYSE-Handelsschluss &mdash; Twelve Data liefert noch keine neue Tageskerze) &mdash; Schlusskurs $39,52, RSI(14) 46,4 (neutral) und MACD -0,886 unter Signallinie -0,505 (Hist. -0,381) unverändert zum Sync-Lauf vom 07.09.2026. Kein neuer zonenrelevanter Pivot (weiterhin deutlich über der Ziel-/Long-Zone $25,89&ndash;$33,38 und den Invalidierungsmarken $25,77/$54,76) &mdash; Primär-/Alternativszenario, Konfluenz-Bewertung und Kurschart daher unverändert." },
@@ -1131,6 +1152,12 @@
   // als Hinweisleiste angezeigt, damit nichts unbemerkt untergeht. Automatisierte Tasks dürfen hier Einträge
   // hinzufügen (push) und Einträge entfernen, sobald sie ausgewertet und ins jeweilige wave-Feld übernommen wurden.
   const YOUTUBE_WATCH = [];
+
+  // Vom taeglichen Detailanalyse-Sync (tools/refresh-deepdive.js) automatisch geflaggte Titel, bei denen der
+  // Kurs die dokumentierte Zone/52-Wochen-Spanne verlassen hat oder Status/Zone inkonsistent wirken - der Sync
+  // schreibt NIE selbst status/downgradeReason/wave um, sondern nur diese Warteliste. Wird manuell (oder in
+  // einer separaten Analyse-Session) abgearbeitet; danach den betreffenden Eintrag wieder entfernen.
+  const DEEPDIVE_REVIEW = [];
 
   const CAT_LABEL = { bci:"BCI / Neurotech", aiagent:"KI-Agenten / ASI", robotics:"Humanoide Robotik", quantum:"Quantencomputing", biotech:"Biotech / Pharma", crypto:"Krypto / CBDC" };
   const STATUS_LABEL = { good:"Im Einstiegsfenster", warn:"Beobachten", bad:"Abwarten" };
@@ -2506,6 +2533,19 @@
       <div class="yt-watch-item">
         📺 <a href="${y.videoUrl}" target="_blank" rel="noopener">${y.videoTitle}</a>
         <span class="yt-meta">${y.channel} &middot; ${y.publishedDate} &middot; betrifft vermutlich: ${y.ticker || "?"} &middot; ${y.note || "noch nicht ausgewertet"}</span>
+      </div>
+    `).join("");
+  }
+
+  // ---- Detailanalyse-Review-Queue (automatisch geflaggte Zonen-/Status-Auffälligkeiten) ----
+  const ddReviewWrap = document.getElementById('ddReviewWrap');
+  const ddReviewList = document.getElementById('ddReviewList');
+  if(DEEPDIVE_REVIEW.length > 0){
+    ddReviewWrap.hidden = false;
+    ddReviewList.innerHTML = DEEPDIVE_REVIEW.map(r => `
+      <div class="dd-review-item">
+        ⚠ <b>${r.ticker}</b>
+        <span class="dd-review-meta">${r.date} &middot; ${r.reason}</span>
       </div>
     `).join("");
   }

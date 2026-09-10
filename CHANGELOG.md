@@ -4,6 +4,22 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v29 — 10.09.2026
+
+**Automatisierten Sync von "nur IONQ" auf alle 22 Twelve-Data-Detailanalyse-Titel erweitert.** Seit v13 lief der tägliche automatisierte Sync (RemoteTrigger, 04:00 Uhr) ausdrücklich nur für IONQ — mit der expliziten Anweisung, keinen anderen Titel im geteilten Datensatz anzufassen. Der Nutzer fragte, ob sich das auf alle Titel mit Detailanalyse ausweiten lässt.
+
+**Architektur-Entscheidung:** Statt 22 einzelne, parallel laufende Routinen (Risiko: gleichzeitige Git-Schreibzugriffe auf dieselbe Datei) wurde die bestehende Routine zu einem einzigen, aber deutlich schlankeren Orchestrator umgebaut. Der eigentliche Rechenaufwand — Kurs/RSI/MACD in Karte, Detailanalyse und Indikator-Datensatz eintragen, Zonenlogik gegenprüfen — wandert dabei komplett aus dem LLM-Kontext heraus in ein neues, deterministisches Skript: **`tools/refresh-deepdive.js`**.
+
+Das Skript kennt zwei Befehle:
+- `list` gibt die Liste der 22 automatisierbaren Titel mit ihrem Twelve-Data-Symbol aus (KAS ist bewusst ausgenommen, da CoinGecko-basiert — siehe v26).
+- `apply --index index.html --data <fetched.json>` liest die von der Routine per Twelve-Data-MCP-Tools abgerufenen Kurs-/Indikator-Werte und aktualisiert **ausschliesslich mechanische Felder**: `price`, `asOf`, `currentPrice`, `change24h`, `rsi`, `macd`, `macdText`. Es rührt **nie** an `status`, `downgradeReason`, `wave`, den Primär-/Alternativszenarien, Invalidierungsleveln oder der gesampelten Kurschart (`DD_CHART_<TICKER>`) — diese bleiben bewusst hand-recherchiert.
+
+**Neue Warteliste statt automatischer Umschreibung:** Verlässt der aktualisierte Kurs die dokumentierte Einstiegszone, widerspricht er dem gesetzten Status (die genau in v25 gefundene Bug-Klasse), oder markiert er ein neues 52-Wochen-Hoch/-Tief, schreibt das Skript **keinen** Analyse-Text um — stattdessen landet der Titel in einer neuen Warteliste `DEEPDIVE_REVIEW`, sichtbar als Dashboard-Banner (identisches Muster wie die bestehende "YouTube-Watch"-Leiste aus v9). Ein Eintrag verschwindet automatisch wieder, sobald ein späterer Lauf denselben Titel ohne Auffälligkeit aktualisiert; Einträge für an diesem Tag nicht abgerufene Titel bleiben unangetastet erhalten.
+
+Das Skript wurde vor dem Einsatz gegen eine Kopie von `index.html` mit synthetischen Testdaten geprüft: korrekte Feld-Updates über mehrere Titel hinweg, korrektes Setzen und automatisches Wiederauflösen von Warteliste-Einträgen bei erneutem Lauf, `--dry-run` schreibt nichts, KAS wird selbst bei versehentlich mitgelieferten Daten ignoriert, und die Datei bleibt nach jeder Operation gültiges JavaScript.
+
+Die RemoteTrigger-Routine selbst wurde entsprechend neu geschrieben: Repo klonen → für jeden Titel aus `list` Kurs/RSI/MACD per Twelve-Data-MCP-Tools abrufen (unter Beachtung des 8-Credits/Minute-Limits) → als JSON sammeln → `refresh-deepdive.js apply` aufrufen → einen Changelog-Eintrag aus der zurückgegebenen Zusammenfassung schreiben → committen, taggen, pushen.
+
 ## v28 — 07.09.2026
 
 **Kaspa (KAS) Detailanalyse um eine reale Video-Quelle ergänzt.** Nutzer teilte einen Link zu STA Solutions (Alexander Schulz), "Altcoins: der größte Bullrun aller Zeiten!" (22.07.2026). Da YouTube für dieses Video keine UI-Transkriptanzeige lieferte, wurde die automatisch generierte Untertitelspur direkt über die YouTube-`timedtext`-API abgerufen und zu Fliesstext zusammengesetzt (auto-generierte Untertitel transkribieren "Kaspa"/"KAS" durchgehend als "Kas"/"KS", daher zunächst per Volltext-Suche im rekonstruierten Transkript lokalisiert). Der dedizierte Kaspa-Teil läuft von ca. 8:53 bis zum Videoende bei 17:19.
