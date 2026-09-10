@@ -16,6 +16,16 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v38 — 10.09.2026
+
+**DEEPDIVE_REVIEW wird jetzt automatisch neu bewertet statt nur als Banner zu warten.** Nutzer-Nachfrage: Statt Zonen-/52-Wochen-Auffälligkeiten nur im Dashboard-Banner zu markieren und auf eine separate manuelle Analyse-Session zu warten — kann das nicht automatisch angestossen werden?
+
+Ja, mit einer bewussten Einschränkung: die tägliche Sync-Routine ("Detailanalyse Sync – alle 22 Titel", läuft täglich 06:00 CH-Zeit über eine claude.ai-Routine) bekam einen neuen SCHRITT 7. Ist `summary.flagged` aus dem mechanischen `apply`-Lauf nicht leer, holt die Routine für jeden geflaggten Ticker die volle Kurshistorie, berechnet ZigZag-Schwungpunkte und Fibonacci-Konfluenz neu und beurteilt, ob die bisherige Elliott-Wave-Zählung/Zone noch gültig ist. **Nur wenn sich die Routine bei dieser Neubewertung wirklich sicher ist**, aktualisiert sie gezielt (per Edit-Tool, nicht Neuschreiben) status/downgradeReason/wave/Szenario/Invalidierung/Einstiegszone für genau diesen einen Ticker und committet das als eigenen, separat revertierbaren zweiten Commit. Ist die Datenlage mehrdeutig, bleibt der Ticker unverändert in `DEEPDIVE_REVIEW` stehen — das Banner ist damit nicht abgeschafft, sondern zur Rückfallebene für die unsicheren Fälle geworden.
+
+**Bewusster Trade-off:** Das ist die erste unbeaufsichtigte, automatische Änderung an qualitativen Feldern (Elliott-Wave-Zählung, Fibonacci-Zonen) — bisher explizit der manuellen Recherche vorbehalten. Damit das nicht im Dashboard untergeht: Neuer Changelog-`kind`-Wert `"auto-review"` (eigene Badge-Farbe, „automatisch · Neuanalyse" statt „geprüft" oder „automatisch") macht im UI sichtbar, wenn eine Neubewertung unbeaufsichtigt lief. Committet wird ausschliesslich für den einen betroffenen Ticker, nie spekulativ für andere, und die Fehlerbehandlung der Routine bleibt streng: Im Zweifel nichts ändern statt raten.
+
+Zum Zeitpunkt dieser Änderung war `DEEPDIVE_REVIEW` leer — Schritt 7 greift daher erst beim nächsten Fund (Zone verlassen oder neues 52-Wochen-Extrem).
+
 ## v37 — 10.09.2026
 
 **Fix: Portfolio-Verteilung war zwischen den beiden Dashboards inkonsistent.** Nutzer-Feedback direkt nach dem v36-Launch der öffentlichen Seite: Das Kuchendiagramm zeigte dort andere Prozentwerte als auf `portfolio.html`.
