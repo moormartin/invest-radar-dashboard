@@ -164,6 +164,7 @@
       </div>
       <div class="add-trade-hint" id="autoPriceHint"></div>
       <button class="btn" id="addTradeBtn" type="button">+ Investition hinzufügen</button>
+      <button class="btn btn-ghost" id="cancelEditBtn" type="button" hidden>Abbrechen</button>
       <div class="add-trade-hint" id="submitStatus"></div>
     </div>
     <div id="manualTradesList"></div>
@@ -422,8 +423,45 @@
   const pendingCommittedTrades = [];
 
   const ADD_TRADE_API = '/api/add-trade';
+  const EDIT_TRADE_API = '/api/edit-trade';
+  const DELETE_TRADE_API = '/api/delete-trade';
   const addTradeBtn = document.getElementById('addTradeBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
   const submitStatus = document.getElementById('submitStatus');
+
+  // null = "Neue Investition erfassen" mode; a number = editing TRADES[editingIndex].
+  let editingIndex = null;
+
+  function enterEditMode(index){
+    const t = TRADES[index];
+    editingIndex = index;
+    tickerSelect.value = t.ticker;
+    tickerSelect.disabled = true; // ticker itself isn't editable - would change the whole position's identity
+    document.getElementById('newAmount').value = t.usdAmount;
+    // buyDate as ISO for the <input type=date>
+    const [d, m, y] = t.buyDate.split('.');
+    dateInput.value = `${y}-${m}-${d}`;
+    document.getElementById('newPrice').value = t.buyPrice;
+    updatePriceHint();
+    manualPriceRow.hidden = false; // editing always shows the price field, prefilled with the current buyPrice
+    addTradeBtn.textContent = 'Position aktualisieren';
+    cancelEditBtn.hidden = false;
+    submitStatus.textContent = `Bearbeite Position #${index} (${t.ticker}, ${t.buyDate}) — Betrag/Kurs/Datum ändern und aktualisieren, oder abbrechen.`;
+    document.querySelector('.add-trade-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exitEditMode(){
+    editingIndex = null;
+    tickerSelect.disabled = false;
+    dateInput.value = todayIso();
+    document.getElementById('newAmount').value = '';
+    document.getElementById('newPrice').value = '';
+    addTradeBtn.textContent = '+ Investition hinzufügen';
+    cancelEditBtn.hidden = true;
+    updatePriceHint();
+  }
+
+  cancelEditBtn.addEventListener('click', () => { exitEditMode(); submitStatus.textContent = ''; });
 
   addTradeBtn.addEventListener('click', async () => {
     const ticker = tickerSelect.value;
@@ -432,13 +470,39 @@
     const dateIso = dateInput.value;
     const isToday = dateIso === todayIso();
     const tp = TICKER_PRICES[ticker];
-    const price = (isToday && tp) ? tp.price : parseFloat(document.getElementById('newPrice').value);
+    const price = (editingIndex == null && isToday && tp) ? tp.price : parseFloat(document.getElementById('newPrice').value);
 
     if(!dateIso){ alert('Bitte ein Kaufdatum wählen.'); return; }
     if(!amount || amount <= 0){ alert('Bitte eine gültige Investition in USD eingeben.'); return; }
     if(!price || price <= 0){ alert('Bitte einen gültigen Kaufkurs eingeben.'); return; }
 
     const buyDate = isoToDe(dateIso);
+
+    if(editingIndex != null){
+      addTradeBtn.disabled = true;
+      submitStatus.textContent = 'Wird aktualisiert…';
+      try {
+        const res = await fetch(EDIT_TRADE_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ index: editingIndex, usdAmount: amount, buyPrice: price, buyDate })
+        });
+        if(!res.ok){
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || ('HTTP ' + res.status));
+        }
+        Object.assign(TRADES[editingIndex], { usdAmount: amount, buyPrice: price, buyDate });
+        submitStatus.textContent = '✓ Aktualisiert und committet.';
+        exitEditMode();
+        renderAll();
+      } catch (e) {
+        submitStatus.textContent = 'Aktualisieren fehlgeschlagen: ' + e.message;
+      } finally {
+        addTradeBtn.disabled = false;
+      }
+      return;
+    }
+
     const nowPrice = tp ? tp.price : price;
     const nowAsOf = tp ? tp.asOfDate : buyDate;
     const trade = {
@@ -481,6 +545,37 @@
     }
   });
 
+  async function deleteTradeRow(index){
+    const t = TRADES[index];
+    if(!confirm(`Position wirklich dauerhaft löschen?\n\n${t.ticker} · ${fmtUSD(t.usdAmount)} am ${t.buyDate}`)) return;
+    submitStatus.textContent = 'Wird gelöscht…';
+    try {
+      const res = await fetch(DELETE_TRADE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index })
+      });
+      if(!res.ok){
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || ('HTTP ' + res.status));
+      }
+      TRADES.splice(index, 1);
+      submitStatus.textContent = '✓ Position gelöscht und committet.';
+      renderAll();
+    } catch (e) {
+      submitStatus.textContent = 'Löschen fehlgeschlagen: ' + e.message;
+    }
+  }
+
+  function wirePositionsTableActions(){
+    document.querySelectorAll('#positionsTableWrap [data-row-action="edit"]').forEach(btn => {
+      btn.addEventListener('click', () => enterEditMode(Number(btn.dataset.tradesIndex)));
+    });
+    document.querySelectorAll('#positionsTableWrap [data-row-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteTradeRow(Number(btn.dataset.tradesIndex)));
+    });
+  }
+
   // ---- Gesamt-Rendering (TRADES + manuell erfasste, lokale Investitionen) ----
   const VERDICT_LABEL = { hit:"✓ Treffer", open:"◐ Offen", miss:"✗ Fehlschlag", pending:"⏳ Ausstehend" };
   const PIE_PALETTE = ['#0E7C86','#96650F','#AD3527','#4A6FA5','#7A5C9E','#2E8B57','#C2185B','#5C6BC0'];
@@ -498,7 +593,12 @@
 
   function renderAll(){
     renderManualTradesList();
-    const allTrades = TRADES.concat(loadManualTrades().map(freshenManualTrade)).concat(pendingCommittedTrades);
+    // tradesIndex identifies a row's position in the real, committed TRADES array -
+    // only these rows get Edit/Delete buttons (manual/pending-local rows already have
+    // their own Entfernen/Code-kopieren controls in the list above).
+    const allTrades = TRADES.map((t, i) => ({ ...t, tradesIndex: i }))
+      .concat(loadManualTrades().map(freshenManualTrade))
+      .concat(pendingCommittedTrades);
 
     const rows = allTrades.map(t => {
       const shares = t.usdAmount / t.buyPrice;
@@ -534,10 +634,10 @@
         <table>
           <thead><tr>
             <th>Ticker</th><th>Name</th><th>Sparte</th><th>Kaufdatum</th><th>Kaufkurs</th><th>Kurs aktuell</th>
-            <th>Anteile</th><th>Kaufwert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th><th>Kauf in Zone?</th>
+            <th>Anteile</th><th>Kaufwert</th><th>Wert aktuell</th><th>G/V</th><th>G/V %</th><th>Kauf in Zone?</th><th>Aktionen</th>
           </tr></thead>
           <tbody>
-            ${rows.map(r => `
+            ${rows.map((r, rowIdx) => `
               <tr>
                 <td class="ticker-cell">${r.ticker}${r.manual ? '<span class="manual-badge">nur lokal</span>' : (r.committed ? '<span class="manual-badge">✓ committet</span>' : '')}</td>
                 <td>${r.name}</td>
@@ -551,12 +651,17 @@
                 <td class="num ${plClass(r.plUsd)}">${fmtUSD(r.plUsd)}</td>
                 <td class="num ${plClass(r.plPct)}">${fmtPct(r.plPct)}</td>
                 <td>${r.entryLow == null ? '<span class="zone-badge out">n/v</span>' : (r.inZone ? '<span class="zone-badge in">✓ in Zone</span>' : '<span class="zone-badge out">✗ ausserhalb</span>')}</td>
+                <td>${r.tradesIndex != null ? `
+                  <button class="btn btn-ghost btn-small" data-row-action="edit" data-trades-index="${r.tradesIndex}" type="button">Bearbeiten</button>
+                  <button class="btn btn-ghost btn-small" data-row-action="delete" data-trades-index="${r.tradesIndex}" type="button">Löschen</button>
+                ` : ''}</td>
               </tr>
             `).join('')}
           </tbody>
         </table>
-        <p class="section-note" style="margin-top:10px;">Kurs aktuell je Position gemäss currentPriceAsOf &mdash; siehe Tabelle. Manuell erfasste Positionen sind mit &bdquo;nur lokal&ldquo; markiert, bis der generierte Code ins Dashboard übernommen wird.</p>
+        <p class="section-note" style="margin-top:10px;">Kurs aktuell je Position gemäss currentPriceAsOf &mdash; siehe Tabelle. Manuell erfasste Positionen sind mit &bdquo;nur lokal&ldquo; markiert, bis der generierte Code ins Dashboard übernommen wird. &bdquo;Bearbeiten&ldquo;/&bdquo;Löschen&ldquo; committen direkt und dauerhaft (Betrag/Kurs/Datum bzw. die ganze Position) &mdash; Retrospektive-Felder (Trefferquote) bleiben davon unberührt und müssen bei Bedarf separat recherchiert werden.</p>
       `;
+      wirePositionsTableActions();
     }
 
     // ---- P&L by Sparte ----

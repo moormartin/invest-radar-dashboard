@@ -4,6 +4,27 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v35 — 10.09.2026
+
+**Positionen direkt im Dashboard bearbeiten und löschen.** Beim Testen des v33-Auto-Commits entstanden versehentlich 3 statt 1 NeuroPace-Positionen — der Nutzer fragte nach einer Möglichkeit, das direkt übers Dashboard zu bereinigen, statt mich für jede Korrektur einzuschalten.
+
+Jede Position, die aus dem echten, committeten `TRADES`-Array stammt (nicht die "nur lokal"/"committet"-Zeilen aus v31/v33, die bereits ihre eigenen Entfernen-/Code-Kopieren-Controls haben), bekommt jetzt zwei Buttons in der Positionen-Tabelle:
+
+- **Bearbeiten**: füllt das bestehende "Neue Investition erfassen"-Formular mit den aktuellen Werten (Betrag, Kaufkurs, Kaufdatum), sperrt den Ticker (der bleibt fix — ein anderer Ticker wäre eine andere Position), und committet das Update über eine neue Route `api/edit-trade.js`.
+- **Löschen**: entfernt die Position nach einem Bestätigungsdialog über `api/delete-trade.js`.
+
+Beide ändern bewusst nur, was sie sollen: Edit fasst ausschliesslich `usdAmount`/`buyPrice`/`buyDate` an, Delete entfernt den kompletten Eintrag — die Retrospektive-Felder (`verdict`, `zoneTestDate` usw.) anderer Positionen bleiben unberührt.
+
+**Technisch:** Die GitHub-Commit-Logik (fetch, PUT, JS-Syntaxprüfung) wurde aus `api/add-trade.js` in ein gemeinsames `api/_lib/github.js` extrahiert, das jetzt auch `edit-trade.js` und `delete-trade.js` nutzen (Vercel ignoriert `_`-präfixierte Ordner als Routen). Die eigentliche Knacknuss: Eine Position eindeutig zu identifizieren, ohne bei mehreren gleichnamigen Tickern (genau unser NPCE-×3-Fall) durcheinanderzukommen. Lösung: `findTradeBounds()` zählt die Trade-Objekte rein textbasiert in ihrer Reihenfolge im Array durch (die Position im Formular = ihr Index) und schneidet nur das eine betroffene Objekt heraus/um — kein Voll-Parse-und-Neuschreiben des gesamten Arrays, wie es die Formatierung, Kommentare und Sonderzeichen aller anderen, unberührten Einträge riskiert hätte.
+
+Dabei eine zweite, subtile Fallstricke gefunden: Der lokale Datei-Stand auf der Festplatte hat durch Git-Zeilenenden-Normalisierung eine Mischung aus `\n` und `\r\n`, während der tatsächlich auf GitHub committete Blob durchgehend `\n` verwendet — ein direkt gegen die lokale Datei geschriebener Test schlug deshalb fehl, obwohl die Produktionslogik (die den Inhalt live von der GitHub-API holt) korrekt war. Getestet wurde daher gegen `git show HEAD:portfolio.html`, nicht gegen die lokale Datei.
+
+Mit gemockten GitHub-Antworten gegen den echten, committeten Dateistand getestet: Grenzfälle (ungültiger Index, fehlende Felder, Dry-Run ohne echten Commit), dass beim Löschen exakt ein Eintrag verschwindet und alle anderen inkl. ihrer Kommentare byte-identisch bleiben, dass beim Bearbeiten nur die drei genannten Felder sich ändern. Im Browser end-to-end getestet: Bearbeiten-Formular korrekt befüllt, Abbrechen setzt sauber zurück, Löschen mit simuliertem Bestätigungsdialog funktioniert, Tabellen-Indizes nach einer Löschung korrekt neu berechnet — keine Konsolenfehler, auch nicht auf Mobile.
+
+## v34 — 10.09.2026
+
+Zweite NeuroPace-Investition ($100, 10.09.2026, Kaufkurs $14,50) manuell nachgetragen, nachdem sie zunächst nur lokal im Browser gelandet war (der v33-Auto-Commit griff zu diesem Zeitpunkt noch nicht, da `GITHUB_TOKEN` auf Vercel noch nicht hinterlegt war). Über die vom Dashboard generierte "Code kopieren"-Ausgabe manuell ins `TRADES`-Array übernommen. Bestätigte damit den Verdacht, der zur Fehlersuche in v33 führte.
+
 ## v33 — 10.09.2026
 
 **Investitionen werden jetzt automatisch dauerhaft committet — keine manuelle Code-Übernahme mehr nötig.** Nutzer-Nachfrage nach dem "nur lokal"-Feedback zu v31: Gibt es keine echte Client-Server-Lösung, statt jedes Mal Code kopieren zu müssen?

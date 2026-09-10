@@ -15,10 +15,7 @@
 // acceptable risk (e.g. the URL becomes widely known), add a shared-secret
 // header check or a proper auth layer before relying on this further.
 
-const GITHUB_OWNER = "moormartin";
-const GITHUB_REPO = "invest-radar-dashboard";
-const FILE_PATH = "portfolio.html";
-const BRANCH = "master";
+const { fetchPortfolioFile, commitPortfolioFile, validateJs } = require("./_lib/github");
 
 // Keep in sync with portfolio.html's SECURITIES list.
 const ALLOWED_TICKERS = new Set([
@@ -67,18 +64,8 @@ module.exports = async (req, res) => {
   const finalEntryLow = isFiniteNumber(entryLow) ? entryLow : null;
   const finalEntryHigh = isFiniteNumber(entryHigh) ? entryHigh : null;
 
-  const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    Accept: "application/vnd.github+json",
-    "User-Agent": "schwellenradar-add-trade",
-  };
-
   try {
-    const getRes = await fetch(`${apiBase}?ref=${BRANCH}`, { headers });
-    if (!getRes.ok) throw new Error(`GitHub GET fehlgeschlagen: ${getRes.status}`);
-    const fileData = await getRes.json();
-    const content = Buffer.from(fileData.content, "base64").toString("utf8");
+    const { content, sha, apiBase } = await fetchPortfolioFile(token);
 
     const marker = "const TRADES = [";
     const idx = content.indexOf(marker);
@@ -98,41 +85,15 @@ module.exports = async (req, res) => {
       `    },`;
 
     const newContent = content.slice(0, insertAt) + snippet + content.slice(insertAt);
-
-    // Defensive check: never push a commit that would break the page.
-    const scriptMatch = newContent.match(/<script>([\s\S]*)<\/script>/);
-    if (!scriptMatch) throw new Error("Konnte den <script>-Block nach dem Einfügen nicht finden.");
-    try {
-      // eslint-disable-next-line no-new-func
-      new Function(scriptMatch[1]);
-    } catch (e) {
-      throw new Error("Ergebnis wäre ungültiges JavaScript - Commit abgebrochen: " + e.message);
-    }
+    validateJs(newContent);
 
     if (body.dryRun === true) {
-      // Verifies GITHUB_TOKEN + repo read access + insertion/syntax logic without
-      // writing anything - used to confirm the one-time setup worked, without
-      // polluting real portfolio data with a throwaway test entry.
-      res.status(200).json({ ok: true, dryRun: true, wouldCommitTo: `${GITHUB_OWNER}/${GITHUB_REPO}@${BRANCH}` });
+      res.status(200).json({ ok: true, dryRun: true, wouldCommitTo: apiBase });
       return;
     }
 
-    const putRes = await fetch(apiBase, {
-      method: "PUT",
-      headers: { ...headers, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: `portfolio: ${ticker} $${usdAmount} am ${buyDate} über Dashboard erfasst\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>`,
-        content: Buffer.from(newContent, "utf8").toString("base64"),
-        sha: fileData.sha,
-        branch: BRANCH,
-      }),
-    });
-    if (!putRes.ok) {
-      const errBody = await putRes.text();
-      throw new Error(`GitHub PUT fehlgeschlagen: ${putRes.status} ${errBody}`);
-    }
-    const putData = await putRes.json();
-    res.status(200).json({ ok: true, commit: putData.commit && putData.commit.sha });
+    const commitSha = await commitPortfolioFile(token, apiBase, newContent, sha, `portfolio: ${ticker} $${usdAmount} am ${buyDate} über Dashboard erfasst`);
+    res.status(200).json({ ok: true, commit: commitSha });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
