@@ -588,18 +588,25 @@
       `;
     }
 
-    // ---- Pie chart: Portfolio-Verteilung nach Wert ----
+    // ---- Pie chart: Portfolio-Verteilung nach Wert (mehrere Käufe desselben Titels
+    // werden zu einer Position zusammengefasst, statt als separate Slices zu erscheinen) ----
     if(rows.length === 0){
       document.getElementById('pieChartWrap').innerHTML = `<div class="empty-note">Noch keine Trades erfasst.</div>`;
     } else {
+      const byTicker = {};
+      rows.forEach(r_ => {
+        if(!byTicker[r_.ticker]) byTicker[r_.ticker] = { ticker:r_.ticker, name:r_.name, value:0 };
+        byTicker[r_.ticker].value += r_.currentValue;
+      });
+      const grouped = Object.values(byTicker);
       const cx = 110, cy = 110, r = 100;
       let angle = 0;
-      const slices = rows.map((r_, i) => {
-        const pct = totalValue ? (r_.currentValue / totalValue) * 100 : 0;
-        const sweep = totalValue ? (r_.currentValue / totalValue) * 360 : 0;
+      const slices = grouped.map((g, i) => {
+        const pct = totalValue ? (g.value / totalValue) * 100 : 0;
+        const sweep = totalValue ? (g.value / totalValue) * 360 : 0;
         const path = describeArc(cx, cy, r, angle, angle + sweep);
         angle += sweep;
-        return { ticker:r_.ticker, name:r_.name, value:r_.currentValue, pct, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
+        return { ticker:g.ticker, name:g.name, value:g.value, pct, path, color: PIE_PALETTE[i % PIE_PALETTE.length] };
       });
       document.getElementById('pieChartWrap').innerHTML = `
         <div class="pie-wrap">

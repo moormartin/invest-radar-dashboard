@@ -4,6 +4,14 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v32 — 10.09.2026
+
+**Portfolio-Verteilung gruppiert jetzt nach Ticker.** Nutzer-Feedback direkt nach dem ersten Test von v31: Eine zweite Investition in NeuroPace (NPCE, $100) erschien im Kuchendiagramm als eigene, separate Scheibe neben der bereits bestehenden NPCE-Position, statt zu einer gemeinsamen $200-Scheibe zusammengefasst zu werden.
+
+Fix: Vor dem Zeichnen werden alle Positionen nach Ticker gruppiert und ihr aktueller Wert summiert — aus zwei NPCE-Käufen wird eine Kuchenscheibe mit dem addierten Wert. Die Positionen-Tabelle, die Sparte-Aufschlüsselung und die Trefferquote-Sektion bleiben bewusst unverändert auf Einzelkauf-Ebene, da dort jeder Kauf mit seinem eigenen Kaufkurs, -datum und Zonentreffer für sich relevant ist — nur die reine Wertverteilung im Kuchendiagramm sollte pro Titel, nicht pro Kauf, dargestellt werden.
+
+Im Browser mit zwei NPCE-Positionen (bestehend + simuliert neu) getestet: Kuchendiagramm zeigt korrekt eine gemeinsame NPCE-Scheibe mit dem summierten aktuellen Wert, keine Konsolenfehler.
+
 ## v31 — 10.09.2026
 
 **Neue Investitionen direkt im Portfolio-Dashboard erfassen.** Bisher musste jeder neue Trade von Hand im Code des `TRADES`-Arrays in `portfolio.html` ergänzt werden. Der Nutzer wollte das direkt im Dashboard tun können — Wertschrift wählen, Investition in USD, Kaufdatum.
