@@ -16,6 +16,18 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v39 — 10.09.2026
+
+**ServiceNow (NOW) Detailanalyse manuell neu bewertet**, auf explizite Nutzer-Anfrage ("Bitte aktualisiere die Detailanalyse von ServiceNow").
+
+Live-Daten (Twelve Data get_quote/get_technical_indicator/get_time_series) zeigten: Nach dem Erholungshoch $147,99 (31.08.) fiel der Kurs drei Handelstage in Serie ($145,59 → $141,26 → $134,21 → $131,11) bis zu einem direkten Test der eigenen 38,2%-Fibonacci-Zone ($131,11) — Tagestief $130,85 am 09.09., Schlusskurs exakt auf der Zonenkante. Die Zone hielt: Erholung um +1,4% auf $133,15 am 10.09. RSI(14) fiel von überkauft (74,4) auf neutral (53,1) zurück. MACD kreuzte seit ca. 08.09. bärisch unter die Signallinie (Histogramm -1,17) — bestätigt die Preiserholung also noch nicht, trotz gehaltener Zone. Dieses Auseinanderlaufen von Preis und Momentum wurde als eigenständiges Alternativszenario (42%, zuvor 43% mit anderer Begründung) in die Analyse aufgenommen, das Primärszenario ("Zone verteidigt") entsprechend auf 58%.
+
+Analystenkonsens per Web-Fetch aktualisiert (stockanalysis.com, 10.09.2026): unverändert 49 Analysten, "Strong Buy", Ø-Kursziel jetzt $142,28 (Median $140, zuvor Ø $141,19) — weiterhin nur knapp über dem aktuellen Kurs trotz optimistischem Rating-Label.
+
+CRV neu berechnet: Da der Einstieg jetzt nahe der bestätigten Zonenkante statt in der Zonen-Mitte kalkuliert wird, verbessert sich das Chance-Risiko-Verhältnis von ≈2,1:1 auf ≈5,4:1 (Risiko $5,15/≈4% bis zum Stop unter dem Zonentief, Reward $27,70/≈21% bis zur 61,8%-Marke).
+
+Kurschart (`DD_CHART_NOW`) um die drei neuesten Handelstage (08.–10.09.2026) ergänzt, `chartEnd` auf 10.09.2026 aktualisiert. `IND.NOW`s RSI/MACD-Werte ebenfalls auf den aktuellen Stand gebracht (zuvor inkonsistente Datumsangaben zwischen `rsiNote` und `macdText`, jetzt beide 10.09.2026).
+
 ## v38 — 10.09.2026
 
 **DEEPDIVE_REVIEW wird jetzt automatisch neu bewertet statt nur als Banner zu warten.** Nutzer-Nachfrage: Statt Zonen-/52-Wochen-Auffälligkeiten nur im Dashboard-Banner zu markieren und auf eine separate manuelle Analyse-Session zu warten — kann das nicht automatisch angestossen werden?
