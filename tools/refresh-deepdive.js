@@ -176,18 +176,31 @@ function cmdApply(args) {
     html = html.slice(0, cardSlice.start) + cardText + html.slice(cardSlice.end);
 
     // --- 2) DEEPDIVE.<ticker>: currentPrice + change24h (only if a Detailanalyse entry exists) ---
+    // IMPORTANT: search must start AFTER "const DEEPDIVE = {" - IND.<ticker> uses the exact same
+    // "\n    TICKER: {" marker and appears earlier in the file, so an unscoped indexOf() silently
+    // matches the wrong block (no currentPrice/change24h there -> no-op, no error).
+    const deepdiveStart = html.indexOf("const DEEPDIVE = {");
     const ddMarker = `\n    ${ticker}: {`;
-    const ddIdx = html.indexOf(ddMarker);
+    const ddIdx = deepdiveStart === -1 ? -1 : html.indexOf(ddMarker, deepdiveStart);
+    let deepdiveUpdated = false;
     if (ddIdx !== -1) {
       const ddEnd = html.indexOf("\n    }", ddIdx);
       let ddText = html.slice(ddIdx, ddEnd);
       const curPriceMatch = ddText.match(/currentPrice:[\d.]+/);
       const change24hMatch = ddText.match(/change24h:-?[\d.]+/);
-      if (curPriceMatch) ddText = ddText.replace(curPriceMatch[0], `currentPrice:${newPrice}`);
+      if (curPriceMatch) {
+        ddText = ddText.replace(curPriceMatch[0], `currentPrice:${newPrice}`);
+        deepdiveUpdated = true;
+      }
       if (change24hMatch && fx.changePercent != null) {
         ddText = ddText.replace(change24hMatch[0], `change24h:${Number(fx.changePercent)}`);
       }
       html = html.slice(0, ddIdx) + ddText + html.slice(ddEnd);
+      if (!curPriceMatch) {
+        summary.errors.push(`${ticker}: DEEPDIVE-Eintrag gefunden, aber kein currentPrice-Feld darin - Detailanalyse-Preis NICHT aktualisiert.`);
+      }
+    } else if (item.detail) {
+      summary.errors.push(`${ticker}: hat detail:true, aber keinen DEEPDIVE-Eintrag gefunden - Detailanalyse-Preis NICHT aktualisiert.`);
     }
 
     // --- 3) IND.<ticker>: rsi + macd + macdText ---
@@ -205,7 +218,7 @@ function cmdApply(args) {
       }
     }
 
-    summary.updated.push({ ticker, oldPrice, newPrice, changePercent: fx.changePercent ?? null });
+    summary.updated.push({ ticker, oldPrice, newPrice, changePercent: fx.changePercent ?? null, deepdiveUpdated });
     if (zoneFlags.length > 0) {
       summary.flagged.push({ ticker, reasons: zoneFlags });
     }
