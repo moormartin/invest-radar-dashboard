@@ -16,6 +16,17 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v41 — 11.09.2026
+
+**Zwei neue automatische Trigger für Schritt 7** (Detailanalyse-Neubewertung), ergänzend zu Zonenausbruch/52-Wochen-Extrem — ausgelöst durch die Diskussion um ROK als Beispiel.
+
+1. **MACD-Clean-Cross:** Ein Richtungswechsel (bullisch/bärisch) zählt nur als Trigger, wenn der Kurs innerhalb der Einstiegszone notiert **und** die Karte aktuell keinen Indikator-Konflikt-Flag trägt. Backtest an ROK (250 Handelstage) zeigte 30 Kreuzungen insgesamt, davon 9 innerhalb der aktuellen Zone — ohne die Zonen-/Flag-Bedingung wäre der Trigger deutlich zu geschwätzig.
+2. **14-Tage-Backstop:** Unabhängig von Kursbewegung wird jede Detailanalyse spätestens alle 14 Kalendertage zur Neubewertung markiert (Vergleich des `asOf`-Datums, das nur eine echte inhaltliche Prüfung setzt — nicht der mechanische Preis-Sync). Schliesst genau die Lücke, die bei ServiceNow und Rockwell Automation sichtbar wurde: Titel ohne Zonenausbruch können trotzdem wochenlang unbemerkt veralten.
+
+Beide Bedingungen sind jetzt Teil von `tools/refresh-deepdive.js` (`computeMacdCrossFlag`, `computeStaleFlag`) statt der Freihand-Einschätzung der Routine überlassen zu bleiben — deterministisch, wie die bestehende Zonen-/52-Wochen-Logik. Abgesichert mit 10 Logik-Tests (Cross-Erkennung, Zonen-Filter, Konflikt-Filter, Datums-Grenzfälle) sowie einem echten Dry-Run- und Real-Write-Testlauf gegen eine Kopie der Produktivdatei (inkl. JS-Validitätsprüfung danach).
+
+Die tägliche Routine (Schritt 7) wurde entsprechend erweitert: Reine Staleness-Treffer ohne tatsächliche inhaltliche Änderung committen künftig nur eine Aktualisierung von `asOf` (Bestätigung "geprüft, unverändert"), ohne separaten `auto-review`-Changelog-Eintrag — sonst würde das Changelog bei 22 Titeln und 14-Tage-Turnus mit "nichts Neues"-Einträgen zugemüllt.
+
 ## v40 — 11.09.2026
 
 **Rockwell Automation (ROK) Detailanalyse manuell neu bewertet**, als praktisches Beispiel im Zuge der Diskussion über einen zusätzlichen MACD-Clean-Cross-Trigger für Schritt 7.

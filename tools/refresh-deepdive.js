@@ -117,6 +117,43 @@ function computeZoneFlag(item, newPrice) {
   return flags;
 }
 
+function isInZone(item, newPrice) {
+  const { entryLow, entryHigh } = item;
+  return entryLow != null && entryHigh != null && newPrice >= entryLow && newPrice <= entryHigh;
+}
+
+// MACD-Clean-Cross-Trigger (seit v41): ein Richtungswechsel (bull<->bear) zählt nur als
+// "sauber" und damit als Neubewertungs-Kandidat, wenn (a) der Kurs innerhalb der Einstiegszone
+// notiert - ausserhalb der Zone ist ein MACD-Dreher für die Kaufentscheidung nicht unmittelbar
+// relevant - und (b) die Karte aktuell KEIN flag trägt, also kein bereits dokumentierter
+// Indikator-Konflikt vorliegt (sonst würde ein weiterer Cross nur denselben Konflikt bestätigen,
+// nicht einen neuen, klaren Trigger darstellen).
+function computeMacdCrossFlag(item, oldDirection, newDirection, newPrice) {
+  if (!oldDirection || oldDirection === newDirection) return null;
+  if (!isInZone(item, newPrice)) return null;
+  if (item.flag) return null;
+  return `MACD wechselte auf ${newDirection === "bull" ? "bullisch" : "bärisch"} bei Kurs $${newPrice}, innerhalb der Einstiegszone und ohne bestehenden Indikator-Konflikt (clean cross) - Kandidat für automatische Neubewertung.`;
+}
+
+function parseDeDate(str) {
+  const m = str && str.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  if (!m) return null;
+  return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+}
+
+// 14-Tage-Backstop (seit v41): unabhängig von Kursbewegung soll jede Detailanalyse spätestens
+// alle 14 Kalendertage einmal gegengeprüft werden, damit kein Titel wie ROK/NOW wochenlang
+// unbemerkt veraltet. asOf ist das Feld, das eine echte inhaltliche Prüfung markiert (wird NUR
+// bei einer manuellen oder Schritt-7-Neubewertung aktualisiert, nicht vom mechanischen Sync).
+function computeStaleFlag(ddAsOfText, today) {
+  const asOfDate = parseDeDate(ddAsOfText);
+  if (!asOfDate) return null;
+  const daysSince = Math.floor((today - asOfDate) / (1000 * 60 * 60 * 24));
+  if (daysSince <= 14) return null;
+  const asOfStr = ddAsOfText.match(/\d{2}\.\d{2}\.\d{4}/)[0];
+  return `Detailanalyse zuletzt am ${asOfStr} inhaltlich geprüft (vor ${daysSince} Tagen) - fällig für turnusmässige Neubewertung (>14 Tage).`;
+}
+
 function extractField(slice, fieldRegex) {
   const m = slice.match(fieldRegex);
   return m ? m[1] : null;
@@ -160,7 +197,7 @@ function cmdApply(args) {
 
     const newPrice = Number(fx.price);
     const oldPrice = item.price;
-    const zoneFlags = computeZoneFlag(item, newPrice);
+    const flags = computeZoneFlag(item, newPrice);
 
     // --- 1) DATA card: price + asOf ---
     const cardSlice = sliceForTicker(html, ticker, "const DATA", "\n    {");
@@ -192,6 +229,7 @@ function cmdApply(args) {
       let ddText = html.slice(ddIdx, ddEnd);
       const curPriceMatch = ddText.match(/currentPrice:[\d.]+/);
       const change24hMatch = ddText.match(/change24h:-?[\d.]+/);
+      const ddAsOfMatch = ddText.match(/asOf:"[^"]*"/);
       if (curPriceMatch) {
         ddText = ddText.replace(curPriceMatch[0], `currentPrice:${newPrice}`);
         deepdiveUpdated = true;
@@ -203,6 +241,10 @@ function cmdApply(args) {
       if (!curPriceMatch) {
         summary.errors.push(`${ticker}: DEEPDIVE-Eintrag gefunden, aber kein currentPrice-Feld darin - Detailanalyse-Preis NICHT aktualisiert.`);
       }
+      if (ddAsOfMatch) {
+        const staleFlag = computeStaleFlag(ddAsOfMatch[0], new Date());
+        if (staleFlag) flags.push(staleFlag);
+      }
     } else if (item.detail) {
       summary.errors.push(`${ticker}: hat detail:true, aber keinen DEEPDIVE-Eintrag gefunden - Detailanalyse-Preis NICHT aktualisiert.`);
     }
@@ -213,18 +255,24 @@ function cmdApply(args) {
       const indMatch = html.match(indRe);
       if (indMatch) {
         const bullish = Number(fx.macd) > Number(fx.macdSignal);
+        const newDirection = bullish ? "bull" : "bear";
         const macdText = `MACD ${fmtDeNum(fx.macd, 4)} ${bullish ? "über" : "unter"} Signallinie ${fmtDeNum(fx.macdSignal, 4)} (Twelve Data live, ${fx.asOfDate || todayDe}, automatischer Sync)`;
         let indInner = indMatch[2];
+        const oldDirMatch = indInner.match(/macd:"(bull|bear)"/);
+        const oldDirection = oldDirMatch ? oldDirMatch[1] : null;
         indInner = indInner.replace(/rsi:[\d.]+/, `rsi:${fx.rsi}`);
-        indInner = indInner.replace(/macd:"(bull|bear)"/, `macd:"${bullish ? "bull" : "bear"}"`);
+        indInner = indInner.replace(/macd:"(bull|bear)"/, `macd:"${newDirection}"`);
         indInner = indInner.replace(/macdText:"[^"]*"/, `macdText:"${macdText}"`);
         html = html.replace(indMatch[0], indMatch[1] + indInner + indMatch[3]);
+
+        const crossFlag = computeMacdCrossFlag(item, oldDirection, newDirection, newPrice);
+        if (crossFlag) flags.push(crossFlag);
       }
     }
 
     summary.updated.push({ ticker, oldPrice, newPrice, changePercent: fx.changePercent ?? null, deepdiveUpdated });
-    if (zoneFlags.length > 0) {
-      summary.flagged.push({ ticker, reasons: zoneFlags });
+    if (flags.length > 0) {
+      summary.flagged.push({ ticker, reasons: flags });
     }
   }
 
