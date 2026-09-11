@@ -16,6 +16,16 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v43 — 11.09.2026
+
+**SpaceX (SPCX) neu aufgenommen.** Der Nutzer fragte, wieso SpaceX nicht im Dashboard ist — bis vor Kurzem korrekterweise, da SpaceX ein reines Privatunternehmen war und weder über eToro noch Yuh handelbar. Der Nutzer wies darauf hin, dass sich das geändert hat: SpaceX ging am 12.06.2026 unter dem Ticker SPCX an die Nasdaq (einer der grössten Börsengänge überhaupt) und ist seither auf eToro handelbar — per Live-Check (Twelve Data, WebSearch) bestätigt.
+
+**Einordnungsfrage geklärt:** SpaceX passt in keines der sechs bestehenden Themenfelder sauber (kein eigenes "Raumfahrt"-Feld vorhanden). Dem Nutzer zwei Optionen vorgelegt: (a) unter Humanoide Robotik einsortieren (lose thematische Klammer über autonome Raketenlandung/Starship-Robotik, keine Strukturänderung) oder (b) ein neues siebtes Feld "Raumfahrt & Verteidigung" eröffnen (würde auch Rocket Lab/DroneShield aus dem kürzlich diskutierten HKCM-Paket wieder relevant machen). Entscheidung: Option (a), Humanoide Robotik.
+
+**Live-Daten zeigen extreme Nach-IPO-Volatilität:** Direkt nach dem IPO (Erstnotiz $150) Allzeithoch $225,64 (16.06.2026, nur vier Handelstage später) — gefolgt von einer Korrektur um -53,5% auf das Zyklustief $104,83 (03.08.2026). Seitherige Erholung auf aktuell $148,18, die sich von unten der eigenen 38,2%-Fibonacci-Marke ($150,98) nähert. RSI(14) neutral-bullisch (57,3), MACD-Histogramm positiv, aber seit drei Tagen abschwächend. Status bewusst "warn" statt "good", mit explizitem Flag zur noch sehr kurzen (< 3 Monate) und damit wenig aussagekräftigen Kurshistorie.
+
+Analystenkonsens per Web-Fetch verifiziert (stockanalysis.com, 11.09.2026): 36 Analysten, "Buy" (23 Strong Buy, 6 Buy, 5 Hold, 2 Strong Sell), Kursziel-Ø $220,68 (Median $220) — deutlich über dem aktuellen Kurs. Zunächst ohne volle Detailanalyse (kein `detail:true`), analog zum Onboarding-Muster der zuletzt aufgenommenen Titel (MRNA, OCGN in v42). Gesamtzahl der Titel damit 43; `README.md` entsprechend aktualisiert.
+
 ## v42 — 11.09.2026
 
 **Zwei neue Titel im Feld Biotech/Pharma: Moderna (MRNA) und Ocugen (OCGN).** Der Nutzer teilte einen Screenshot von HKCMs "Hype-Aktienpaket" (Kategorien: Cannabis, Verteidigung/Sicherheit & Luft-/Raumfahrt, Quantencomputing & Technologie, Konsumgüter & Lifestyle, Agrar, Gesundheit & Biotechnologie) und fragte, ob Titel fehlen bzw. ausgetauscht werden sollten, um strategisch schlank zu bleiben.

@@ -1,6 +1,6 @@
 # Schwellenradar — Invest-Radar Dashboard
 
-Interaktives Marktradar-Dashboard für 42 über eToro oder Yuh handelbare Wertschriften in sechs Zukunftstechnologie-Feldern: BCI/Neurotech, KI-Agenten/ASI, humanoide Robotik, Quantencomputing, Biotech/Pharma und Krypto/CBDC.
+Interaktives Marktradar-Dashboard für 43 über eToro oder Yuh handelbare Wertschriften in sechs Zukunftstechnologie-Feldern: BCI/Neurotech, KI-Agenten/ASI, humanoide Robotik, Quantencomputing, Biotech/Pharma und Krypto/CBDC.
 
 Hintergrund: Ausgangspunkt war ein Interview mit dem Zukunftsforscher Sven Gábor Jánszky, der diese sechs Felder als börsenrelevant für die nächsten 5–10 Jahre benennt. Das Dashboard bildet dafür konkrete, handelbare Wertschriften ab, ordnet sie technisch ein (Elliott-Wave-Heuristik, Fibonacci-Zonen, RSI/MACD/Squeeze-Indikatoren), verlinkt öffentlich auffindbare Analysten-Einschätzungen (v. a. HKCM, Phantom by HKCM, STA Solutions) und markiert Broker-Handelbarkeit.
 
