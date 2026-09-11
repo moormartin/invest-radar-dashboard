@@ -16,6 +16,18 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v42 — 11.09.2026
+
+**Zwei neue Titel im Feld Biotech/Pharma: Moderna (MRNA) und Ocugen (OCGN).** Der Nutzer teilte einen Screenshot von HKCMs "Hype-Aktienpaket" (Kategorien: Cannabis, Verteidigung/Sicherheit & Luft-/Raumfahrt, Quantencomputing & Technologie, Konsumgüter & Lifestyle, Agrar, Gesundheit & Biotechnologie) und fragte, ob Titel fehlen bzw. ausgetauscht werden sollten, um strategisch schlank zu bleiben.
+
+**Abgleich:** Quantencomputing (D-Wave/QBTS, Rigetti/RGTI) war bereits abgedeckt — Workday (WDAY) passt fachlich nicht zur Kategorie. Cannabis, Verteidigung/Luftfahrt, Konsumgüter und Agrar liegen ausserhalb der sechs Zukunftsfelder (nach Jánszky) und wurden nicht übernommen, um den Fokus nicht zu verwässern. Einziger echter Gap: Biotech/Pharma mit nur 2 Titeln (CRSP, NVO) gegenüber 12 bei Krypto. Von HKCMs vier Biotech-Vorschlägen (Molina Healthcare, Hims & Hers, Moderna, Ocugen) erfüllen nur die letzten beiden das "Schwellen"-Kriterium (echte Technologie-Plattform, nicht Geschäftsmodell/Value-Play) — MOH (Kassenversicherer) und HIMS (Telehealth-Vertrieb) wurden bewusst nicht aufgenommen.
+
+**Moderna (MRNA):** mRNA-Plattformtechnologie, nach dem Post-COVID-Crash ein möglicher Wendepunkt. Live-Daten zeigten einen aussergewöhnlichen Einzeltag-Kurssprung (+177% intraday am 19.08.2026, $62→$177, >199 Mio. Aktien Volumen) — seither Konsolidierung deutlich über der eigenen 38,2–50%-Retracement-Zone ($119,39–$132,91). Analystenkonsens (stockanalysis.com, 11.09.2026): 23 Analysten, "Hold", Ø-Kursziel $116,50 — auffällig unter dem aktuellen Kurs, spricht für eine vom Konsens erwartete Korrektur. Status "warn", mit explizitem Flag zum ungeklärten Katalysator.
+
+**Ocugen (OCGN):** Gentherapie-Mikrocap (u. a. OCU400 für erblich bedingte Netzhautdegeneration). Live-Daten zeigten einen durchgehenden Abwärtstrend seit März 2026 mit frischem 52-Wochen-Tief ($1,01) und sich vertiefendem bärischem MACD-Histogramm — keine Bodenbildung, daher bewusst ohne definierte Einstiegszone (`entryLow`/`entryHigh: null`, analog zum bestehenden PayPal-Muster) und Status "bad". Analystenkonsens extrem optimistisch (nur 6 Analysten, "Strong Buy", Ø-Kursziel $12,08, >1000% Aufwärtspotenzial laut Konsens) — eine der grössten Kursziel-Kurs-Divergenzen im gesamten Dashboard, explizit als Flag markiert (dünne Abdeckung, Mikrocap-Risiko).
+
+Beide Titel zunächst ohne volle Detailanalyse (kein `detail:true`), analog zum sonstigen Onboarding-Muster neuer Titel (z. B. FET in v15) — Live-Snapshot bei Aufnahme, kein Teil des täglichen automatisierten Syncs, bis ggf. später zu einer vollen Elliott-Wave-Analyse ausgebaut. Gesamtzahl der Titel damit 42 (zuvor 40); `README.md` entsprechend korrigiert (stand dort ohnehin bereits veraltet auf "44").
+
 ## v41 — 11.09.2026
 
 **Zwei neue automatische Trigger für Schritt 7** (Detailanalyse-Neubewertung), ergänzend zu Zonenausbruch/52-Wochen-Extrem — ausgelöst durch die Diskussion um ROK als Beispiel.
