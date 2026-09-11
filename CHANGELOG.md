@@ -16,6 +16,14 @@ Vor der Umsetzung drei Design-Entscheidungen mit dem Nutzer geklärt: (1) Sollen
 
 Getestet: Ein gemocktes Testskript prüft `api/public-portfolio.js` gegen den echten, committeten Dateistand (`git show HEAD:portfolio.html`) — bestätigt, dass `usdAmount`/`shares`/`currentValue` in der Antwort nie vorkommen und die `weight`-Werte aller Positionen sich zu 100% aufsummieren. Im Browser mit gemockter API end-to-end getestet: alle Sektionen rendern korrekt, das virtuelle Vermögen lässt sich live ändern und die Berechnung (virtueller Wert/G+V/%) reagiert sofort — keine Konsolenfehler.
 
+## v40 — 11.09.2026
+
+**Rockwell Automation (ROK) Detailanalyse manuell neu bewertet**, als praktisches Beispiel im Zuge der Diskussion über einen zusätzlichen MACD-Clean-Cross-Trigger für Schritt 7.
+
+Live-Daten (Twelve Data get_quote/get_technical_indicator/get_time_series) zeigten: Der MACD-Bullcross vom 04.09. (Bounce auf $433,81 vom September-Tief $417,53) wurde von der Preisentwicklung der Folgetage bislang **nicht bestätigt** — vier Rückgangstage in Serie ($429,13 → $426,08 → $421,37), RSI(14) fällt von 46,6 auf 39,3 zurück, das MACD-Histogramm bleibt zwar formal positiv, schwächt sich aber seit dem 08.09. wieder ab. Genau das Muster, das der geplante MACD-Trigger künftig automatisch erkennen und markieren soll.
+
+Primärszenario-Wahrscheinlichkeit von 63% auf 56% gesenkt (Korrektur "noch nicht ganz abgeschlossen, aber intakt" statt "nahezu abgeschlossen"), Alternativszenario (verfrühtes MACD-Signal) auf 44% erhöht. Neuer Flag-Hinweis auf der Karte macht das nicht bestätigte Signal sichtbar, statt es stillschweigend als bestätigte Wende stehen zu lassen. Analystenkonsens gegengeprüft (stockanalysis.com, 11.09.2026): unverändert 28 Analysten, "Buy", Ø $478,63/Median $495. CRV neu berechnet relativ zur strukturell sinnvollen 61,8%-Marke als Stop (≈4,7:1, zuvor war die Vorlage inkonsistent zwischen currentPrice-Feld und Prosa). Kurschart (`DD_CHART_ROK`) um die drei neuesten Handelstage ergänzt.
+
 ## v39 — 10.09.2026
 
 **ServiceNow (NOW) Detailanalyse manuell neu bewertet**, auf explizite Nutzer-Anfrage ("Bitte aktualisiere die Detailanalyse von ServiceNow").
