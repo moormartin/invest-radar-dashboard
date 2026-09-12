@@ -4,6 +4,24 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v44 — 12.09.2026
+
+**XPeng (XPEV) neu aufgenommen, inkl. voller Detailanalyse.** Nutzer-Wunsch: "xpeng in schwellenradar integrieren, inkl. detail analyse". Anders als bei den zuletzt aufgenommenen Titeln (SPCX, MRNA, OCGN in v42/v43) diesmal direkt mit vollständiger Elliott-/Fibonacci-Detailanalyse (`detail:true`), nicht nur als Live-Snapshot.
+
+**Einordnung:** Unter Humanoide Robotik einsortiert — XPeng positioniert sich in eigenen Pressemitteilungen explizit als "leading global Physical AI company" mit eigener Robotaxi- und Humanoidroboter-Sparte (im August 2026 externe Finanzierung von über $900 Mio. bei einer Bewertung von über $6,3 Mrd., angeführt von IDG Capital mit Tencent/Alibaba als strategischen Investoren) — thematisch dieselbe Logik wie bei Tesla (EV + Robotaxi + Humanoidroboter Optimus).
+
+**Live-Daten (Twelve Data get_quote/get_technical_indicator/get_time_series, 09.09.2024–11.09.2026) zeigen eine aussergewöhnlich klare, zehn Monate lange Abwärtsstruktur:** Eigene ZigZag-Pivot-Analyse identifiziert zwölf aufeinanderfolgende tiefere Hochs und Tiefs seit dem Allzeithoch $28,24 (11.11.2025) — $21,71 (12.01.2026) → $18,73 (24.02.) → $20,09 (16.03., nahe der 38,2%-Marke $20,29 einer Zwischenerholung) → $17,89 (02.06.) → $14,04 (16.07.) → frisches 52-Wochen-Tief $10,31 (10.09.2026, −63,5% vom Allzeithoch). Bemerkenswert: Das entspricht rund 89% Retracement der gesamten Rally seit dem Zyklustief $8,10 (09.09.2024, Beginn der zweijährigen Kurshistorie) — der Titel hat damit fast die gesamte Aufwärtsbewegung der letzten zwei Jahre wieder abgegeben.
+
+**Auslöser der jüngsten Beschleunigung** (per Company-News-API und WebSearch verifiziert): Q2-2026-Bericht vom 24.08.2026 mit Verlust über Erwartung und einem Q3-Umsatzausblick unter Analystenkonsens (25,88 Mrd. RMB), dazu eine angekündigte Wertpapier-Untersuchung durch die Kanzlei Pomerantz LLP. Gleichzeitig stehen dem positive operative Signale gegenüber: Auslieferungen im August 2026 +4% YoY (39'107 Einheiten, kumuliert über 1,2 Mio.), Q2-Umsatz +51,5% QoQ, sowie die oben genannte $6,3-Mrd.-Fremdbewertung der Robotik-Sparte — eine fundamentale Divergenz zur rein charttechnisch klar bärischen Lage, im `crossCheck`-Feld der Detailanalyse explizit benannt, aber nicht als Kaufsignal gewertet.
+
+**Zone/Status-Entscheidung:** Eine 38,2–61,8%-Fibonacci-"Reclaim-Zone" der letzten Abwärtswelle ($14,04→$10,31) wurde bei $11,74–$12,62 definiert und sowohl auf der Karte (`entryLow`/`entryHigh`) als auch in der Detailanalyse (`longZone`) konsistent verwendet — anders als bei OCGN (v42, dort `null`/`null` mangels jeglicher definierbarer Struktur), da hier eine klare ZigZag-Fibonacci-Ableitung möglich war. Status trotzdem bewusst **"bad"** statt "warn" gesetzt: Der aktuelle Kurs liegt unterhalb dieser Zone, und keiner der zwölf Erholungsversuche der letzten zehn Monate hat ein vorheriges Swing-Hoch überwunden — die Zone ist als "worauf achten", nicht als "jetzt kaufen" zu verstehen, was `tradingBox`- und `wave`-Text explizit machen.
+
+Analystenkonsens per WebFetch direkt von stockanalysis.com verifiziert (11.09.2026, da `get_statistics`/`get_company_info` planbedingt nicht verfügbar waren): 26 Analysten, "Buy" (14 Strong Buy, 7 Buy, 3 Hold, 2 Sell), Kursziel-Ø $19,62 (Median $19,45, Spanne $12,02–$25,22) — der Median liegt rund 85% über dem aktuellen Kurs, eine der grössten Kursziel-Kurs-Divergenzen im gesamten Dashboard neben ROK/ISRG.
+
+**Broker-Handelbarkeit:** eToro per direktem WebFetch der Marktseite (etoro.com/markets/xpev) bestätigt (Rating dort: "Hold", Ø-Ziel $14,67 — eigene, unabhängige Quelle, nicht identisch mit stockanalysis.com). Yuh liess sich mangels durchsuchbarer Einzeltitel-Liste nicht verifizieren, entsprechend ehrlich als "maybe" markiert statt geraten.
+
+Gesamtzahl der Titel damit 44 (zuvor 43); `README.md` entsprechend aktualisiert.
+
 ## v36 — 10.09.2026
 
 **Öffentliche, teilbare Performance-Seite ohne investierte Beträge.** Nutzer-Wunsch: einen zweiten Link generieren, den er teilen kann — das eigene Portfolio soll darauf sichtbar sein (Positionen, Performance, Trefferquote), aber ohne den effektiv investierten Betrag. Besucher sollen stattdessen ein frei wählbares, virtuelles Vermögen eingeben können und sehen, welchen Gewinn/Verlust diese Verteilung damit erzielt hätte.
