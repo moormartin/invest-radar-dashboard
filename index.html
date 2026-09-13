@@ -300,6 +300,9 @@
   .range-labels{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:.68rem; color:var(--ink-faint); margin-top:6px; }
   .entry-line{ font-size:.78rem; margin-top:6px; }
   .entry-line b{ color:var(--ink); }
+  .exit-line{ font-size:.78rem; margin-top:3px; }
+  .exit-line b{ color:var(--ink); }
+  .exit-active{ color:var(--warn); font-weight:600; }
   .no-range-note{ font-size:.78rem; color:var(--ink-faint); font-style:italic; padding:8px 0 2px; }
 
   details{ border-top:1px solid var(--border); padding-top:10px; margin-top:2px; }
@@ -524,6 +527,11 @@
       <button class="pill" data-filter="status" data-value="warn" data-active-accent>Beobachten</button>
       <button class="pill" data-filter="status" data-value="bad" data-active-accent>Abwarten</button>
     </div>
+    <div class="filter-group">
+      <span class="filter-label">Ausstieg</span>
+      <button class="pill active" data-filter="exit" data-value="all" data-active-accent>Alle</button>
+      <button class="pill" data-filter="exit" data-value="yes" data-active-accent>Im Ausstiegsfenster</button>
+    </div>
     <div class="search-wrap">
       <input type="text" class="search-input" id="searchInput" placeholder="Titel suchen…" autocomplete="off">
     </div>
@@ -542,6 +550,7 @@
       <h3>Methodik: Wie die Einstiegsfenster entstehen</h3>
       <p>Für jeden Titel wird die 52-Wochen-Handelsspanne (Tief&ndash;Hoch) als Grundlage für eine Fibonacci-Retracement-Zone (38,2&thinsp;%&ndash;61,8&thinsp;%) genommen &mdash; der klassische Bereich, in dem eine Welle&nbsp;2- oder Welle&nbsp;4-Korrektur innerhalb eines übergeordneten Aufwärtsimpulses typischerweise endet. Liegt der aktuelle Kurs in dieser Zone und bleibt die übergeordnete Struktur intakt, gilt das Fenster als <em>Im Einstiegsfenster</em>. Wo öffentlich auffindbare Wellenzählungen (HKCM, Elliott Wave International, ElliottWave-Forecast, TradingLounge u.&nbsp;a.) vorlagen, sind sie als Quelle vermerkt und mit der eigenen Einschätzung abgeglichen &mdash; wo nicht, ist das explizit ausgewiesen.</p>
       <p>Frische IPOs (&lt; 12 Monate Kurshistorie, z.&nbsp;B. Cerebras, CoreWeave, Circle) und Titel mit einem laufenden fundamentalen Schock ohne Bodenbildung (z.&nbsp;B. Boston Scientific, Inspire Medical) werden bewusst <strong>nicht</strong> in eine Wellenzählung gezwungen, da die EW-Methode eine belastbare Wellenhistorie voraussetzt.</p>
+      <p><strong>Ausstiegsfenster (Nutzer-Anfrage):</strong> Nur für die Titel mit voller Detailanalyse (&bdquo;📊 Detailanalyse&ldquo;-Button) existiert bereits eine eigenständig hergeleitete Short-/Zielzone aus derselben ZigZag-/Fibonacci-Analyse (z.&nbsp;B. Widerstandscluster, Analysten-Kurszielbereich oder Extension-Marke) &mdash; diese wird jetzt zusätzlich auf der Karte als &bdquo;Ausstiegsfenster&ldquo; angezeigt und ist über den Filter &bdquo;Im Ausstiegsfenster&ldquo; auffindbar (aktiv, sobald der Kurs die untere Zonengrenze erreicht oder überschreitet). Für die übrigen, leichter onboardeten Titel (z.&nbsp;B. POET, SPCX, OCGN) wurde bewusst <strong>keine</strong> Ausstiegszone konstruiert, um keine unbegründete Präzision vorzutäuschen, wo keine vergleichbare Analyse vorliegt.</p>
       <p><strong>Indikatoren (RSI, MACD, Squeeze Momentum/TTM Squeeze):</strong> RSI(14) und MACD stammen primär von Investing.com bzw. Barchart (Stand 27.&ndash;31.08.2026); wo beide Quellen spürbar abweichen, ist das im Detailbereich vermerkt. Der Squeeze-/TTM-Squeeze-Indikator ist auf frei zugänglichen Finanzseiten praktisch nicht verfügbar (meist hinter TradingView-/ThinkorSwim-Bezahlschranken) &mdash; wo kein verifizierter Status auffindbar war, zeigt das Dashboard das ehrlich als &bdquo;n/v&ldquo; statt einen Wert zu erfinden.</p>
       <p><strong>Wichtig &mdash; Status ist Zone plus Risiko-Overlay, nicht rein mechanisch:</strong> Der Ampel-Status startet bei der Fibonacci-/Wellenzone, wird aber auf &bdquo;Beobachten&ldquo; heruntergestuft, wenn konkrete Risikofaktoren vorliegen &mdash; z.&nbsp;B. stark widersprüchliche Kursdaten zwischen Quellen, unbestätigte Bodenbildung, extreme Volatilität oder ein laufender fundamentaler Schock. Bei 9 von 44 Titeln liegt der Kurs aktuell zwar in der Zone, der Status ist aber trotzdem gelb &mdash; diese Karten zeigen dafür explizit einen Hinweis (&bdquo;↓ Trotz Preis in der Zone auf &lsquo;Beobachten&rsquo; eingestuft: [Grund]&ldquo;), damit dieser Judgment Call nachvollziehbar bleibt statt sich hinter der Ampelfarbe zu verstecken.</p>
       <p><strong>Getrennt davon:</strong> RSI, MACD und Squeeze (kurzfristiges Momentum) fliessen <strong>nicht</strong> in den Status ein, weil sie einer anderen Zeitebene folgen und legitim von der Wellen-Einordnung abweichen können. Widerspricht die Indikatorenlage dem Status (z.&nbsp;B. Grün bei überkauftem RSI), zeigt die Karte einen separaten gelben &bdquo;Indikator-Konflikt&ldquo;-Hinweis direkt bei den Indikatoren.</p>
@@ -1167,6 +1176,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"v47", date:"13.09.2026", kind:"manual", summary:"Ausstiegsfenster als neuer Filter (Nutzer-Wunsch: 'kannst du auch ausstiegsfenster berechnen und als filter darstellen für alle Titel?'). Vorab geklärt: nur für die ~24 Titel mit voller Detailanalyse berechnen (dort existiert bereits eine eigenständig hergeleitete Short-/Zielzone, `shortZone`, aus der ZigZag-/Fibonacci-Analyse), nicht für alle 45 &mdash; für die übrigen, leichter onboardeten Titel (POET, SPCX, OCGN etc.) gäbe es keine vergleichbar belastbare Grundlage, eine Formel dafür hätte unbegründete Präzision vorgetäuscht. Umgesetzt: neue Karten-Zeile 'Ausstiegsfenster: $X&ndash;$Y' (inkl. 'aktuell im Fenster'-Hinweis, sobald der Kurs die untere Zonengrenze erreicht/überschreitet), neuer Filter-Pill-Bereich 'Ausstieg' (Alle / Im Ausstiegsfenster) analog zum bestehenden Status-Filter, Methodik-Sektion entsprechend ergänzt. Aktuell (13.09.2026) 3 von 24 Titeln mit Zone im Fenster: CRM, TEAM, KAS." },
     { version:"v46", date:"13.09.2026", kind:"manual", summary:"POET Technologies (POET) neu aufgenommen (Nutzer-Wunsch). Kategorisiert unter KI-Agenten/ASI &mdash; kanadisches Photonik-Unternehmen, dessen optische Interposer/Engines KI-Rechenzentrum-Interconnects bedienen. Live-Recherche (Twelve Data, Company-News-API, WebSearch) deckte einen schweren Vorfall auf: Am 21.04.2026 bestätigte CFO Thomas Mika öffentlich eine Bestellung von Celestial AI und eine vertiefte Marvell-Partnerschaft, was laut mehreren Sammelklagen (Rosen Law, Levi &amp; Korsinsky, Pomerantz, Robbins LLP u.&nbsp;a.) einen Vertraulichkeitsbruch darstellte; Marvell stornierte daraufhin am 23.04. alle Bestellungen, POET bestätigte dies am 27.04. vor Handelsbeginn &mdash; Kurssturz -47,3% ($15,10&rarr;$7,95) bei Rekordvolumen. Ungewöhnlich: Kurs erholte sich binnen drei Wochen auf ein neues Allzeithoch $20,81 (14.05.2026), fiel seither aber wieder auf fast exakt das Crash-Tage-Niveau zurück ($7,95 aktuell). Status 'warn' (RSI neutral, MACD seit 08.09. bullisch gekreuzt, aber keine belastbare Zone angesichts der Volatilität) &mdash; keine detail:true-Detailanalyse, analog zum sonstigen Onboarding-Muster. Analystenabdeckung explizit als dünn/widersprüchlich geflaggt: stockanalysis.com zeigt keinen Konsens (n/a), MarketBeat nur 1 Rating (Weiss Ratings, 'Sell', Kursziel $8), Craig-Hallum senkte nach dem Crash von $7,50 auf $3 bei gleichzeitig beibehaltenem 'Buy'. Cross-Check: Q2-Umsatz +112% YoY, $400-Mio.-Finanzierung, neuer COO &mdash; operatives Geschäft wächst trotz Reputationsschaden. eToro-Handelbarkeit live bestätigt, Yuh als 'maybe' markiert. Gesamtzahl der Titel damit 45." },
     { version:"Sync-13.09.2026", date:"13.09.2026", kind:"auto", tickers:["MDT","BSX","NPCE","ROBO","NVDA","MSFT","PLTR","CRM","NOW","AVGO","TSLA","ROK","ISRG","BOTZ","BTC","ETH","FET","LINK","IONQ","CRSP","NVO","TEAM"], summary:"22 Detailanalyse-Titel per Twelve Data aktualisiert (Kurs, RSI, MACD), inkl. Portfolio-Kurse (AVGO, NPCE in portfolio.html synchronisiert). Keine Zonen-Inkonsistenzen, neuen 52-Wochen-Extreme oder MACD-Clean-Crosses festgestellt, DEEPDIVE_REVIEW bleibt leer." },
     { version:"v45", date:"13.09.2026", kind:"manual", summary:"XPEV: Community-Quelle nachgetragen (Nutzer teilte zwei YouTube-Shorts). Phantom by HKCM (&bdquo;Deshalb haben wir JETZT die Xpeng Aktie nachgekauft!&ldquo;, 02.09.2026) vollständig per Untertitel-Transkript ausgewertet: sieht die Korrektur exakt in der eigenen 78,6&ndash;88,7%-Retracement-Zone (Marke $11) als langfristige Bodenbildung vor einem Wave-3-Impuls (Zielpotenzial rund +300%) &mdash; auffallend deckungsgleich mit der hier unabhängig berechneten &asymp;89%-Retracement-Marke des frischen Tiefs, allerdings mit Eigenposition (keine neutrale Quelle) und deutlich optimistischerem Ziel/Zeithorizont als die eigene Analyse. `source`/`crossCheck`-Felder entsprechend ergänzt, `SOURCE_STATUS.XPEV` auf 'video-read' gesetzt. Ein zweites, älteres HKCM-Video (13.03.2025) wurde ebenfalls gesichtet, betrifft aber einen bereits abgeschlossenen früheren Kurszyklus und wurde als nicht mehr relevant eingeordnet, statt es unpassend in die aktuelle Analyse zu mischen. Primär-/Alternativszenario-Wahrscheinlichkeiten (62/38) bewusst unverändert gelassen &mdash; Community-Quellen dienen laut Methodik als Cross-Check, nicht als Berechnungsgrundlage." },
@@ -2560,8 +2570,16 @@
     const hasConflict = conflictReasons(item, IND[item.ticker]).length > 0;
     const inZone = item.entryLow != null && item.entryHigh != null && item.price >= item.entryLow && item.price <= item.entryHigh;
     const aboveZone = item.entryHigh != null && item.price > item.entryHigh;
+    // Ausstiegsfenster: nur für die Detailanalyse-Titel, die bereits eine eigenständig hergeleitete
+    // Short-/Zielzone (shortZone) besitzen — kein Fallback-Wert für die übrigen, leichter onboardeten Titel,
+    // um keine unbegründete Präzision vorzutäuschen (Nutzer-Entscheid).
+    const dd = DEEPDIVE[item.ticker];
+    const hasExitZone = !!(item.detail && dd && Array.isArray(dd.shortZone));
+    const exitLow = hasExitZone ? dd.shortZone[0] : null;
+    const exitHigh = hasExitZone ? dd.shortZone[1] : null;
+    const inExitZone = hasExitZone && item.price >= exitLow;
     return `
-    <article class="card" data-cats="${item.cats.join(' ')}" data-status="${item.status}" data-conflict="${hasConflict ? '1' : '0'}" data-search="${(item.ticker + ' ' + item.name).toLowerCase()}">
+    <article class="card" data-cats="${item.cats.join(' ')}" data-status="${item.status}" data-conflict="${hasConflict ? '1' : '0'}" data-exit="${hasExitZone ? (inExitZone ? 'yes' : 'no') : 'none'}" data-search="${(item.ticker + ' ' + item.name).toLowerCase()}">
       <div class="card-top">
         <div>
           <div class="ticker-block"><span class="ticker">${item.ticker}</span><span class="exch">${item.exch}</span></div>
@@ -2574,6 +2592,7 @@
       ${item.brokerWarning ? `<div class="broker-warning">⚠ ${item.brokerWarning}</div>` : ""}
       <div class="price-row"><span class="price num">${fmtPrice(item)}</span><span class="trend">${item.trend}</span></div>
       ${rangeBarHTML(item)}
+      ${hasExitZone ? `<div class="exit-line">Ausstiegsfenster: <b>${fmtBound(exitLow, item.cur)}&ndash;${fmtBound(exitHigh, item.cur)}</b>${inExitZone ? ` <span class="exit-active">— aktuell im Fenster</span>` : ""}</div>` : ""}
       ${item.downgradeReason ? `<div class="downgrade-note">↓ <span><b>${inZone ? "Trotz Preis in der Zone" : (aboveZone ? "Da Kurs bereits über der Zone" : "Trotz zusätzlicher Faktoren")} auf &bdquo;${STATUS_LABEL[item.status]}&ldquo; eingestuft:</b> ${item.downgradeReason}</span></div>` : ""}
       ${indicatorsHTML(item)}
       <details>
@@ -2673,17 +2692,19 @@
   }
 
   // ---- filters ----
-  let activeCat = "all", activeStatus = "all", searchTerm = "";
+  let activeCat = "all", activeStatus = "all", activeExit = "all", searchTerm = "";
   function applyFilters(){
     let visible = 0;
     document.querySelectorAll('.card').forEach(card => {
       const cats = card.dataset.cats.split(' ');
       const status = card.dataset.status;
+      const exit = card.dataset.exit;
       const searchBlob = card.dataset.search;
       const catOk = activeCat === "all" || cats.includes(activeCat);
       const statusOk = activeStatus === "all" || status === activeStatus;
+      const exitOk = activeExit === "all" || exit === activeExit;
       const searchOk = searchTerm === "" || searchBlob.includes(searchTerm);
-      const show = catOk && statusOk && searchOk;
+      const show = catOk && statusOk && exitOk && searchOk;
       card.hidden = !show;
       if(show) visible++;
     });
@@ -2714,6 +2735,14 @@
       document.querySelectorAll('.pill[data-filter="status"]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeStatus = btn.dataset.value;
+      applyFilters();
+    });
+  });
+  document.querySelectorAll('.pill[data-filter="exit"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pill[data-filter="exit"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeExit = btn.dataset.value;
       applyFilters();
     });
   });

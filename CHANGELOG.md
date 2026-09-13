@@ -4,6 +4,19 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v47 — 13.09.2026
+
+**Ausstiegsfenster als neuer Filter.** Nutzer-Anfrage: "kannst du auch ausstiegsfenster berechnen und als filter darstellen für alle Titel?"
+
+**Vorab per Rückfrage geklärt (AskUserQuestion):** Soll das für alle 45 Titel berechnet werden, oder nur für die Titel mit voller Detailanalyse? Der Nutzer entschied sich für die zweite, robustere Option — nachvollziehbar, da für die ~24 Detailanalyse-Titel bereits eine eigenständig hergeleitete Short-/Zielzone (`shortZone`) aus derselben ZigZag-/Fibonacci-Analyse existiert (Widerstandscluster, Analysten-Kurszielbereich oder Fibonacci-Extension, je nach Titel), während für die übrigen, leichter onboardeten Titel (POET, SPCX, OCGN, MRNA u. a.) keine vergleichbare Analyse vorliegt — eine Formel dafür hätte unbegründete Präzision vorgetäuscht, genau das Gegenteil dessen, was dieses Dashboard methodisch auszeichnet.
+
+**Umgesetzt:**
+- Neue Karten-Zeile `Ausstiegsfenster: $X–$Y` direkt unter der bestehenden Range-Bar, nur bei Titeln mit `detail:true` und vorhandener `shortZone` sichtbar. Zusätzlicher Hinweis „— aktuell im Fenster", sobald der aktuelle Kurs die untere Zonengrenze erreicht oder überschreitet (analog zur Logik des bestehenden Einstiegsfensters, aber ohne obere Begrenzung, da ein Kursziel auch überschritten werden kann, ohne dass die Ausstiegsüberlegung hinfällig wird).
+- Neuer Filter-Pill-Bereich „Ausstieg" (Alle / Im Ausstiegsfenster) neben Feld- und Status-Filter, inkl. eigenem `data-exit`-Attribut (`yes`/`no`/`none`, wobei `none` = keine Zone definiert) und Verdrahtung in `applyFilters()`.
+- Methodik-Sektion um einen erklärenden Absatz ergänzt, der genau diese Umfangs-Entscheidung transparent macht, statt sie stillschweigend zu treffen.
+
+Stand 13.09.2026: 3 von 24 Titeln mit definierter Ausstiegszone aktuell im Fenster (CRM, TEAM, KAS).
+
 ## v46 — 13.09.2026
 
 **POET Technologies (POET) neu aufgenommen.** Nutzer-Wunsch: "integriere Poet Technologies". Kategorisiert unter KI-Agenten/ASI — POET ist ein kanadisches Photonik-Halbleiterunternehmen, dessen optische Interposer/Engines KI-Rechenzentrum-Interconnects bedienen (Kunden/Partner im AI-Infrastruktur-Umfeld), thematisch passend neben AVGO/CRWV/SOUN.
