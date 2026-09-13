@@ -290,6 +290,7 @@
   .range-zone.hatch{
     background:repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink-faint) 55%, transparent) 0 4px, transparent 4px 8px);
   }
+  .range-zone-exit{ position:absolute; top:0; bottom:0; background:color-mix(in srgb, var(--bad) 42%, transparent); border-radius:99px; }
   .range-marker{
     position:absolute; top:-4px; width:2px; height:16px; background:var(--ink); border-radius:2px;
   }
@@ -302,7 +303,7 @@
   .entry-line b{ color:var(--ink); }
   .exit-line{ font-size:.78rem; margin-top:3px; }
   .exit-line b{ color:var(--ink); }
-  .exit-active{ color:var(--warn); font-weight:600; }
+  .exit-active{ color:var(--bad); font-weight:600; }
   .no-range-note{ font-size:.78rem; color:var(--ink-faint); font-style:italic; padding:8px 0 2px; }
 
   details{ border-top:1px solid var(--border); padding-top:10px; margin-top:2px; }
@@ -1265,14 +1266,15 @@
     return (cur === "CHF" ? "CHF " : cur) + s;
   }
 
-  function rangeBarHTML(item){
+  function rangeBarHTML(item, exitLow, exitHigh){
     if(item.low == null || item.high == null){
       return `<div class="no-range-note">Keine belastbare 52-Wochen-Spanne recherchiert &mdash; Chartaufbau vor Order selbst prüfen.</div>`;
     }
-    // Zieht die Achse auf, falls die Einstiegszone (z.B. ein spekulatives tieferes Kursziel)
-    // ausserhalb der recherchierten 52-Wochen-Spanne liegt, statt sie am Rand zu verstecken.
-    const effLow = Math.min(item.low, item.entryLow != null ? item.entryLow : item.low);
-    const effHigh = Math.max(item.high, item.entryHigh != null ? item.entryHigh : item.high);
+    // Zieht die Achse auf, falls die Einstiegs- oder Ausstiegszone (z.B. ein spekulatives Kursziel
+    // oder eine Extension über dem bisherigen Hoch) ausserhalb der recherchierten 52-Wochen-Spanne
+    // liegt, statt sie am Rand zu verstecken.
+    const effLow = Math.min(item.low, item.entryLow != null ? item.entryLow : item.low, exitLow != null ? exitLow : item.low);
+    const effHigh = Math.max(item.high, item.entryHigh != null ? item.entryHigh : item.high, exitHigh != null ? exitHigh : item.high);
     const span = effHigh - effLow;
     const pct = v => Math.max(0, Math.min(100, ((v - effLow) / span) * 100));
     const markerPct = pct(item.price);
@@ -1282,6 +1284,10 @@
       zoneHTML = `<div class="range-zone" style="left:${zLeft}%; width:${Math.max(zRight - zLeft, 1.5)}%;"></div>`;
     } else {
       zoneHTML = `<div class="range-zone hatch" style="left:0%; width:100%;"></div>`;
+    }
+    if(exitLow != null && exitHigh != null){
+      const zLeft = pct(exitLow), zRight = pct(exitHigh);
+      zoneHTML += `<div class="range-zone-exit" style="left:${zLeft}%; width:${Math.max(zRight - zLeft, 1.5)}%;"></div>`;
     }
     const extended = effLow < item.low || effHigh > item.high;
     return `
@@ -2591,7 +2597,7 @@
       <p class="case-text">${item.case}</p>
       ${item.brokerWarning ? `<div class="broker-warning">⚠ ${item.brokerWarning}</div>` : ""}
       <div class="price-row"><span class="price num">${fmtPrice(item)}</span><span class="trend">${item.trend}</span></div>
-      ${rangeBarHTML(item)}
+      ${rangeBarHTML(item, exitLow, exitHigh)}
       ${hasExitZone ? `<div class="exit-line">Ausstiegsfenster: <b>${fmtBound(exitLow, item.cur)}&ndash;${fmtBound(exitHigh, item.cur)}</b>${inExitZone ? ` <span class="exit-active">— aktuell im Fenster</span>` : ""}</div>` : ""}
       ${item.downgradeReason ? `<div class="downgrade-note">↓ <span><b>${inZone ? "Trotz Preis in der Zone" : (aboveZone ? "Da Kurs bereits über der Zone" : "Trotz zusätzlicher Faktoren")} auf &bdquo;${STATUS_LABEL[item.status]}&ldquo; eingestuft:</b> ${item.downgradeReason}</span></div>` : ""}
       ${indicatorsHTML(item)}
