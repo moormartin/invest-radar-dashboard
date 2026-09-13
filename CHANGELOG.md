@@ -4,6 +4,16 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v45 — 13.09.2026
+
+**XPEV: Community-Quelle nachgetragen.** Der Nutzer teilte zwei YouTube-Shorts zum Xpeng-Sentiment. Beide stammen von den bereits im Dashboard getrackten Kanälen (HKCM bzw. Phantom by HKCM) — Untertitel-Transkripte per YouTube-`timedtext`-API vollständig ausgewertet, nicht nur Titel/Beschreibung gelesen.
+
+**Phantom by HKCM, "Deshalb haben wir JETZT die Xpeng Aktie nachgekauft!" (02.09.2026, aktuell, 9 Tage vor dem Analyse-Stand):** Sieht die laufende Korrektur exakt in der eigenen 78,6–88,7%-Retracement-Zone (eigene Marke bei $11) als langfristige Bodenbildung vor dem nächsten Impuls einer übergeordneten Welle 3, mit Kurszielpotenzial von rund +300% (162%-Fibonacci-Extension). Bemerkenswert: Das deckt sich fast exakt mit der in v44 unabhängig berechneten ≈89%-Retracement-Marke des frischen Tiefs — zwei getrennte Methoden (eigene ZigZag-Analyse vs. Community-Elliott-Wave-Zählung) kommen auf dieselbe strukturelle Zone. Wichtiger Vorbehalt: Der Video-Autor hat zu diesem Zeitpunkt selbst nachgekauft (Eigenposition, keine neutrale Quelle) und sein Kursziel/Zeithorizont ist deutlich optimistischer als die eigene, vorsichtigere Einschätzung.
+
+**Zweites Video (HKCM, 13.03.2025, "China mit unglaublicher Stärke! Jetzt XPeng kaufen?!"):** Ebenfalls vollständig transkribiert, behandelt aber einen früheren, seit Nov. 2025 (neues Allzeithoch) bereits abgeschlossenen Kurszyklus (damals −58,2% in einer anderen Korrektur). Bewusst nicht in die aktuelle Analyse eingemischt, da nicht mehr strukturell relevant — nur der Vollständigkeit halber dokumentiert.
+
+**Umgesetzt:** `source`- und `crossCheck`-Felder von XPEV entsprechend ergänzt (inkl. Verweis auf die Eigenposition/fehlende Neutralität der Quelle), `sourceUrl` auf das Phantom-by-HKCM-Video umgestellt, `SOURCE_STATUS.XPEV` von fehlend auf `'video-read'` gesetzt. Primär-/Alternativszenario-Wahrscheinlichkeiten (62/38 aus v44) bewusst **unverändert** gelassen: Community-/Analysten-Quellen dienen laut Projekt-Methodik als Cross-Check und Plausibilitätsprüfung, nicht als Berechnungsgrundlage für die eigene ZigZag-/Fibonacci-Analyse.
+
 ## v44 — 12.09.2026
 
 **XPeng (XPEV) neu aufgenommen, inkl. voller Detailanalyse.** Nutzer-Wunsch: "xpeng in schwellenradar integrieren, inkl. detail analyse". Anders als bei den zuletzt aufgenommenen Titeln (SPCX, MRNA, OCGN in v42/v43) diesmal direkt mit vollständiger Elliott-/Fibonacci-Detailanalyse (`detail:true`), nicht nur als Live-Snapshot.
