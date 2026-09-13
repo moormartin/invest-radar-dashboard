@@ -4,6 +4,20 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v46 — 13.09.2026
+
+**POET Technologies (POET) neu aufgenommen.** Nutzer-Wunsch: "integriere Poet Technologies". Kategorisiert unter KI-Agenten/ASI — POET ist ein kanadisches Photonik-Halbleiterunternehmen, dessen optische Interposer/Engines KI-Rechenzentrum-Interconnects bedienen (Kunden/Partner im AI-Infrastruktur-Umfeld), thematisch passend neben AVGO/CRWV/SOUN.
+
+**Live-Recherche deckte einen erheblichen Vorfall auf**, der die aktuelle Bewertung dominiert: Am 21.04.2026 bestätigte CFO Thomas Mika öffentlich (Stocktwits) eine Bestellung von Celestial AI und eine vertiefte Partnerschaft mit Marvell. Laut mehreren, unabhängig voneinander eingereichten Sammelklagen (Rosen Law Firm, Levi & Korsinsky, Pomerantz, Robbins LLP, Faruqi & Faruqi, The Gross Law Firm u. a.) wurden dabei vertrauliche Liefer-/Bestelldetails offengelegt. Marvell kündigte daraufhin am 23.04.2026 schriftlich die Stornierung aller Bestellungen wegen Vertraulichkeitsbruchs an; POET bestätigte dies am 27.04.2026 vor Handelsbeginn — der Kurs stürzte am selben Tag um −47,3 % ab ($15,10 → $7,95, Tagesspanne $7,50–$10,42, Rekordvolumen 199 Mio. Stück). Die Sammelklagen decken Käufe zwischen 01.04. und 27.04.2026 (08:57 Uhr ET) ab, Lead-Plaintiff-Frist war der 29.06.2026.
+
+**Ungewöhnlicher Kursverlauf danach:** Statt nachhaltig tief zu bleiben, erholte sich POET binnen drei Wochen auf ein neues Allzeithoch $20,81 (14.05.2026, +162 % vom Crash-Tief) — fiel seither aber wieder zurück und notiert aktuell (11.09.2026) fast exakt auf dem Niveau des Crash-Tages ($7,95), rund 88,5 % Retracement der Mai-Rally vom Juli-Tief $6,28. RSI(14) neutral (49,1), MACD seit 08.09.2026 bullisch gekreuzt, aber ohne verlässliche Fibonacci-Zone angesichts der extremen, ereignisgetriebenen Volatilität — deshalb Status **"warn"** mit `entryLow`/`entryHigh: null` statt einer konstruierten, falsch präzisen Zone.
+
+**Analystenabdeckung explizit als dünn und widersprüchlich geflaggt**, statt eine einzelne Zahl unkommentiert zu übernehmen: stockanalysis.com zeigt keinen Konsens (n/a, 11.09.2026). MarketBeat verzeichnet nur 1 aktives Rating (Weiss Ratings, algorithmisch, "Sell"/D-, 17.07.2026, Kursziel $8 — kaum Aufwärtspotenzial). Craig-Hallum (Richard Shannon) senkte das Kursziel nach dem Crash von $7,50 auf $3, behielt aber "Buy" bei — ein intern widersprüchliches Signal. Vor einem Jahr lagen noch 2 Buy-Ratings im Schnitt bei $6,25.
+
+**Cross-Check (operatives Geschäft trotz Reputationsschaden):** Q2-2026-Umsatz +112 % YoY, eine $400-Mio.-Finanzierung zum Kapazitätsausbau wurde abgeschlossen, und ein neuer COO (Dr. Sandeep Kumar) wurde berufen — das operative Geschäft wächst sichtbar weiter, unabhängig vom Vertrauensschaden aus dem April-Vorfall.
+
+**Onboarding ohne volle Detailanalyse** (kein `detail:true`), analog zum Muster bei SPCX/MRNA/OCGN (v42/v43) — die Datenlage (ereignisgetriebener Crash statt gleichmässiger Trendstruktur, dünne Analystenbasis) eignet sich ohnehin schlecht für eine klassische Elliott-Wave-Detailanalyse. eToro-Handelbarkeit per direktem WebFetch bestätigt (etoro.com/markets/poet), Yuh mangels verifizierbarer Liste als "maybe" markiert. Gesamtzahl der Titel damit 45; `README.md` entsprechend aktualisiert.
+
 ## v45 — 13.09.2026
 
 **XPEV: Community-Quelle nachgetragen.** Der Nutzer teilte zwei YouTube-Shorts zum Xpeng-Sentiment. Beide stammen von den bereits im Dashboard getrackten Kanälen (HKCM bzw. Phantom by HKCM) — Untertitel-Transkripte per YouTube-`timedtext`-API vollständig ausgewertet, nicht nur Titel/Beschreibung gelesen.
