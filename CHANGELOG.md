@@ -4,6 +4,14 @@ Alle Versionen sind zusätzlich direkt im Dashboard selbst über den Button „�
 
 > **Hinweis zur Versionshistorie:** Dieses Repository wurde am 04.09.2026 als erster Git-Commit angelegt und startet mit dem damals aktuellen, veröffentlichten Stand (v10). Die Versionen v2–v9 existieren nicht als separate Dateischnappschüsse — ihre Inhalte sind hier und im Dashboard-Changelog dokumentiert, aber nicht als eigene Git-Commits rekonstruierbar. Ab v10 (dieser Commit) läuft die Versionierung normal über Git-Commits/Tags weiter.
 
+## v48 — 13.09.2026
+
+**Atlassian (TEAM) Detailanalyse manuell neu bewertet.** Auslöser: Nutzer fragte, ob die TEAM-Analyse als attraktives Ausstiegsfenster gelten könne. Antwort im Chat gegeben (im Kern: ja, aber nicht am attraktivsten Punkt des Fensters, da preislich in der Mitte statt am oberen Rand der Zone, und die Detailanalyse selbst war mit 04.09.2026 schon 9 Tage alt), danach auf Nutzer-Wunsch die Detailanalyse selbst aktualisiert.
+
+**Was sich seit der letzten Bewertung (04.09.2026, $189,58) geändert hat:** Der Kurs fiel auf ein Zwischentief $174,21 (09.09.2026, −12,3% vom Doppeltop-Hoch $198,60) — das bärische MACD-Crossover vom 04.09. wurde damit bestätigt, nicht widerlegt. Seither drei Handelstage Stabilisierung eng um $178–180 ($179,70 aktuell). RSI(14) normalisierte sich von überkauft 75,3 auf neutral 61,0 — ein gesundes Muster. MACD-Histogramm vertieft sich dagegen weiterhin (+1,30 am 31.08. → −3,29 am 11.09.) und zeigt bislang kein Bodensignal auf Momentum-Ebene — ein typisches Nachlaufen des Indikators hinter dem bereits stabilisierenden Kurs.
+
+**Anpassungen:** Primärszenario umformuliert zu "Korrektur nach bestätigtem Doppeltop, Stabilisierung bereits deutlich über der grossen Zielzone" (55%, zuvor "Verschnaufpause" bei 50%), Alternativszenario ("MACD-Verschlechterung setzt sich durch") entsprechend auf 45% (zuvor 50%). CRV neu berechnet und dabei eine bemerkenswerte Verschiebung sichtbar gemacht: von 0,4:1 (ungünstig, bei $189,58 nahe am Hoch) auf 1,6:1 (deutlich günstiger, bei $179,70 nach dem Rücksetzer) — der Kursrückgang hat einen Neu-/Nachkauf relativ attraktiver gemacht, obwohl der Titel weiterhin im dokumentierten Ausstiegsfenster liegt. Analystenkonsens gegengeprüft (stockanalysis.com, 11.09.2026): unverändert 33 Analysten, "Buy" (21 Strong Buy, 6 Buy, 6 Hold), Kursziel-Median $180 liegt jetzt praktisch exakt am aktuellen Kurs (letzte Woche noch 5,1% darunter) — der Markt hat den Analystenkonsens quasi eingeholt. Kartenfelder (`trend`, `wave`, `invalid`, `source`, `flag`) und Kurschart (`DD_CHART_TEAM`, vier neue Handelstage) entsprechend synchronisiert.
+
 ## v47 — 13.09.2026
 
 **Ausstiegsfenster als neuer Filter.** Nutzer-Anfrage: "kannst du auch ausstiegsfenster berechnen und als filter darstellen für alle Titel?"
