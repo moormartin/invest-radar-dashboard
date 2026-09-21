@@ -908,9 +908,9 @@
       ticker:"LINK", exch:"Krypto", name:"Chainlink", cats:["crypto"], detail:true,
       case:"Oracle-/Interoperabilitäts-Infrastruktur (CCIP), zentral für institutionelle Tokenisierungs-Pilotprojekte (SWIFT, DTCC) und potenziell für automatisierte On-Chain-Zahlungen von KI-Agenten.",
       price:12.616, cur:"$", asOf:"21.09.2026 (Twelve Data live, automatischer Sync)", low:6.996, high:25.64, entryLow:6.996, entryHigh:14.12,
-      trend:"+1,8% (24h), +71% seit dem Zyklustief (06.06.) &mdash; Kurs nähert sich der 38,2%-Zone der Korrektur vom Allzeithoch", status:"good",
-      wave:"Eigene ZigZag-/Fibonacci-Analyse (Twelve-Data-Tagesschlusskurse, 24.04.2025&ndash;05.09.2026): Kräftige Rally seit dem Zyklustief $6,996 (06.06.2026) auf $11,845, innerhalb der 0&ndash;38,2%-Zone der Korrektur seit dem Allzeithoch $25,64. RSI bereits erhöht (65,7) &mdash; ein Rücksetzer wäre technisch gesund. HKCM bestätigt in &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen, gemeinsam mit XRP und ADA) eine bullische Grundtendenz.",
-      invalid:"Unter $6,996 (Zyklustief/52-Wochen-Tief) wäre die Trendwende-These hinfällig.",
+      trend:"+0,8% (24h), Rücksetzer in die 23,6&ndash;38,2%-Zone der Rally (Tief $10,80 am 15.09.) seither mit bullischem MACD-Clean-Cross (21.09.) bestätigt &mdash; Kurs nähert sich erneut der 38,2%-Zone der Korrektur vom Allzeithoch", status:"good",
+      wave:"Eigene ZigZag-/Fibonacci-Analyse (Twelve-Data-Tagesschlusskurse, 24.04.2025&ndash;21.09.2026): Nach dem Zwischenhoch $13,685 (07.09.2026) korrigierte LINK wie erwartet in die 23,6&ndash;38,2%-Retracement-Zone der Rally ($10,16&ndash;$10,86, Tief $10,80 am 15.09.) und erholte sich seither auf $12,62, begleitet von einem bullischen MACD-Clean-Cross (21.09., automatische Schritt-7-Neubewertung). Bewegung bleibt innerhalb der 0&ndash;38,2%-Zone der Korrektur seit dem Allzeithoch $25,64.",
+      invalid:"Unter $6,996 (Zyklustief/52-Wochen-Tief) wäre die Trendwende-These hinfällig; unter $9,54 (23,6%-Marke der Gesamtkorrektur) wäre die unmittelbare Fortsetzungs-These bereits geschwächt.",
       source:"HKCM: &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen) &mdash; ergänzt die bisherige Brave-New-Coin-Textquelle als aktuellste Direktquelle.", sourceUrl:"https://www.youtube.com/watch?v=QD8HHYUfNBU",
       flag:null,
       etoro:"yes", yuh:"maybe"
@@ -1178,6 +1178,7 @@
   // 'auto' = von einer automatisierten Hintergrundaufgabe (Zeitplan-Task) ohne direkte menschliche Prüfung erzeugt.
   // Automatisierte Tasks: NUR an dieses Array etwas voranstellen (unshift), nie bestehende Einträge verändern/löschen.
   const CHANGELOG = [
+    { version:"Review-21.09.2026", date:"21.09.2026", kind:"auto-review", tickers:["LINK"], summary:"LINK: Automatische Schritt-7-Neubewertung nach MACD-Clean-Cross-Flag. Der zuvor als Alternativszenario erwartete Rücksetzer in die 23,6&ndash;38,2%-Zone der Rally ($10,16&ndash;$10,86) trat am 15.09.2026 ein (Tief $10,80) und wurde seither mit einem bullischen MACD-Clean-Cross (21.09.) bestätigt. Primärszenario entsprechend von 60% auf 70% hochgewichtet (Alternative auf 30% reduziert, neu formuliert als Restrisiko einer erneuten Konsolidierung statt der bereits eingetretenen), CRV und Kennzahlen auf Basis des aktuellen Kurses ($12,62) neu berechnet, Status/Zonen/Invalidierung unverändert. Bekannte, akzeptierte Einschränkung: Kurschart (DD_CHART_LINK) bleibt vorübergehend auf dem Stand vom 05.09.2026. NVO bleibt zur manuellen Prüfung offen (Tagesschluss $41,71 am 16.09. unterschritt kurzzeitig die harte Invalidierung $41,97, seitherige Erholung auf $43,24 hat die Einstiegszone $46,21&ndash;49,64 aber noch nicht zurückerobert, MACD weiterhin bärisch) &mdash; keine sichere automatische Einordnung möglich." },
     { version:"Sync-21.09.2026", date:"21.09.2026", kind:"auto", tickers:["MDT","BSX","NPCE","ROBO","NVDA","MSFT","PLTR","CRM","NOW","AVGO","TSLA","ROK","ISRG","BOTZ","BTC","ETH","FET","LINK","IONQ","CRSP","NVO","TEAM"], summary:"22 von 22 Detailanalyse-Titeln per Twelve Data aktualisiert (Kurs, RSI, MACD), inkl. Portfolio-Kurse. LINK zeigt einen MACD-Clean-Cross innerhalb der Einstiegszone (Kurs $12,616), NVO ist fällig für die turnusmässige 14-Tage-Backstop-Neubewertung (zuletzt am 04.09.2026 inhaltlich geprüft) &mdash; wird in Schritt 7 automatisch geprüft." },
     { version:"Sync-20.09.2026", date:"20.09.2026", kind:"auto", tickers:["MDT","BSX","NPCE","ROBO","NVDA","MSFT","PLTR","CRM","NOW","AVGO","TSLA","ROK","ISRG","BOTZ","BTC","ETH","FET","LINK","IONQ","CRSP","NVO","TEAM"], summary:"22 von 22 Detailanalyse-Titeln per Twelve Data aktualisiert (Kurs, RSI, MACD), inkl. Portfolio-Kurse. FET, LINK und NVO sind fällig für die turnusmässige 14-Tage-Backstop-Neubewertung (zuletzt am 05.09. bzw. 04.09.2026 inhaltlich geprüft) &mdash; wird in Schritt 7 automatisch geprüft." },
     { version:"Review-19.09.2026", date:"19.09.2026", kind:"auto-review", tickers:["ETH"], summary:"ETH: Automatische Schritt-7-Neubewertung nach 14-Tage-Backstop-Flag. Der Kurs überschritt am 18. und 19.09.2026 mit zwei Tagesschlüssen in Folge ($2.612 bzw. $2.622) das alte Erholungshoch $2.566,53 (27.08.) &mdash; exakt der zuvor dokumentierte Auslöser, der das Alternativszenario (&bdquo;Erholungshoch bereits gesehen&ldquo;) verwirft. Primärszenario (Fortsetzung Richtung $3.136&ndash;3.521) entsprechend von 58% auf 78% hochgewichtet, Alternative auf 22% (nur noch Restrisiko) reduziert, Status/Zonen unverändert. NVO bleibt zur manuellen Prüfung offen (kurzer Unterschuss der harten Invalidierung $41,97 am 16.09., seither zwei Erholungstage, aber Einstiegszone $46,21&ndash;49,64 noch nicht zurückerobert und MACD widerspricht der zuletzt dokumentierten Headline &mdash; keine sichere automatische Einordnung möglich). Zusätzlich 13 Titel (MDT, BSX, NPCE, ROBO, NVDA, MSFT, PLTR, CRM, TSLA, ISRG, BOTZ, BTC, CRSP) nach vollem Check (Kurshistorie, Zonen/Invalidierungslevel, RSI/MACD) als weiterhin gültig bestätigt, keine inhaltliche Änderung." },
@@ -1262,8 +1263,7 @@
   // schreibt NIE selbst status/downgradeReason/wave um, sondern nur diese Warteliste. Wird manuell (oder in
   // einer separaten Analyse-Session) abgearbeitet; danach den betreffenden Eintrag wieder entfernen.
   const DEEPDIVE_REVIEW = [
-    { ticker:"LINK", date:"21.09.2026", reason:"MACD wechselte auf bullisch bei Kurs $12.616, innerhalb der Einstiegszone und ohne bestehenden Indikator-Konflikt (clean cross) - Kandidat für automatische Neubewertung." },
-    { ticker:"NVO", date:"21.09.2026", reason:"Detailanalyse zuletzt am 04.09.2026 inhaltlich geprüft (vor 17 Tagen) - fällig für turnusmässige Neubewertung (>14 Tage)." }
+    { ticker:"NVO", date:"21.09.2026", reason:"Turnusmässige 14-Tage-Neubewertung (zuletzt 04.09.2026 geprüft) zeigt ein uneindeutiges Bild: Tagesschluss $41,71 am 16.09.2026 unterschritt kurzzeitig die harte Invalidierung $41,97, seither Erholung auf $43,24 (18.09.), aber die 38,2%-Einstiegszone ($46,21&ndash;49,64) wurde noch nicht zurückerobert. MACD bleibt bärisch (wenn auch seit dem 16.09. weniger stark fallend), RSI schwach bei 41,3 &mdash; keine sichere automatische Einordnung möglich, bleibt zur manuellen Prüfung offen." }
   ];
 
   const CAT_LABEL = { bci:"BCI / Neurotech", aiagent:"KI-Agenten / ASI", robotics:"Humanoide Robotik", quantum:"Quantencomputing", biotech:"Biotech / Pharma", crypto:"Krypto / CBDC" };
@@ -1981,39 +1981,39 @@
     },
     LINK: {
       name:"Chainlink", ticker:"LINK", unit:"$",
-      statusHeadline:"Kräftige +71%-Rally seit Juni-Tief nähert sich der 38,2%-Marke, RSI läuft heiss",
+      statusHeadline:"Rücksetzer in die erwartete 23,6&ndash;38,2%-Zone der Rally bestätigt, MACD-Clean-Cross signalisiert Fortsetzung",
       statusTone:"good",
-      asOf:"20.09.2026 &middot; Twelve Data (Tagesschluss) &middot; eigene Berechnung",
+      asOf:"21.09.2026 &middot; Twelve Data (Tagesschluss) &middot; eigene Berechnung (automatische Schritt-7-Neubewertung: Rücksetzer-These bestätigt, Primärszenario hochgewichtet)",
       currentPrice:12.616, change24h:0.75872534,
-      tradingBox:"Kurs notiert bei $11,845, knapp unter dem August-Hoch $11,99 und nahe der 38,2%-Fibo-Marke ($14,12) der Korrektur seit dem Allzeithoch $25,64 ist noch etwas entfernt. Nach der kräftigen +71%-Rally seit dem Zyklustief $6,996 (06.06.2026) ist der RSI (65,7) bereits erhöht &mdash; ein Einstieg auf einen Rücksetzer in die $10&ndash;10,50-Zone (23,6&ndash;38,2%-Retracement der Rally selbst) bietet ein besseres Chance-Risiko-Verhältnis als ein Nachkauf auf dem aktuellen, bereits weit gelaufenen Niveau.",
-      whatHappened:"LINK ist seit dem Zyklustief $6,996 (06.06.2026) um +71,3% auf $11,845 (05.09.2026, +1,8&thinsp;% zum Vortag) gestiegen &mdash; angeführt von einem sauberen Aufwärtsschub bis zum bisherigen Erholungshoch $11,99 (21.08.2026). RSI(14) 65,7 (erhöht, aber noch nicht überkauft &gt;70), MACD bleibt knapp unter der Signallinie (&minus;0,058 Histogramm, aber deutlich verengt gegenüber &minus;0,068 in den Vortagen) &mdash; das Momentum bleibt bullisch, wenn auch nicht mehr beschleunigend.",
+      tradingBox:"Kurs notiert bei $12,62 (21.09.), nachdem er in der Woche zum 15.09. wie im damaligen Alternativszenario erwartet in die $10,16&ndash;$10,86-Rücksetzerzone konsolidierte (Tief $10,80) und sich seither wieder erholt hat. Der MACD vollzog am 21.09. das erwartete bullische Clean-Cross (Histogramm erstmals seit dem 16.09. wieder positiv), RSI (62,5) ist dabei neutral-bullisch geblieben statt überkauft zu laufen &mdash; ein technisch saubereres Setup als vor dem Rücksetzer. Ein Einstieg innerhalb der bestehenden $6,996&ndash;$14,12-Zone bleibt möglich, wer aber erst nach der Bestätigung einsteigen will, hat ein weniger günstiges CRV als beim Tief vom 15.09.",
+      whatHappened:"Nach dem Zwischenhoch $13,685 (07.09.2026) korrigierte LINK wie im Alternativszenario erwartet in die 23,6&ndash;38,2%-Retracement-Zone der Rally ($10,16&ndash;$10,86) und markierte am 15.09.2026 ein Tief von $10,80 &mdash; knapp innerhalb der Zielzone. Seither erholte sich der Kurs in vier Handelstagen um +16,9% auf $12,62 (21.09.2026, +0,8&thinsp;% zum Vortag), begleitet von einem bullischen MACD-Clean-Cross (Histogramm von &minus;0,0042 am 20.09. auf +0,028 am 21.09.) &mdash; genau die Bestätigung, auf die das Primärszenario gewartet hatte. RSI(14) 62,5 (neutral-bullisch, nicht überkauft).",
       primary:{
-        label:"Primärszenario &mdash; Rally setzt sich nach kurzer Konsolidierung fort",
-        probability:60,
-        text:"Seit dem Allzeithoch $25,64 (13.09.2025) fiel LINK um &minus;72,7% auf das Zyklustief $6,996 (06.06.2026). Die seitherige Erholung (+71,3% auf $11,845) bewegt sich innerhalb der eigenen 0&ndash;38,2%-Fibonacci-Zone ($6,996&ndash;$14,12) der Gesamtkorrektur und nähert sich deren oberer Grenze. Deckt sich mit HKCMs Einschätzung (&bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo;, vor 7 Tagen, gemeinsam mit XRP/ADA behandelt): eine bullische Grundtendenz für Altcoins. Nach einer möglichen kurzen Verschnaufpause (RSI ist bereits erhöht) wäre der nächste Fibonacci-Meilenstein die 50%-Marke ($16,32).",
+        label:"Primärszenario &mdash; Rally setzt sich nach bestätigtem Rücksetzer fort",
+        probability:70,
+        text:"Seit dem Allzeithoch $25,64 (13.09.2025) fiel LINK um &minus;72,7% auf das Zyklustief $6,996 (06.06.2026). Der zuvor erwartete Rücksetzer in die 23,6&ndash;38,2%-Zone der Rally ($10,16&ndash;$10,86) ist am 15.09.2026 eingetreten (Tief $10,80) und wurde seither mit einem bullischen MACD-Clean-Cross (21.09.) bestätigt &mdash; ein klassisches Muster für die Fortsetzung eines impulsiven Aufwärtstrends nach gesunder Konsolidierung. Die Rally bewegt sich weiterhin innerhalb der eigenen 0&ndash;38,2%-Fibonacci-Zone ($6,996&ndash;$14,12) der Gesamtkorrektur und nähert sich erneut deren oberer Grenze. Nächster Fibonacci-Meilenstein bleibt die 50%-Marke ($16,32).",
         invalidation:"Tagesschluss unter $9,54 (23,6%-Marke der Gesamtkorrektur) würde die unmittelbare Fortsetzungs-These schwächen."
       },
       alternative:{
-        label:"Alternativszenario &mdash; überkaufte Rally korrigiert erst, bevor sie weiterläuft",
-        probability:40,
-        text:"Eine +71%-Rally binnen rund drei Monaten ohne grössere Verschnaufpause ist ungewöhnlich stark; der bereits erhöhte RSI (65,7) und der weiterhin unter der Signallinie liegende MACD sprechen für eine erhöhte Wahrscheinlichkeit einer Konsolidierung. Ein Rücksetzer in die 23,6&ndash;38,2%-Zone der Rally selbst ($10,16&ndash;$10,86) wäre technisch gesund und böte einen saubereren Einstiegspunkt, bevor die Fortsetzung Richtung $14,12&ndash;$16,32 erfolgt.",
-        invalidation:"Ein Tagesschluss über $14,12 (38,2%-Marke der Gesamtkorrektur) ohne vorherigen Rücksetzer würde diese Lesart hinfällig machen, ohne die Grundthese (Fortsetzung) zu widerlegen."
+        label:"Alternativszenario &mdash; erneute, tiefere Konsolidierung vor der Fortsetzung",
+        probability:30,
+        text:"Der erwartete Rücksetzer ist bereits eingetreten und mit dem bullischen MACD-Cross am 21.09. augenscheinlich abgeschlossen &mdash; das Restrisiko einer erneuten, tieferen Konsolidierung vor der eigentlichen Fortsetzung bleibt aber bestehen, etwa falls der RSI erneut zu schnell in überkauftes Terrain (&gt;70) läuft, bevor die 38,2%-Marke ($14,12) nachhaltig überschritten wird.",
+        invalidation:"Ein nachhaltiger Tagesschluss über $14,12 (38,2%-Marke der Gesamtkorrektur) würde dieses Restrisiko vorerst ausräumen und die Fortsetzung Richtung 50%-Marke bestätigen."
       },
       outlook:"Als zentrale Oracle-/Interoperabilitäts-Infrastruktur (CCIP) für institutionelle Tokenisierungs-Pilotprojekte (SWIFT, DTCC) bleibt LINK fundamental gut positioniert für den Trend automatisierter On-Chain-Zahlungen von KI-Agenten. Bei Fortsetzung über die 38,2%-Marke hinaus wären die 50%- ($16,32) und 61,8%-Marken ($18,52) der Gesamtkorrektur die nächsten rechnerischen Ziele.",
       confluence:[
-        {label:"Elliott-Struktur", value:"impulsiv", note:"Klarer, bislang kaum unterbrochener Aufwärtsschub seit dem Zyklustief"},
-        {label:"Fibo-Konfluenz", value:"mittel", note:"Rally nähert sich der 38,2%-Marke der Gesamtkorrektur, noch nicht erreicht"},
-        {label:"RSI/MACD", value:"bullisch, aber erhöht", note:"RSI 65,7 (nicht mehr früh), MACD-Histogramm verengt sich, aber noch negativ"}
+        {label:"Elliott-Struktur", value:"impulsiv", note:"Aufwärtsschub seit dem Zyklustief, unterbrochen von einem gesunden, bereits abgeschlossenen Rücksetzer (07.&ndash;15.09.)"},
+        {label:"Fibo-Konfluenz", value:"mittel", note:"Rücksetzer testete exakt die 23,6&ndash;38,2%-Zone der Rally, Kurs nähert sich erneut der 38,2%-Marke der Gesamtkorrektur"},
+        {label:"RSI/MACD", value:"bullisch", note:"RSI 62,5 (neutral-bullisch), MACD vollzog am 21.09. das erwartete bullische Clean-Cross"}
       ],
-      crv:{ risk:"$11,845 (aktuell) &minus; $10,16 (38,2%-Marke der Rally/Stop) = $1,685 (&asymp;14,2%)", reward:"$14,12 (38,2%-Marke Gesamtkorrektur) &minus; $11,845 = $2,275 (&asymp;19,2%)", ratio:"&asymp; 1,4 : 1 (auf aktuellem Niveau, günstiger nach Rücksetzer)" },
+      crv:{ risk:"$12,62 (aktuell) &minus; $10,16 (38,2%-Marke der Rally/Stop) = $2,46 (&asymp;19,5%)", reward:"$14,12 (38,2%-Marke Gesamtkorrektur) &minus; $12,62 = $1,50 (&asymp;11,9%)", ratio:"&asymp; 0,6 : 1 (auf aktuellem, bereits erholtem Niveau &mdash; beim Rücksetzertief $10,80 lag es deutlich günstiger bei rund 1,9:1)" },
       growth:[
-        {label:"Aktuell ($11,845) &rarr; 50%-Marke Gesamtkorrektur ($16,32)", pct:"+37,8%"},
-        {label:"Aktuell ($11,845) &rarr; Allzeithoch-Retest ($25,64)", pct:"+116,5%"}
+        {label:"Aktuell ($12,62) &rarr; 50%-Marke Gesamtkorrektur ($16,32)", pct:"+29,3%"},
+        {label:"Aktuell ($12,62) &rarr; Allzeithoch-Retest ($25,64)", pct:"+103,2%"}
       ],
-      supports:[ {label:"23,6&ndash;38,2%-Retracement der Rally (Rücksetzerzone)", value:"$10,16 &ndash; $10,86"}, {label:"Zyklustief", value:"$6,996"} ],
-      resistances:[ {label:"August-2026-Hoch", value:"$11,99"}, {label:"38,2%-Marke Gesamtkorrektur", value:"$14,12"}, {label:"50%-Marke Gesamtkorrektur", value:"$16,32"} ],
-      timing:"Trend/Struktur: Tages-Kerzen. Nach der starken Rally: 4h-Kerzen auf eine Konsolidierung/einen Rücksetzer warten, statt auf dem bereits erhöhten Niveau nachzukaufen.",
-      crossCheck:"HKCM: &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (vor 7 Tagen) &mdash; bestätigt die bullische Grundtendenz, ohne LINK-spezifische Kursziele zu nennen. Die eigene Fibonacci-Analyse liefert die konkreten Zielmarken.",
+      supports:[ {label:"Rücksetzertief (15.09.2026)", value:"$10,80"}, {label:"23,6&ndash;38,2%-Retracement der Rally (Rücksetzerzone)", value:"$10,16 &ndash; $10,86"}, {label:"Zyklustief", value:"$6,996"} ],
+      resistances:[ {label:"Zwischenhoch (07.09.2026)", value:"$13,685"}, {label:"38,2%-Marke Gesamtkorrektur", value:"$14,12"}, {label:"50%-Marke Gesamtkorrektur", value:"$16,32"} ],
+      timing:"Trend/Struktur: Tages-Kerzen. Nach dem bestätigten Rücksetzer: 4h-Kerzen auf einen nachhaltigen Ausbruch über $14,12 warten, statt auf dem bereits erholten Niveau nachzukaufen.",
+      crossCheck:"HKCM: &bdquo;Beginnt vor unseren Augen gerade der Altcoin Bullenmarkt?&ldquo; (05.09.2026) &mdash; bestätigt die bullische Grundtendenz, ohne LINK-spezifische Kursziele zu nennen. Kein neuer Newsflow seither identifiziert; die eigene Fibonacci-/MACD-Analyse liefert die konkrete Bestätigung für diese Neubewertung.",
       ath:25.64, cycleLow:6.996,
       longZone:[6.996,14.12], shortZone:[14.12,18.52],
       chart: DD_CHART_LINK, chartStart:"24.04.2025", chartEnd:"05.09.2026"
